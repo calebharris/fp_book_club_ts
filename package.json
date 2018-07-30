@@ -1,0 +1,29 @@
+{
+  "name": "fp_book_club_ts",
+  "version": "0.0.1",
+  "description": "Notes and exercises from Functional Programming in Scala translated to TypeScript",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "vuepress": "^0.12.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vuepress dev docs_src",
+    "docs:build": "vuepress build docs_src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebharris/fp_book_club_ts.git"
+  },
+  "keywords": [
+    "typescript",
+    "functional programming"
+  ],
+  "author": "Caleb Harris",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/calebharris/fp_book_club_ts/issues"
+  },
+  "homepage": "https://github.com/calebharris/fp_book_club_ts#readme"
+}
