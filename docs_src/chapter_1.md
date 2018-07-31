@@ -3,13 +3,10 @@
 We construct our programs using only *pure functions* - functions that have no *side effects*.
 
 A function has a side effect if it does anything other than return a value. Examples:
-* Modifying a variable
-* Modifying a data structure in place
-* Setting a field on an object
-* Throwing an exception or halting with an error
-* Printing to the console or reading user input
-* Reading from or writing to a file
-* Drawing on the screen
+* Modifying any state, such as a variable or data structure, in place
+* Throwing an exception or exiting the program with an error
+* Reading or writing a file
+* Making a network request
 
 ## Benefits of FP: a simple example
 
@@ -40,7 +37,7 @@ class Cafe {                               //class keyword introduces a class, j
 ```
 
 The line `cc.charge(cup.price)` is an example of a side effect. Charging a credit card involves some interaction
-with the outside world. But the function's return value is just a `Coffee`, meaning this interactions are not easily
+with the outside world. But the function's return value is just a `Coffee`, meaning this interaction is not easily
 observable, making our function difficult to test. We can improve modularity and testability by introducing a
 `Payments` object that encapsulates the payment processing logic and removing it from `CreditCard`.
 
@@ -55,7 +52,7 @@ class Cafe {
 }
 ```
 
-The side effect still happens. But we have regained some testability because we can pass in a mock `Payments` object.
+The side effect still happens. But we have improved testability because we can pass in a mock `Payments` object.
 However, any mock will be awkward to use, because it will have to do things like maintain internal state that we can
-inspect after the call to `charge()`. This all feels like overkill if we just want to test that buyCoffee creates a
-charge equal to the price of a cup of coffee.
+inspect after the call to `charge()`. This is a bit much if all we want is to test that buyCoffee charges the correct
+amount for a cup of coffee.
