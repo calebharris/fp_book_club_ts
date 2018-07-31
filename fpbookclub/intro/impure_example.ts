@@ -1,7 +1,7 @@
 /**
  * A TypeScript program with side-effects
  *
- * Adapted from Function Programming in Scala listing 1.1
+ * Adapted from Functional Programming in Scala listing 1.1
  **/
 
 export class Coffee {
