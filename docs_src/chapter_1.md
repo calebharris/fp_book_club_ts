@@ -137,3 +137,30 @@ Later on, we'll have to employ some advanced, potentially difficult-to-understan
 power from TypeScript's types as we can with Scala's. Still, TypeScript is a powerful, easy-to-deploy, and
 rapidly-evolving language that drastically improves our ability to manage and maintain large JavaScript projects.
 :::
+
+## Definition of a pure function
+
+The book differentiates between "functions" and "procedures", stating that the phrase "pure function" is redundant. But
+given the preponderance of using "function" to mean any semi-cohesive, addressable sequence of code, we'll stick with
+explicitly calling functions "pure" when it matters. Consider a function `f`, with an input type of `A` and an output
+type of `B`. In both Scala and TypeScript, the type of `f` is written as `A => B`. Then `f` is pure if it relates every
+value of `A` to exactly one value of `B`, the output value is determined solely by the input value, and `f` takes no
+other actions that change the meaning of the program.
+
+Some examples of pure functions:
+* Integer addition
+* Index of substring in string, if the string is immutable
+
+The concept of *referential transparency*, which is a property of *expressions*, formalizes purity. Any part of a
+program that can be evaluated to a result is an expression (meaning that a function is one kind of expression), and it
+is referentially transparent (or RT) if its every occurence in a program can be replaced by its result without altering
+the meaning of the program. More formally:
+
+::: tip Referential transparency and purity
+An expression `e` is *referentially transparent* if, for all programs `p`, all occurrences of `e` in `p` can be
+replaced by the result of evaluating `e` without changing the meaning of `p`. A function `f` is *pure* if the
+expression `f(x)` is referentially trasparent for all referentially transparent `x`.
+:::
+
+Referential transparency allows us to reason about programs using the substitution model, wherein we discover the
+meaning of program by repeatedly replacing expressions with their results.
