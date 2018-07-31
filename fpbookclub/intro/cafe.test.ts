@@ -1,5 +1,12 @@
-import { Coffee, CreditCard, Cafe } from "./impure_example"
+import * as impure from "./impure_example"
 
-test("returns a Coffee", () => {
-  expect(new Cafe().buyCoffee(new CreditCard())).toEqual(new Coffee());
+describe("the impure version of Cafe.buyCoffee()", () => {
+  const { CreditCard, Cafe } = impure;
+
+  test("causes a side effect", () => {
+    const cc = new CreditCard();
+    expect(cc.didCharge).toEqual(false);
+    new Cafe().buyCoffee(cc);
+    expect(cc.didCharge).toEqual(true);
+  })
 });

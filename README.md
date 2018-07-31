@@ -43,10 +43,18 @@ Exercises and notes from [Functional Programming in Scala][fpinscala] translated
    Snapshots:   0 total
    Time:        0.896s, estimated 1s
    ```
-5. ...Or run the tests on every file change...
+5. ...Or run the affected tests on every file change...
    ```
    $ npm run test:watch
    ```
+6. ...Or run all the tests on every file change...
+   ```
+   $ npm run test:watchAll
+   ```
+
+We use [Jest][jest] as our test framework, via [ts-jest][ts-jest]. In addition to the top-level scripts listed above,
+you can invoke Jest with arbitrary arguments with `npm test -- [--jestArg1 --jestArg2 ...]`. To see everything Jest can
+do for you, run `npm test -- --help`.
 
 ## Working with the documentation
 
@@ -64,5 +72,7 @@ To update the notes:
 
 [fpinscala]: https://www.manning.com/books/functional-programming-in-scala "Functional Programming in Scala"
 [ghpages]: https://pages.github.com "GitHub Pages"
+[jest]: https://jestjs.io/en/ "Jest"
 [ts]: https://www.typescriptlang.org "TypeScript"
+[ts-jest]: https://github.com/kulshekhar/ts-jest "ts-jest"
 [vuepress]: https://vuepress.vuejs.org "VuePress"
