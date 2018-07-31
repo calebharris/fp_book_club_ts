@@ -9,11 +9,8 @@ export class Coffee {
 }
 
 export class CreditCard {
-  didCharge: boolean = false;
-
   charge(price: number) {
     console.log("Side effect! Charging the credit card...");
-    this.didCharge = true;
   }
 }
 
