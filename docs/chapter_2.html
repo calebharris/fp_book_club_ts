@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Chapter 2. Getting started with functional programming in TypeScript</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.ed62baa3.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/6.a5924d91.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.6db29525.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.541e78ef.js">
+    <link rel="stylesheet" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/fp_book_club_ts/" class="home-link router-link-active"></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/fp_book_club_ts/" class="nav-link">Home</a></div><div class="nav-item"><a href="/fp_book_club_ts/chapter_1.html" class="nav-link">Chapters</a></div><div class="nav-item"><a href="https://github.com/calebharris/fp_book_club_ts" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/fp_book_club_ts/" class="nav-link">Home</a></div><div class="nav-item"><a href="/fp_book_club_ts/chapter_1.html" class="nav-link">Chapters</a></div><div class="nav-item"><a href="https://github.com/calebharris/fp_book_club_ts" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/fp_book_club_ts/chapter_1.html" class="sidebar-link">Chapter 1. What is functional programming?</a></li><li><a href="/fp_book_club_ts/chapter_2.html" class="active sidebar-link">Chapter 2. Getting started with functional programming in TypeScript</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fp_book_club_ts/chapter_2.html#introducing-typescript-an-example" class="sidebar-link">Introducing TypeScript: an example</a></li></ul></li></ul> </div> <div class="page"> <div class="content"><h1 id="chapter-2-getting-started-with-functional-programming-in-typescript"><a href="#chapter-2-getting-started-with-functional-programming-in-typescript" aria-hidden="true" class="header-anchor">#</a> Chapter 2. Getting started with functional programming in TypeScript</h1> <p>Our ultimate goal is to start thinking about programs more as combinations of pure functions and less as sequences of
+instructions that each have an effect. In this chapter, we'll learn some of TypeScript's syntax, and how to use
+its features to exercise the basics of typed functional programming techniques: writing loops as recursive functions,
+using higher-order functions (HOFs), and writing polymorphic HOFs.</p> <h2 id="introducing-typescript-an-example"><a href="#introducing-typescript-an-example" aria-hidden="true" class="header-anchor">#</a> Introducing TypeScript: an example</h2> <div class="language-ts line-numbers-mode"><pre class="language-ts"><code><span class="token comment">/**
+ * abs.ts - a simple TypeScript program
+ **/</span>
+
+<span class="token comment">// A comment!</span>
+<span class="token comment">/* A multiline (or block)
+     comment */</span>
+<span class="token comment">/**
+ * A documentation comment
+ **/</span>
+
+<span class="token comment">// Exporting something makes it visible to</span>
+<span class="token comment">// code outside of this module</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">abs</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>        <span class="token comment">// abs takes a number and</span>
+                                                <span class="token comment">// returns a number</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>n <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token operator">-</span>n<span class="token punctuation">;</span>                                  <span class="token comment">// return the negation of n</span>
+  <span class="token keyword">else</span>                                          <span class="token comment">// if it's less than zero</span>
+    <span class="token keyword">return</span> n<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Since this function isn't exported, it's</span>
+<span class="token comment">// only visible to code in this file</span>
+<span class="token keyword">function</span> <span class="token function">formatAbs</span><span class="token punctuation">(</span>x<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token string">&quot;The absolute value of &quot;</span> <span class="token operator">+</span> x <span class="token operator">+</span> <span class="token string">&quot; is &quot;</span> <span class="token operator">+</span> <span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> msg<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// This line will be executed when the module</span>
+<span class="token comment">// is loaded, or when this file is executed</span>
+<span class="token comment">// directly</span>
+<span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">formatAbs</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                    <span class="token comment">// writes to standard out</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br></div></div><p>The building blocks of TypeScript programs are modules. For now, it's fine to think of each TypeScript file as though
+it automatically defines a module. The <code>export</code> keyword does not come into play in this example, but makes the <code>abs</code>
+function visible to other modules. In other words, <code>abs</code> is a public member of this module. Functions, classes,
+interfaces, types, and raw values can all be members of a module. We'll discuss all these constructs later.</p> <p>Our module has three functions, which we'll also call methods, declared with the <code>function</code> keyword. There are other
+ways to declare functions, but we'll cover those later.</p> <p>The <code>abs</code> function is a pure function that takes a number and returns its absolute value:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">abs</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>n <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token operator">-</span>n<span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    <span class="token keyword">return</span> n<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br></div></div><p>TypeScript inherits its numeric type from JavaScript. That means it has only one type of number, conveniently called
+<code>number</code>, which represents a floating-point value. Without some extra work, or the help of a library, we cannot
+distinguish between integers and floating-point values using the type system.</p> <p>The <code>function</code> keyword is followed by a name, and then by a parenthesized list of parameters. <code>Abs</code> takes one argument
+named <code>n</code>, of type <code>number</code>, which we denote with <code>: number</code>. Similarly, we declare the type of <code>abs'</code> return value
+to be a number with the <code>: number</code> after the parameter list. The body of the function, which contains all its logic, is
+written between curly braces: '{' and '}'. We'll sometimes refer to everything before the opening brace as a function
+s <em>signature</em>, and everything inside the braces as its <em>definition</em>. In general, code between braces can also be
+referred to as a <em>block</em>. The <code>return</code> keyword immediately returns the value after it to the caller.</p> <p>In some languages, the if-else construct works a little like a function call, returning either one value or the other,
+depending on the condition. If that were the case in TypeScript, we could write:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">return</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>n <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">-</span>n <span class="token keyword">else</span> n<span class="token punctuation">;</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>But in TypeScript, if-else is only a control-flow mechanism and does not itself return a value. Therefore, when using
+if-else, we must rely on side effects to know which branch was followed. We'll be careful to keep these side effects as
+localized as possible, so that the overall function remains pure.</p> <p>The <code>formatAbs</code> function, also pure, takes a number and returns a string:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">formatAbs</span><span class="token punctuation">(</span>x<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token string">&quot;The absolute value of &quot;</span> <span class="token operator">+</span> x <span class="token operator">+</span> <span class="token string">&quot; is &quot;</span> <span class="token operator">+</span> <span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> msg<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>Notice that we have not declared its return type with a <code>: string</code> clause. TypeScript has powerful <em>type-inferencing</em>
+capabilities, meaning that we can often omit explicit type declarations and let the compiler figure things out. But
+it's generally considered good style to include explicit types in the signatures of functions we intend for others to
+use. Since <code>formatAbs</code> is not <code>export</code>ed, it is effectively private to our module, so it's OK to leave out the
+<code>: string</code>. <code>FormatAbs</code> uses the plus (<code>+</code>) operator to concatenate several strings and numbers together into a
+human-readable message. Plus is the only example of so-called <em>operator overloading</em> in JavaScript, and therefore
+TypeScript. When either side of the <code>+</code> is a string, the other side is also converted into a string.</p> <p>The first line of <code>formatAbs</code> assigns the result of the string concatenation to the variable <code>msg</code>, using the keyword
+<code>const</code>. <code>Const</code> is short for <em>constant</em>, which is programmer-speak for &quot;a variable whose value never changes&quot;.
+Variables declared with <code>const</code> must have a value assigned as soon as they are created, and can never be assigned a new
+value.</p> <p>Finally, the last line of the module calls our other functions and writes the result to the console:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">formatAbs</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>If we execute this file directly with a TypeScript interpreter (more on that later), that's when the output would
+occur. In that case, it works kind of like an implicit <code>main</code> method. But if we use the file as a module by importing
+<code>abs</code> into another file, the output would happen the first time that file actually refers to <code>abs</code>.</p></div> <div class="page-edit"><!----> <!----></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/fp_book_club_ts/chapter_1.html" class="prev">
+          Chapter 1. What is functional programming?
+        </a></span> <!----></p></div> </div> <!----></div></div>
+    <script src="/fp_book_club_ts/assets/js/6.a5924d91.js" defer></script><script src="/fp_book_club_ts/assets/js/app.ed62baa3.js" defer></script>
+  </body>
+</html>

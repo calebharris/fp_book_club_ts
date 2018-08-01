@@ -11,7 +11,8 @@ module.exports = {
       { text: "GitHub", link: "https://github.com/calebharris/fp_book_club_ts" }
     ],
     sidebar: [
-      "/chapter_1"
+      "/chapter_1",
+      "/chapter_2"
     ]
   }
 }
