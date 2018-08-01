@@ -1,6 +1,9 @@
 module.exports = {
   base: "/fp_book_club_ts/",
   dest: "docs",
+  markdown: {
+    lineNumbers: true
+  },
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },

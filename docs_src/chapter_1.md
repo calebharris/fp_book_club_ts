@@ -18,19 +18,21 @@ runnable versions of these examples.
 
 ### A program with side effects
 ```typescript
-class Cafe {                               //class keyword introduces a class, just
-                                           //  like every other OO language
+// `class` keyword introduces a class
+class Cafe {
 
-  buyCoffee(cc: CreditCard): Coffee {      //method of a class introduced by a name
-                                           //  followed by ()
-                                           //`cc: CreditCard` defines parameter
-                                           //  named `cc` of type `CreditCard`
-                                           //`: Coffee` declares the return type of
-                                           //  the method. compiler will error if the
-                                           //  method can possibly not return a
-                                           //  `Coffee` object
+  // method of a class introduced by a
+  // name followed by ()
+  buyCoffee(cc: CreditCard): Coffee {   // `cc: CreditCard` defines parameter
+                                        //  named `cc` of type `CreditCard`
+                                        //
+                                        // `: Coffee` declares the return type
+                                        // of the method. compiler will error
+                                        // if the method doesn't return a
+                                        // `Coffee` object
+
     const cup = new Coffee();
-    cc.charge(cup.price);                  //side effect: actually charges the card
+    cc.charge(cup.price);                  //side effect: charges the card
     return cup;
   }
 }
@@ -60,14 +62,13 @@ no obvious way to do that without contacting the payment processor 10 times!
 
 ### A functional solution: removing the side effects
 ```typescript
-class Cafe {
-  buyCoffee(cc: CreditCard): [Coffee, Charge] {  //buyCoffee now returns a pair, or
-                                                 //  tuple, of the purchased Coffee
-                                                 //  and its associated Charge
-    const cup = new Coffee();
-    const charge = new Charge(cc, cup.price);
-    return [cup, charge];
-  }
+// buyCoffee now returns a pair, or tuple, of the
+// purchased Coffee  and its associated Charge
+buyCoffee(cc: CreditCard): [Coffee, Charge] {
+  const cup = new Coffee();
+  const charge = new Charge(cc, cup.price);
+  return [cup, charge];
+}
 ```
 
 Here, we've removed the side effect. Instead of immediately interacting with the payment processor, `buyCoffee` returns
@@ -77,15 +78,19 @@ now a concern for elsewhere. In fact, `Cafe` no longer has any knowledge of how 
 Let's look at `Charge` more closely:
 
 ```typescript
-class Charge {                                   //once a Charge is created, it's
-  readonly cc: CreditCard;                       //  intended never to change, hence
-  readonly amount: number;                       //  the `readonly` markers
+class Charge {
+  readonly cc: CreditCard;    // once a Charge is created, it should never
+  readonly amount: number;    // change, hence the `readonly` markers
 
   constructor(cc: CreditCard, amount: number) {
     this.cc = cc;
     this.amount = amount;
   }
 
+  /**
+   * Returns a new Charge containing the sum of the amounts of this Charge
+   * and the other Charge
+   **/
   combine(other: Charge): Charge {
     if (this.cc == other.cc) {
       return new Charge(this.cc, this.amount + other.amount);
@@ -104,13 +109,18 @@ buyCoffees(cc: CreditCard, n: number): [Coffee[], Charge] {
   const cards: CreditCard[] = new Array(n).fill(cc);
   const purchases = Array.from(cards, cc => this.buyCoffee(cc));
 
-  //this part is a bit ugly, but we're just splitting the array of [Coffee, Charge]
-  //  tuples into one Coffee array and one Charge array
-  const [coffees, charges] = purchases.reduce(([coffees, charges], [coffee, charge]) => {
-    coffees.push(coffee);
-    charges.push(charge);
-    return [coffees, charges];
-  }, [new Array(), new Array()]) ;
+  // this part is a bit ugly, but we're just splitting the array of
+  // [Coffee, Charge] tuples into one Coffee array and one Charge array
+  const [coffees, charges] = purchases.reduce(
+    ([coffees, charges], [coffee, charge]) => {
+        coffees.push(coffee);
+        charges.push(charge);
+        return [coffees, charges];
+    },
+    [new Array(), new Array()]
+  );
+
+  // reduce the list of Charges to one by sequentially applying combine()
   return [coffees, charges.reduce((l, r) => l.combine(r))];
 }
 ```
