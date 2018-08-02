@@ -81,3 +81,193 @@ console.log(formatAbs(-42));
 If we execute this file directly with a TypeScript interpreter (more on that later), that's when the output would
 occur. In that case, it works kind of like an implicit `main` method. But if we use the file as a module by importing
 `abs` into another file, the output would happen the first time that file actually refers to `abs`.
+
+## Running our program
+
+The easist way to run this and other programs in these notes is to clone the [Git repository][fpbookclub_repo] and
+follow the instructions in the README. You'll use npm, a standard package-management tool in the Node.js ecosystem, to
+download this project's dependencies, build it, and run it.
+
+Once you've completed those steps, you can run the program we've been discussing using the console script:
+
+```
+$ npm run console -- fpbookclub/getting_started/abs.ts
+
+> fp_book_club_ts@0.0.1 console /Users/caleb/fp_book_club_ts
+> ts-node "fpbookclub/getting_started/abs.ts"
+
+The absolute value of -42 is 42
+```
+
+The `--` argument signals the end of arguments to the `npm run` command and the start of arguments to the `console`
+script. `Console` uses a package called `ts-node` under the hood, which acts like a TypeScript REPL when no script
+argument is provided:
+
+```
+$ npm run console
+
+> fp_book_club_ts@0.0.1 console /Users/caleb/src/fp_book_club_ts
+> ts-node
+
+> import { abs } from "./fpbookclub/getting_started/abs";
+{}
+> abs(-13);
+The absolute value of -42 is 42
+13
+> abs(6);
+6
+> (Ctrl-D to exit)
+```
+
+In the previous example, we are treating the sample program as a module and importing the `abs` function into the
+REPL's scope. You can see where our "main" code is executed, which is right when we use `abs` for the first time. On
+the second invocation, because the module has already been loaded, we don't see a second line of output. Mixing
+script-like and module-like code like this, as you can see, can lead to confusing results, so generally we'll stick to
+one or the other in a given file.
+
+Finally, the project for these notes incorporates [Jest][jest] - a JavaScript testing framework. You can use the
+`npm test` command to run all the tests for the project:
+
+```
+$ npm test
+
+> fp_book_club_ts@0.0.1 test /Users/caleb/src/fp_book_club_ts
+> jest
+
+ PASS  fpbookclub/getting_started/abs.test.ts
+  ● Console
+
+    console.log fpbookclub/getting_started/abs.ts:32
+      The absolute value of -42 is 42
+
+ PASS  fpbookclub/intro/cafe.test.ts
+  ● Console
+
+    console.log fpbookclub/intro/impure_example.ts:13
+      Side effect! Charging the credit card...
+    console.log fpbookclub/intro/cafe.test.ts:35
+      Another side effect
+
+
+Test Suites: 2 passed, 2 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        1.083s, estimated 2s
+Ran all test suites.
+```
+
+You can also have Jest "watch" the source files and re-run related tests whenever a source file changes. Doing so
+brings up a little interactive test results menu, which provides options for running tests manually or exiting from the
+watch session.
+
+```
+$ npm run test:watch
+
+ PASS  fpbookclub/getting_started/abs.test.ts
+  ✓ abs computes the absolute value of a number (4ms)
+
+  console.log fpbookclub/getting_started/abs.ts:32
+    The absolute value of -42 is 42
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.673s, estimated 1s
+Ran all test suites related to changed files.
+
+Watch Usage
+ › Press a to run all tests.
+ › Press f to run only failed tests.
+ › Press p to filter by a filename regex pattern.
+ › Press t to filter by a test name regex pattern.
+ › Press q to quit watch mode.
+ › Press Enter to trigger a test run.
+```
+
+## Modules, imports, and exports
+
+We've already seen that files are essentially modules in TypeScript. More specifically, any file that has an `import`
+or `export` statement is a module. A module can have *named* exports, which we've already seen an example of. Each
+module can also declare one *default* export. Named and default exports are imported in slightly different ways.
+Suppose we have the following module that we want to reuse elsewhere:
+
+```typescript
+/**
+ * lib.ts
+ **/
+
+export default function commonlyUsed() {...}
+
+export function lessCommonlyUsed() {...}
+
+export function evenLessCommonlyUsed() {...}
+```
+
+Then our client module has a number of options for importing `lib`'s functionality:
+
+```typescript
+// directly import named exports
+import { lessCommonlyUsed, evenLessCommonlyUsed } from "./lib";
+
+lessCommonlyUsed();
+evenLessCommonlyUsed();
+
+// directly import named exports and rename them
+import { lessCommonlyUsed as a, evenLessCommonlyUsed as b } from "./lib";
+
+a();
+b();
+
+// import all named exports into a namespace
+import * as lib from "./lib";
+
+lib.lessCommonlyUsed();
+lib.evenLessCommonlyUsed();
+
+// default exports are easier to import
+import myName from "./lib";
+
+myName();        // `myName` is actually `commonlyUsed`
+
+// default exports are just special named exports
+import { default as myOtherName } from "./lib";
+
+myOtherName();   // `myName` and 'myOtherName` are `commonlyUsed`
+lib.default();   // so is `lib.default`
+
+```
+
+## Higher-order functions: passing functions to functions
+
+It's often useful in functional programming to write functions that accept other functions as arguments or that return
+functions as results. These are called higher-order functions (HOFs). Fortunately, in TypeScript, functions are just
+like any other value. They can be passed around as arguments, assigned to variables, and stored in data structures. To
+get us started, let's think about modifying the program to output both the absolute value of a number *and* the
+factorial of another number.
+
+But first...
+
+### Writing loops functionally
+
+A possible `factorial` implementation:
+
+```typescript
+export function factorial(n: number): number {
+  const go = (n: number, acc: number): number => {
+    if (n <= 0)
+      return acc;
+    else
+      return go(n - 1, n * acc);
+  }
+
+  return go(n, 1);
+}
+```
+
+::: tip Note
+You can find expanded code for this and the following examples in the code repo at
+`/fpbookclub/getting_started/math.ts`.
+:::
+
+[fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
+[jest]: https://jestjs.io/en/ "Jest"
