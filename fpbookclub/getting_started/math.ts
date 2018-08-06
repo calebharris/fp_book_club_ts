@@ -17,10 +17,10 @@ export function abs(n: number): number {
 /**
  * A recursive factorial function
  **/
-export function factorialRecurse(n: number): number {
+export function factorialRecursive(n: number): number {
   assert(Number.isSafeInteger(n));
 
-  const go = (n: number, acc: number): number => {
+  const go = function(n: number, acc: number): number {
     if (n <= 0)
       return acc;
     else
@@ -28,4 +28,40 @@ export function factorialRecurse(n: number): number {
   }
 
   return go(n, 1);
+}
+
+/**
+ * A factorial function with a while loop
+ **/
+export function factorialWhile(n: number): number {
+  assert(Number.isSafeInteger(n));
+
+  let acc = 1, i = n;   // declare and initialize mutable variables
+  while (i > 0) {       // execute block until i <= 0
+    acc = acc * i;
+    i = i - 1;
+  }
+
+  return acc;
+}
+
+/**
+ * A factorial function with a for loop
+ **/
+export function factorialFor(n: number): number {
+  assert(Number.isSafeInteger(n));
+  let acc = 1;
+
+  for (let i = n; i > 0; --i) {  // set i to n and then loop until i <= 0
+    acc *= i;
+  }
+
+  return acc;
+}
+
+/**
+ * A simple higher-order function for formatting the result of a computation
+ **/
+export function formatResult(name: string, x: number, f: (n: number) => number): string {
+  return `The ${name} of ${x} is ${f(x)}`;
 }

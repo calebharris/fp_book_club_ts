@@ -1,4 +1,5 @@
-import { abs, factorialRecurse } from "./math";
+import { AssertionError } from "assert";
+import { abs, factorialFor, factorialRecursive, factorialWhile, formatResult } from "./math";
 
 describe("abs", () => {
   test("calculates the absolute value of a number", () => {
@@ -8,12 +9,39 @@ describe("abs", () => {
   });
 });
 
-describe("factorial", () => {
+describe("factorialRecursive", () => {
   test("calculates the factorial of an integer", () => {
-    expect(factorialRecurse(6)).toEqual(720);
+    expect(factorialRecursive(6)).toEqual(720);
   });
 
   test("throws an exception with non-integer arguments", () => {
-    expect(() => factorialRecurse(1.1)).toThrow();
+    expect(() => factorialRecursive(1.1)).toThrow(AssertionError);
+  });
+});
+
+describe("factorialWhile", () => {
+  test("calculates the factorial of an integer", () => {
+    expect(factorialWhile(6)).toEqual(720);
+  });
+
+  test("throws an exception with non-integer arguments", () => {
+    expect(() => factorialWhile(1.1)).toThrow(AssertionError);
+  });
+});
+
+describe("factorialFor", () => {
+  test("calculates the factorial of an integer", () => {
+    expect(factorialFor(6)).toEqual(720);
+  });
+
+  test("throws an exception with non-integer arguments", () => {
+    expect(() => factorialFor(1.1)).toThrow(AssertionError);
+  });
+});
+
+describe("formatResult", () => {
+  test("formats the result of a computation", () => {
+    expect(formatResult("factorial", 6, factorialFor)).toEqual(
+      "The factorial of 6 is 720");
   });
 });

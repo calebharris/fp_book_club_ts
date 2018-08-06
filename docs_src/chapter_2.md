@@ -243,7 +243,12 @@ It's often useful in functional programming to write functions that accept other
 functions as results. These are called higher-order functions (HOFs). Fortunately, in TypeScript, functions are just
 like any other value. They can be passed around as arguments, assigned to variables, and stored in data structures. To
 get us started, let's think about modifying the program to output both the absolute value of a number *and* the
-factorial of another number.
+factorial of another number. The program's output might look like this:
+
+```
+The absolute value of -42 is 42
+The factorial of 7 is 5040
+```
 
 But first...
 
@@ -252,8 +257,8 @@ But first...
 A possible `factorial` implementation:
 
 ```typescript
-export function factorial(n: number): number {
-  const go = (n: number, acc: number): number => {
+function factorial(n: number): number {
+  const go = function(n: number, acc: number): number {
     if (n <= 0)
       return acc;
     else
@@ -268,6 +273,102 @@ export function factorial(n: number): number {
 You can find expanded code for this and the following examples in the code repo at
 `/fpbookclub/getting_started/math.ts`.
 :::
+
+We write loops functionally, without mutating a loop variable, with *recursive* functions. The variable `go` holds a
+recursive function, which is just a function that calls itself. It might seem strange, at first glance, to have a
+function defined entirely inside another function. But TypeScript allows us to create functions in any scope.
+
+In an imperative language, we'd typically write a `for` or `while` loop (known as *iteration*) that repeatedly runs a
+block of code as long as some condition holds. However, this necessarily involves mutating some state (otherwise, the
+condition would never change!), which is something we try to minimize in FP. By using a pure, recursive function, we
+transmute the local state changes into a chain of calls to the function with different parameters.
+
+In the `go` local function, the recursive call to itself is in *tail position*, meaning that the return value of the
+recursive call is itself immediately returned, rather than being retained and used later in the function. It is
+possible, when compiling tail calls, to skip the step of generating a new stack frame and instead reuse the current
+stack frame. This process is known as *tail call elimination*.
+
+For a function like `go` that contains recursive calls only in tail position - a property we describe as *tail
+recursive* - this results in a constant stack size. We say *stack safe* to describe programs with a constant stack
+size. Being aware of how the stack size of a program changes over time is important because most JavaScript runtimes
+limit the amount of memory that can be consumed by the stack. With tail call elimination, tail-recursive functions
+combine the elegance of pure functions with the efficiency of imperative loops.
+
+### Recursion, iteration, and stack-safety
+
+Now for some bad news: TypeScript does not do tail call elimination. That means that if we need to guarantee
+stack-safety, we need to use a loop. Deciding when to use recursion vs. when to use iteration is a matter of judgment.
+You'll need to decide when stack safety is more important than functional purity based on the needs of your specific
+program.  If that seems like a daunting task right now, that's OK. As you follow these notes, work through the
+exercises, and become more familiar with functional thinking, you will develop an intuition for making these decisions.
+
+The good news is that converting a tail-recursive function to an imperative loop is very straightforward, so it often
+makes sense to start with recursion and switch to iteration when your needs dictate it. The solutions to many problems
+in FP are naturally expressed with recursive functions, so you'll find yourself doing this fairly frequently. Here is
+`factorial`, refactored to use a `while` loop:
+
+```typescript
+function factorial(n: number): number {
+  let acc = 1, i = n;   // declare and initialize mutable variables:w
+  while (i > 0) {       // execute block until i <= 0
+    acc = acc * i;
+    i = i - 1;
+  }
+  return acc;
+}
+```
+
+There are just a couple new pieces of syntax here. Using `let`, rather than `const`, declares a variable that we can
+assign new values to later in our program. While it is possible to declare a variable with `let` without immediately
+assigning a value to it, or *initializing* it, it's considered good practice not to have uninitialized variables. The
+`while` syntax is pretty self-explanatory: it repeatedly executes the code in the block as long as the condition inside
+the parentheses, or the *test*, evaluates to `true`. We might refer to `i` as the *loop variable*, since the loop
+condition depends on it.
+
+Most TypeScript programmers would find this code a little odd. They'd probably write something like this, instead:
+
+```typescript
+function factorial(n: number): number {
+  let acc = 1;
+  for (let i = n; i > 0; --i) {  // set `i` to `n` and loop until `i` <= 0
+    acc *= i;                    // shortcut for `acc = acc * i`
+  }
+  return acc;
+}
+```
+
+A `for` loop is kind of like an advanced `while` loop. In addition to the the test, it makes explicit what the loop
+variable is (`i`), what its initial value is (`let i = n`), and how it changes on each iteration (`--i`, which is a
+shortcut for `i = i - 1`). There's nothing wrong with using a `while` loop, and sometimes there is no other choice. But
+when either will do, use a `for` loop.
+
+## Our first higher-order function
+
+Now that we have `factorial`, let's add it to our program.
+
+```typescript
+// <definitions of `abs` and `factorial` go here>
+
+function formatAbs(x: number) {
+  const msg = "The absolute value of " + x + " is " + abs(x);
+  return msg;
+}
+
+function formatFactorial(x: number) {
+  const msg = "The factorial of " + x + " is " + factorial(x);
+  return msg;
+}
+```
+
+The functions `formatAbs` and `formatFactorial` are very similar. They differ only in the string describing the result
+and which function to call to obtain the result. We can factor these differences out into parameters and write one
+function, `formatResult`, that's more general:
+
+```typescript
+function formatResult(name: string, x: number, f: number => number) {
+  return `The ${name} of ${x} is ${f(x)}`;
+}
+```
 
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
