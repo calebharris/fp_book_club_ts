@@ -54,7 +54,7 @@ The `formatAbs` function, also pure, takes a number and returns a string:
 
 ```typescript
 function formatAbs(x: number) {
-  const msg = "The absolute value of " + x + " is " + abs(x);
+  const msg = `The absolute value of ${x} is ${abs(x)}`;
   return msg;
 }
 ```
@@ -63,12 +63,15 @@ Notice that we have not declared its return type with a `: string` clause. TypeS
 capabilities, meaning that we can often omit explicit type declarations and let the compiler figure things out. But
 it's generally considered good style to include explicit types in the signatures of functions we intend for others to
 use. Since `formatAbs` is not `export`ed, it is effectively private to our module, so it's OK to leave out the
-`: string`. `FormatAbs` uses the plus (`+`) operator to concatenate several strings and numbers together into a
-human-readable message. Plus is the only example of so-called *operator overloading* in JavaScript, and therefore
-TypeScript. When either side of the `+` is a string, the other side is also converted into a string.
+`: string`.
 
-The first line of `formatAbs` assigns the result of the string concatenation to the variable `msg`, using the keyword
-`const`. `Const` is short for *constant*, which is programmer-speak for "a variable whose value never changes".
+`FormatAbs` uses a template literal to create the message string. Template literals are enclosed in backticks (` `` `)
+and can incorporate values from the current scope using the placeholder syntax `${value}`. In our example, `${x}` is
+replaced by the string representation of `x`, and `${abs(x)}` is replaced by the string representation of the value
+returned by `abs(x)`.
+
+The first line of `formatAbs` assigns the result of evaluating the template literal to the variable `msg`, using the
+keyword `const`. `Const` is short for *constant*, which is programmer-speak for "a variable whose value never change".
 Variables declared with `const` must have a value assigned as soon as they are created, and can never be assigned a new
 value.
 

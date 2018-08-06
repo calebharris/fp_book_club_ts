@@ -22,7 +22,7 @@ export function abs(n: number): number {        // abs takes a number and
 // Since this function isn't exported, it's
 // only visible to code in this file
 function formatAbs(x: number) {
-  const msg = "The absolute value of " + x + " is " + abs(x);
+  const msg = `The absolute value of ${x} is ${abs(x)}`;
   return msg;
 }
 

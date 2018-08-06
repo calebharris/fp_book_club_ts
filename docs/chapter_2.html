@@ -7,7 +7,7 @@
     <meta name="description" content="">
     
     
-    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.89be9db1.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/6.94ce6116.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.6db29525.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.0f8b112b.js">
+    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.7f3050a9.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/6.98ad3176.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.6db29525.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.0f8b112b.js">
     <link rel="stylesheet" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css">
   </head>
   <body>
@@ -42,7 +42,7 @@ using higher-order functions (HOFs), and writing polymorphic HOFs.</p> <h2 id="i
 <span class="token comment">// Since this function isn't exported, it's</span>
 <span class="token comment">// only visible to code in this file</span>
 <span class="token keyword">function</span> <span class="token function">formatAbs</span><span class="token punctuation">(</span>x<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token string">&quot;The absolute value of &quot;</span> <span class="token operator">+</span> x <span class="token operator">+</span> <span class="token string">&quot; is &quot;</span> <span class="token operator">+</span> <span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token template-string"><span class="token string">`The absolute value of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>x<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> is </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">;</span>
   <span class="token keyword">return</span> msg<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
@@ -72,17 +72,18 @@ depending on the condition. If that were the case in TypeScript, we could write:
 </code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>But in TypeScript, if-else is only a control-flow mechanism and does not itself return a value. Therefore, when using
 if-else, we must rely on side effects to know which branch was followed. We'll be careful to keep these side effects as
 localized as possible, so that the overall function remains pure.</p> <p>The <code>formatAbs</code> function, also pure, takes a number and returns a string:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">formatAbs</span><span class="token punctuation">(</span>x<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token string">&quot;The absolute value of &quot;</span> <span class="token operator">+</span> x <span class="token operator">+</span> <span class="token string">&quot; is &quot;</span> <span class="token operator">+</span> <span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> msg <span class="token operator">=</span> <span class="token template-string"><span class="token string">`The absolute value of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>x<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> is </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token function">abs</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">;</span>
   <span class="token keyword">return</span> msg<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>Notice that we have not declared its return type with a <code>: string</code> clause. TypeScript has powerful <em>type-inferencing</em>
 capabilities, meaning that we can often omit explicit type declarations and let the compiler figure things out. But
 it's generally considered good style to include explicit types in the signatures of functions we intend for others to
 use. Since <code>formatAbs</code> is not <code>export</code>ed, it is effectively private to our module, so it's OK to leave out the
-<code>: string</code>. <code>FormatAbs</code> uses the plus (<code>+</code>) operator to concatenate several strings and numbers together into a
-human-readable message. Plus is the only example of so-called <em>operator overloading</em> in JavaScript, and therefore
-TypeScript. When either side of the <code>+</code> is a string, the other side is also converted into a string.</p> <p>The first line of <code>formatAbs</code> assigns the result of the string concatenation to the variable <code>msg</code>, using the keyword
-<code>const</code>. <code>Const</code> is short for <em>constant</em>, which is programmer-speak for &quot;a variable whose value never changes&quot;.
+<code>: string</code>.</p> <p><code>FormatAbs</code> uses a template literal to create the message string. Template literals are enclosed in backticks (<code>``</code>)
+and can incorporate values from the current scope using the placeholder syntax <code>${value}</code>. In our example, <code>${x}</code> is
+replaced by the string representation of <code>x</code>, and <code>${abs(x)}</code> is replaced by the string representation of the value
+returned by <code>abs(x)</code>.</p> <p>The first line of <code>formatAbs</code> assigns the result of evaluating the template literal to the variable <code>msg</code>, using the
+keyword <code>const</code>. <code>Const</code> is short for <em>constant</em>, which is programmer-speak for &quot;a variable whose value never change&quot;.
 Variables declared with <code>const</code> must have a value assigned as soon as they are created, and can never be assigned a new
 value.</p> <p>Finally, the last line of the module calls our other functions and writes the result to the console:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">formatAbs</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 </code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>If we execute this file directly with a TypeScript interpreter (more on that later), that's when the output would
@@ -284,6 +285,6 @@ function, <code>formatResult</code>, that's more general:</p> <div class="langua
         <a href="/fp_book_club_ts/chapter_1.html" class="prev">
           Chapter 1. What is functional programming?
         </a></span> <!----></p></div> </div> <!----></div></div>
-    <script src="/fp_book_club_ts/assets/js/6.94ce6116.js" defer></script><script src="/fp_book_club_ts/assets/js/app.89be9db1.js" defer></script>
+    <script src="/fp_book_club_ts/assets/js/6.98ad3176.js" defer></script><script src="/fp_book_club_ts/assets/js/app.7f3050a9.js" defer></script>
   </body>
 </html>
