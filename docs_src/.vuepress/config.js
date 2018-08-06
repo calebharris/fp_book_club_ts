@@ -7,12 +7,19 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: "Home", link: "/" },
-      { text: "Chapters", link: "/chapter_1"},
+      {
+	text: "Chapters",
+	items: [
+	  { text: "Chapter 1", link: "/chapter_1" },
+	  { text: "Chapter 2", link: "/chapter_2" }
+	]
+      },
       { text: "GitHub", link: "https://github.com/calebharris/fp_book_club_ts" }
     ],
     sidebar: [
       "/chapter_1",
       "/chapter_2"
-    ]
+    ],
+    sidebarDepth: 2
   }
 }
