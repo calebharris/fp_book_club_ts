@@ -345,7 +345,20 @@ variable is (`i`), what its initial value is (`let i = n`), and how it changes o
 shortcut for `i = i - 1`). There's nothing wrong with using a `while` loop, and sometimes there is no other choice. But
 when either will do, use a `for` loop.
 
-## Our first higher-order function
+### Exercise 2.1. Fibonacci numbers
+
+Write a recursive function to get the *n*th [Fibonacci number][wikip_fib]. The first two Fibonacci numbers are 0 and 1.
+The nth number is always the sum of the previous two—the sequence begins 0, 1, 1, 2, 3, 5. Your definition should use a
+local tail-recursive function.
+
+```typescript
+function fib(n: number): number
+```
+
+Once you have a working recursive implementation, make it stack-safe by converting it to an iterative solution (i.e.
+use a loop).
+
+### Our first higher-order function
 
 Now that we have `factorial`, let's add it to our program.
 
@@ -373,5 +386,31 @@ function formatResult(name: string, x: number, f: number => number) {
 }
 ```
 
+`FormatResult` is a higher-order function because it takes another function as the `f` parameter. The type of `f` is
+`number => number`, which can be said as "number to number", "number arrow number", or "a function that takes a number
+parameter and returns a number result" if you're feeling wordy.
+
+Both `abs` and `factorial` happen to match the type `number => number`. We can, therefore, pass either as the value of
+the `f` argument to `formatResult`:
+
+```
+> formatResult("absolute value", -42, abs);
+'The absolute value of -42 is 42'
+> formatResult("factorial", 7, factorial);
+'The factorial of 7 is 5040'
+```
+
+::: tip Variable-naming conventions
+
+It's a common convention to use names like `f`, `g`, and `h` for higher-order function parameters. In FP, we tend to use
+very short variable names, even one-letter names. HOFs are often so general that they have no expectation of what their
+function arguments should actually *do*, beyond conforming to the expected type. Many functional programmers think short
+names make code easier to read, because the structure of short code is more apparent at a glance. In these notes, we'll
+follow this convention. In your own code, you should do whatever you feel works best for making it readable and
+maintainable.
+
+:::
+
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
+[wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"

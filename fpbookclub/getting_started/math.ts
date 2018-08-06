@@ -60,6 +60,11 @@ export function factorialFor(n: number): number {
 }
 
 /**
+ * An simpler alias for our preferred factorial implementation
+ **/
+export const factorial = factorialFor;
+
+/**
  * A simple higher-order function for formatting the result of a computation
  **/
 export function formatResult(name: string, x: number, f: (n: number) => number): string {
