@@ -169,7 +169,7 @@ the meaning of the program. More formally:
 ::: tip Referential transparency and purity
 An expression `e` is *referentially transparent* if, for all programs `p`, all occurrences of `e` in `p` can be
 replaced by the result of evaluating `e` without changing the meaning of `p`. A function `f` is *pure* if the
-expression `f(x)` is referentially trasparent for all referentially transparent `x`.
+expression `f(x)` is referentially transparent for all referentially transparent `x`.
 :::
 
 Referential transparency allows us to reason about programs using the substitution model, wherein we discover the
