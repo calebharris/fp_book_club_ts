@@ -8,11 +8,11 @@ module.exports = {
     nav: [
       { text: "Home", link: "/" },
       {
-	text: "Chapters",
-	items: [
-	  { text: "Chapter 1", link: "/chapter_1" },
-	  { text: "Chapter 2", link: "/chapter_2" }
-	]
+        text: "Chapters",
+        items: [
+          { text: "Chapter 1", link: "/chapter_1" },
+          { text: "Chapter 2", link: "/chapter_2" }
+        ]
       },
       { text: "GitHub", link: "https://github.com/calebharris/fp_book_club_ts" }
     ],
