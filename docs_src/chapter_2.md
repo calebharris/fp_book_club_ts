@@ -506,9 +506,9 @@ was a shorter way to define an anonymous function? Turns out there is!
 findFirst([0, 1, 3], x => x === 1);
 ```
 
-In this example, `x => x === 1` is an *arrow function*, which has a few differences from a function created with
-`function` that we won't go into right now. This is actually the shortest possible form of an arrow function. Because
-it's only one line, we can omit the curly braces and `return` keyword. We're also relying on TypeScripts type
+In this example, `x => x === 1` is an *[arrow function][mdn_arw]*, which has a few differences from a function created
+with `function` that we won't go into right now. This is actually the shortest possible form of an arrow function.
+Because it's only one line, we can omit the curly braces and `return` keyword. We're also relying on TypeScripts type
 inferencing to avoid annotating `x` with a type. The long form looks like this:
 
 ```typescript
@@ -590,8 +590,92 @@ In the above example, `charge.combine(charge)` is using the method syntax. We *c
 As you can see, changing `this` around on code that doesn't expect it usually leads to bad results. You can also see
 that TypeScript makes no guarantees about what `this` points to, so use it wisely!
 
+## Following types to implementations
+
+Polymorphic functions are limited in what they can do. A bare type parameter `A` tells us nothing about what operations
+a value of `A` supports, so the only operations we can perform are those passed explicitly to us. In some cases, we find
+that a polymorphic function is so constrained that only one implementation is possible.
+
+As an example, let's consider the `partial1` function. It takes a value and a function of two arguments, and returns a
+function of one argument. The name means that it applies some, but not all, of a function's arguments.
+
+```typescript
+function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C
+```
+
+There is really only one way to implement this function. To start, we know we need to return another function that takes
+a single parameter of type `B`, so lets start with that:
+
+```typescript
+function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C {
+  return function(b) {
+    ???
+  };
+}
+```
+
+Our returned function needs to itself return a value of type `C`. Examining the values available to us, we see that the
+only way to obtain a `C` is to call `f` with an `A`, which is provided as a parameter to `partial1`, and a `B`, which
+our returned function takes as a parameter.
+
+```typescript
+function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C {
+  return function(b) {
+    return f(a, b);
+  };
+}
+```
+
+And we're done! We now have a higher-order function that takes a function of two arguments and partially applies it.
+
+### Exercise 2.3. Currying
+
+Implement `curry`, which converts a function `f` of two arguments into a function of one argument that partially applies
+`f`. This is another case where there is only one implementation that compiles.
+
+```typescript
+function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C)
+```
+
+### Exercise 2.4. Uncurrying
+
+Implement `uncurry`, which reverses the transformation of `curry`. Since `=>` in type signatures associates to the
+right, `(a: A) => ((b: B) => C)` can be written as `(a: A) => (b: B) => C`.
+
+```typescript
+function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C
+```
+
+### Exercise 2.5. Function composition
+
+Implement `compose`, which feeds the output of one function into the input of another.
+
+```typescript
+function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C
+```
+
+This is a very common thing to want to do in functional programming. In fact, all three previous exercises will yield
+functions that we'll want to re-use in later exercises, so you might want to put them in a `util` module.
+
+So we've written a bunch of interesting one-liners, who cares? How does this help when writing software in the large?
+Turns out that polymorphic, higher-order functions can be reused in a large variety of contexts, because they say
+nothing about a particular domain. Instead, they abstract over common patterns that widely applicable. Writing
+applications in FP ends up feeling very similar to writing small utilities.
+
+## Summary
+
+We learned...
+* Some TypeScript
+* How to define simple functions and programs
+* How to loop functionally and how to choose iteration or recursion
+* What higher-order functions are
+* What polymorphic functions are
+
+Next up... functional data structures, starting with lists.
+
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
+[mdn_arw]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions "Arrow functions - MDN"
 [wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"
 [wikip_para]: https://en.wikipedia.org/wiki/Parametric_polymorphism "Parametric polymorphism - Wikipedia"
 [wikip_subt]: https://en.wikipedia.org/wiki/Subtyping "Subtyping - Wikipedia"
