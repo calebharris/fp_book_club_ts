@@ -478,6 +478,118 @@ Implement `isSorted`, which checks whether an array of `A` values is sorted acco
 function isSorted<A>(as: A[], ordered: (l: A, r: A) => boolean): boolean
 ```
 
+### Calling HOFs with anonymous functions
+
+We often want to call HOFs with functions defined in-place, rather than having to define a named function separately and
+then pass it to the HOF. This is because the functions we provide to HOFs are often crafted for a specific purpose and
+are not generally reusable elsewhere in our code.
+
+```typescript
+// instead of this...
+function equalsOne(x: number) {
+  return x === 1;
+}
+
+findFirst([0, 1, 3], equalsOne);
+
+// we want this
+findFirst([0, 1, 3], function(x) { return x == 1; });
+```
+
+The second way of calling `findFirst` in the example above uses an *anonymous function*, also called a *function
+expression*. It allows us to avoid "polluting" our module's namespace with lots of function declarations that may only
+be used in one place. But, we've sacrificed a little readability in the call to findFirst. Wouldn't it be nice if there
+was a shorter way to define an anonymous function? Turns out there is!
+
+```typescript
+// actually, we *really* want this
+findFirst([0, 1, 3], x => x === 1);
+```
+
+In this example, `x => x === 1` is an *arrow function*, which has a few differences from a function created with
+`function` that we won't go into right now. This is actually the shortest possible form of an arrow function. Because
+it's only one line, we can omit the curly braces and `return` keyword. We're also relying on TypeScripts type
+inferencing to avoid annotating `x` with a type. The long form looks like this:
+
+```typescript
+(x: number) => {
+  return x === 1;
+}
+```
+
+Just like normal functions, we can assign arrow functions to variables. Here's an example with some extraneous type
+annotations, just to demonstrate the syntax:
+
+```typescript
+const equalsOne: (x: number) => number = (x: number) => {
+  return x === 1;
+);
+```
+
+### Functions as values in TypeScript
+
+When we define a function expression, through either the `function` or arrow syntax, we're actually creating a
+`Function` object, that defines a `call` method (among others). Calling a function directly is equivalent to invoking
+`call` on the function object:
+
+```
+> const equalsOne = (x: number) => x === 1;
+'use strict'
+> equalsOne
+[Function: equalsOne]
+> equalsOne(1);
+true
+> equalsOne.call({}, 1);
+true
+```
+
+The `call` method's first argument is the *context*, also known as the `this` value, for the call. The context is only
+meaningful inside `function`-defined functions, where it is accessible via the `this` keyword. It's useful primarily in
+object-oriented programming, which we will use occasionally in these notes. In the above REPL session, we used an arrow
+function, which has no context and therefore ignores the first argument to `call` (hence our passing of an empty object,
+`{}`).
+
+If you think way back to our first example, you may recall that we defined a `Charge` class with a `combine` function
+that used `this`:
+
+```typescript
+class Charge {
+  // several properties and the constructor omitted...
+
+  combine(other: Charge): Charge {
+    if (this.cc == other.cc) {
+      return new Charge(this.cc, this.amount + other.amount);
+    } else {
+      throw new Error("Can't combine charges to different cards");
+    }
+  }
+}
+```
+
+We called `combine` a *method* of `Charge`. A method is just a function defined for a class. When we use the *method
+syntax* for calling a function, `this` is automatically set to the class instance:
+
+```
+> const charge = new Charge(new CreditCard(), 1.99);
+undefined
+> charge
+Charge { cc: CreditCard {}, amount: 1.99 }
+> charge.combine(charge);
+Charge { cc: CreditCard {}, amount: 3.98 }
+```
+
+In the above example, `charge.combine(charge)` is using the method syntax. We *could* use `call` to change the context:
+
+```
+> charge.combine.call({}, charge);
+/Users/caleb/src/fp_book_club_ts/fpbookclub/intro/pure_example.ts:32
+            throw new Error("Can't combine charges to different cards");
+            ...
+```
+
+As you can see, changing `this` around on code that doesn't expect it usually leads to bad results. You can also see
+that TypeScript makes no guarantees about what `this` points to, so use it wisely!
+
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
 [wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"
