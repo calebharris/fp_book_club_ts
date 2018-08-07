@@ -345,6 +345,10 @@ variable is (`i`), what its initial value is (`let i = n`), and how it changes o
 shortcut for `i = i - 1`). There's nothing wrong with using a `while` loop, and sometimes there is no other choice. But
 when either will do, use a `for` loop.
 
+Now you know more than you probably wanted to about recursion. Whenever [Functional Programming in Scala] uses
+tail-recursion to loop over a structure, we'll use iteration instead, because that's what you'll see in real-world
+TypeScript programs. We'll still have plenty of opportunities to use recursion to solve problems.
+
 ### Exercise 2.1. Fibonacci numbers
 
 Write a recursive function to get the *n*th [Fibonacci number][wikip_fib]. The first two Fibonacci numbers are 0 and 1.
@@ -411,6 +415,71 @@ maintainable.
 
 :::
 
+## Polymorphic functions: abstracting over types
+
+We've been writing functions that are *monomorphic*, meaning that they only work for the specific types declared in
+their signatures. Especially when writing HOFs, we'd like to write code that works for *all* types, or *polymorphic*
+code. The kind of polymorphism we're talking about here is *[parametric polymorphism][wikip_para]*, rather than the
+*[subtype polymorphism][wikip_subt]* used commonly in object-oriented programming. You may have heard the term
+*generics*, which is another name for parametric polymorphism.
+
+To introduce polymorphism, let's consider the example of finding the first instance of a value in an array.
+
+### Monomorphic function to find a `string` in an array
+
+```typescript
+function findFirst(ss: string[], key: string): number {
+  let index = -1;                               // if the key isn't found
+                                                // we'll return -1
+  for (let i = 0; i < ss.length; ++i) {
+    if (ss[i] === key) {
+      index = i;
+      break;                                    // break the loop early if
+                                                // the key is found
+    }
+  }
+  return index;
+}
+```
+
+The details of this code aren't too important. But what *is* important is to notice that, even though we've specified
+`string[]` as the parameter types, this code isn't doing anything specific to strings. If wanted to change the types to
+`number[]`, or any other type of array, the code would look largely the same. Rather than fixing the types to something
+specific, we can introduce a *type parameter* `A` to define a function that works for any given type `A`.
+
+### Polymorphic function to find an element in an array
+
+```typescript
+// `A` is a type parameter
+function findFirst<A>(as: A[], p: (a: A) => boolean): number {
+  let index = -1;
+  for (let i = 0; i < as.length; ++i) {
+    if (p(as[i])) {
+      index = i;
+      break;
+    }
+  }
+  return index;
+}
+```
+
+Only the function's signature and the test in the for loop had to change. We introduced a type parameter named `A` with
+the `<A>` syntax after the function name. We could have named this type parameter anything, but by convention we
+normally use one letter uppercase names like `A` or `B`. Also, we changed the second parameter to be a function of type
+`A => boolean`, because we don't know how to compare two values of any arbitrary type `A`. The name `p` stands for
+*predicate*, which is a name for a function that returns a boolean. Our `findFirst` now returns the first value in the
+array for which `p` returns `true`. And it works for any type, not just `string`s!
+
+### Exercise 2.2. Checking for order
+
+Implement `isSorted`, which checks whether an array of `A` values is sorted according to a given comparison function.
+
+```typescript
+function isSorted<A>(as: A[], ordered: (l: A, r: A) => boolean): boolean
+```
+
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
 [wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"
+[wikip_para]: https://en.wikipedia.org/wiki/Parametric_polymorphism "Parametric polymorphism - Wikipedia"
+[wikip_subt]: https://en.wikipedia.org/wiki/Subtyping "Subtyping - Wikipedia"
