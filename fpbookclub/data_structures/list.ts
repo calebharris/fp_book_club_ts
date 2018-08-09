@@ -6,22 +6,28 @@
  **/
 
 /**
- * Every List instance is either another Cons or a Nil
+ * The "root" definition of our List data type, with one type parameter, `A`.
+ * Note that List is defined entirely by its constituent types, using
+ * TypeScript's type union syntax, `|`.
  **/
 export type List<A> = Cons<A> | Nil;
 
 /**
- * The empty list
+ * Nil represents the empty list
  **/
 export interface Nil {
   tag: "nil";
 }
 
+/**
+ * There is only one instance of Nil
+ **/
 export const Nil: Nil = { tag: "nil" };
 
 /**
  * A link in the list, containing a value in `head` and a pointer to
- * the remainder of the list in `tail`
+ * the remainder of the list in `tail`. Every tail is a complete List
+ * in its own right, with Nil signifying the "end" of the list.
  **/
 export class Cons<A> {
   tag: "cons" = "cons";
@@ -34,6 +40,9 @@ export class Cons<A> {
   }
 }
 
+/**
+ * Creates a List from a variable number of arguments.
+ **/
 export function List<A>(...vals: A[]): List<A> {
   if (vals.length === 0) {
     return Nil;
@@ -42,13 +51,22 @@ export function List<A>(...vals: A[]): List<A> {
   }
 }
 
+/**
+ * Uses recursion and pattern matching to add up a list of numbers
+ **/
 export function sum(ns: List<number>): number {
   switch (ns.tag) {
+    // the sum of the empty list is 0
     case "nil": return 0;
+
+    // the sum of a list is the value in the head plus the sum of the tail
     case "cons": return ns.head + sum(ns.tail);
   }
 }
 
+/**
+ * Multiplies a list of numbers together, using the same technique as `sum`
+ **/
 export function product(ns: List<number>): number {
   switch (ns.tag) {
     case "nil": return 1.0;

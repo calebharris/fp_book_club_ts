@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Chapter 3. Functional data structures</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.cd9437cc.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/7.9bbcc712.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.1679b0bc.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.0f8b112b.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/6.141ea5e1.js">
+    <link rel="stylesheet" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/fp_book_club_ts/" class="home-link router-link-active"></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/fp_book_club_ts/" class="nav-link">Home</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title">Chapters</span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_1.html" class="nav-link">Chapter 1</a></li><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_2.html" class="nav-link">Chapter 2</a></li><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_3.html" class="nav-link router-link-exact-active router-link-active">Chapter 3</a></li></ul></div></div><div class="nav-item"><a href="https://github.com/calebharris/fp_book_club_ts" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/fp_book_club_ts/" class="nav-link">Home</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title">Chapters</span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_1.html" class="nav-link">Chapter 1</a></li><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_2.html" class="nav-link">Chapter 2</a></li><li class="dropdown-item"><!----> <a href="/fp_book_club_ts/chapter_3.html" class="nav-link router-link-exact-active router-link-active">Chapter 3</a></li></ul></div></div><div class="nav-item"><a href="https://github.com/calebharris/fp_book_club_ts" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/fp_book_club_ts/chapter_1.html" class="sidebar-link">Chapter 1. What is functional programming?</a></li><li><a href="/fp_book_club_ts/chapter_2.html" class="sidebar-link">Chapter 2. Getting started with functional programming in TypeScript</a></li><li><a href="/fp_book_club_ts/chapter_3.html" class="active sidebar-link">Chapter 3. Functional data structures</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fp_book_club_ts/chapter_3.html#defining-functional-data-structures" class="sidebar-link">Defining functional data structures</a></li></ul></li></ul> </div> <div class="page"> <div class="content"><h1 id="chapter-3-functional-data-structures"><a href="#chapter-3-functional-data-structures" aria-hidden="true" class="header-anchor">#</a> Chapter 3. Functional data structures</h1> <p>We said in the introduction that functional programs don't update variables or modify mutable data structures (except in
+iterative loops, of course). So what kinds of data structures <em>can</em> we use? <em>Functional data structures</em>, of course!
+This chapter talks about how we define data types in functional programming and a related logical branching technique
+called <em>pattern matching</em>. It has a ton of exercises, too, to provide practice writing and generalizing pure functions.
+In general, the book is trying to lead us to higher level functional abstractions - things like <em>monoids</em>, <em>functors</em>,
+<em>monads</em>, and other structures with weird names borrowed from <a href="https://en.wikipedia.org/wiki/Category_theory" title="Category theory - Wikipedia" target="_blank" rel="noopener noreferrer">category theory<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <h2 id="defining-functional-data-structures"><a href="#defining-functional-data-structures" aria-hidden="true" class="header-anchor">#</a> Defining functional data structures</h2> <p>A functional data structure is only operated on with pure functions. Pure functions cannot modify data in place or
+perform side effects. Thus, by definition, functional data structures are immutable.</p> <p>Let's start by talking about everyone's favorite functional data structure - a singly linked list. Of course, we're
+going to dive into some new TypeScript syntax, as well.</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token comment">/**
+ * list.ts - a functional singly linked list implementation using a
+ * discriminated union, a.k.a. algebraic data type (ADT). Based on
+ * guidance at
+ * https://www.typescriptlang.org/docs/handbook/advanced-types.html
+ **/</span>
+
+<span class="token comment">/**
+ * The &quot;root&quot; definition of our List data type, with one type parameter, `A`.
+ * Note that List is defined entirely by its constituent types, using
+ * TypeScript's type union syntax, `|`.
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">type</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token operator">=</span> Cons<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token operator">|</span> Nil<span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * Nil represents the empty list
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">interface</span> <span class="token class-name">Nil</span> <span class="token punctuation">{</span>
+  tag<span class="token punctuation">:</span> <span class="token string">&quot;nil&quot;</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Our &quot;data constructor&quot; for Nil, which has only one instance
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">const</span> Nil<span class="token punctuation">:</span> Nil <span class="token operator">=</span> <span class="token punctuation">{</span> tag<span class="token punctuation">:</span> <span class="token string">&quot;nil&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * A data constructor representing a link in the list, containing a value in
+ * `head` and a pointer to the remainder of the list in `tail`. Every tail is
+ * a complete List in its own right, with Nil signifying the &quot;end&quot; of the
+ * list.
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">Cons</span><span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+  tag<span class="token punctuation">:</span> <span class="token string">&quot;cons&quot;</span> <span class="token operator">=</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">;</span>
+  readonly head<span class="token punctuation">:</span> <span class="token constant">A</span><span class="token punctuation">;</span>
+  readonly tail<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">constructor</span><span class="token punctuation">(</span>head<span class="token punctuation">:</span> <span class="token constant">A</span><span class="token punctuation">,</span> tail<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>head <span class="token operator">=</span> head<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tail <span class="token operator">=</span> tail<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Creates a List from a variable number of arguments.
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token operator">...</span>vals<span class="token punctuation">:</span> <span class="token constant">A</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>vals<span class="token punctuation">.</span>length <span class="token operator">===</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> Nil<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Cons</span><span class="token punctuation">(</span>vals<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token function">List</span><span class="token punctuation">(</span><span class="token operator">...</span>vals<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Uses recursion and pattern matching to add up a list of numbers
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">sum</span><span class="token punctuation">(</span>ns<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token builtin">number</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// the sum of the empty list is 0</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;nil&quot;</span><span class="token punctuation">:</span> <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// the sum of a list is the value in the head plus the sum of the tail</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">:</span> <span class="token keyword">return</span> ns<span class="token punctuation">.</span>head <span class="token operator">+</span> <span class="token function">sum</span><span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tail<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Multiplies a list of numbers together, using the same technique as `sum`
+ **/</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">product</span><span class="token punctuation">(</span>ns<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token builtin">number</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;nil&quot;</span><span class="token punctuation">:</span> <span class="token keyword">return</span> <span class="token number">1.0</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">:</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>ns<span class="token punctuation">.</span>head <span class="token operator">===</span> <span class="token number">0.0</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token number">0.0</span><span class="token punctuation">;</span>
+      <span class="token keyword">else</span>
+        <span class="token keyword">return</span> ns<span class="token punctuation">.</span>head <span class="token operator">*</span> <span class="token function">product</span><span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tail<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br></div></div><p>If you're familiar with object-oriented programming, and someone asks you to create a data type called <code>List</code> with two
+implementations, you probably immediately reach for some kind of subtyping, maybe with <code>List</code> as the parent interface or
+abstract class and two implementors or subclasses, <code>Nil</code> and <code>Cons</code>. We don't see that in the code above, so what
+exactly is going on here?</p> <p>In FP, we often use a pattern called an <em>Algebraic Data Type</em> (ADT), also called a <em>discriminated union</em>, to represent
+data structures. This kind of structure ends up being more natural to work with than traditional OOP class hierarchies.
+It also enables a technique called <em>pattern matching</em>, which allows us to get some help from the compiler when writing
+functions for ADTs.</p> <p>TypeScript, being both a &quot;lightweight&quot; language and something of a hybrid beast between OOP and FP, does not directly
+support either ADTs or pattern matching, but does have some lower-level features that allow us to &quot;build up&quot; to those
+techniques. Strap in, we've got some reading to do.</p> <p>Our goal is to define an ADT that represents a singly linked list. Lists of this kind are useful tools for exploring FP
+because they can be defined and constructed recursively: each subpart of the list is itself a list.  Therefore, we need
+two variants of our List type: one to represent a link in the list and one to represent the empty list. We call the
+variants <em>data constructors</em>, and they are <code>Cons</code> and <code>Nil</code>. The <code>List</code> type is defined as the union of <code>Cons</code> and
+<code>Nil</code>.</p> <p>Now, we could have chosen to create a parent class or interface for <code>List</code> and still achieved roughly the same thing. We
+didn't do that for a couple reasons. There is no common functionality between <code>Cons</code> and <code>Nil</code>, so a class isn't really
+appropriate.</p> <p>The reasoning behind not using an interface is a bit more complex. Unlike traditional class hierarchies, an ADT is not
+meant to be extended. The &quot;algebraic&quot; descriptor means that our data type is really a formulation of other, known data
+types, which cannot be true if there is the possibility of someone else adding a variant to our ADT! So we want a way to
+define a closed set of types that allows us to write functions that accept any member of the set and prevents the
+addition of new members. Enter TypeScript's union type:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">type</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token operator">=</span> Cons<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token operator">|</span> Nil<span class="token punctuation">;</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>This declares a type alias named <code>List</code>, with one type parameter <code>A</code>, that can be either a <code>Cons&lt;A&gt;</code> or <code>Nil</code>. We cannot
+add types to <code>List</code> after it has been declared, but we can write functions that accept any <code>List</code> value. In the snippet
+below, <code>ns</code> will be either a <code>Cons&lt;number&gt;</code> or <code>Nil</code>.</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">sum</span><span class="token punctuation">(</span>ns<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token builtin">number</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>The union type is the first TypeScript feature that we're using to implement an ADT. The second is the <em>literal type</em>.
+You may have noticed that both <code>Nil</code> and <code>Cons</code> have a property called <code>tag</code>, each with an unusual type annotation:
+<code>&quot;nil&quot;</code> and <code>&quot;cons&quot;</code>, respectively. The code <code>tag: &quot;nil&quot;</code> declares the <code>tag</code> property to be of the literal type <code>&quot;nil&quot;</code>,
+which is a kind of constrained <code>string</code> type that can only ever hold one value: <code>&quot;nil&quot;</code>. Attempting to assign any other
+value to it results in a compiler error. Because literal types can only hold one value (i.e. have only one
+<em>inhabitant</em>), they are also called <em>singleton types</em>. ADTs, or discriminated unions, are also called <em>tagged unions</em>,
+hence the property name <code>tag</code>. We could have called it <code>discriminator</code>, but that's kind of a long word and we're lazy.</p> <p>To understand why the <code>tag</code>s matter, we need to talk about a third TypeScript feature called <em>type guards</em>. A type guard
+is a conditional that guarantees a value has a specific type. Inside the conditional, we can then safely treat the value
+as that type. For example:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> printHead<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">(</span>ls<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>ls<span class="token punctuation">.</span>tag <span class="token operator">===</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`The head is </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>ls<span class="token punctuation">.</span>head<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;We're headless!&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><p>This code compiles because <code>ls.tag === &quot;cons&quot;</code> is a type guard, allowing the TypeScript compiler to know that, inside
+the <code>if</code> block, <code>ls</code> must be a <code>Cons</code>, so that the <code>ls.head</code> property access is legal. This is type inferencing at work,
+and it hinges on TypeScript knowing that every variant of <code>List</code> has a <code>tag</code> property, but only one variant has a <code>tag</code>
+property that can possibly hold a value of <code>&quot;cons&quot;</code> (thanks, literal types!), so that if <code>ls.tag === &quot;cons&quot;</code> is <code>true</code>,
+then <code>ls</code> <em>must</em> be a <code>Cons</code>.</p> <p>There is one more feature of ADTs often supported by FP languages that we have not yet achieved, which is
+<em>exhaustiveness checking</em>. It would be helpful for the compiler to warn us if we haven't handled every variant of an
+ADT, in order to avoid undefined behavior. Fortunately, once again due to TypeScript's type inferencing, we don't have
+to do anything special. Consider this function:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> getHead<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">(</span>ls<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token constant">A</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>ls<span class="token punctuation">.</span>tag <span class="token operator">===</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> ls<span class="token punctuation">.</span>head<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br></div></div><p>Attempting to compile it leads to this error:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>[eval].ts(13,35): error TS2366: Function lacks ending return statement and
+return type does not include 'undefined'.
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>This is a bit of a subtle message, but makes more sense if you keep in mind that a function lacking an explicit return
+value returns <code>undefined</code>. In strict mode, TypeScript does not allow us to have <code>undefined</code> or <code>null</code> values unless we
+explicitly allow it, which we won't get into now.</p> <p>We'll often use type guards and exhaustiveness checking with switch statements, which gives us something close to the
+pattern matching capability offered by other FP languages. Hopefully, the <code>sum</code> function for <code>List</code> makes complete sense
+to you now:</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">sum</span><span class="token punctuation">(</span>ns<span class="token punctuation">:</span> List<span class="token operator">&lt;</span><span class="token builtin">number</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">switch</span> <span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;nil&quot;</span><span class="token punctuation">:</span> <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&quot;cons&quot;</span><span class="token punctuation">:</span> <span class="token keyword">return</span> ns<span class="token punctuation">.</span>head <span class="token operator">+</span> <span class="token function">sum</span><span class="token punctuation">(</span>ns<span class="token punctuation">.</span>tail<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br></div></div></div> <div class="page-edit"><!----> <!----></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/fp_book_club_ts/chapter_2.html" class="prev">
+          Chapter 2. Getting started with functional programming in TypeScript
+        </a></span> <!----></p></div> </div> <!----></div></div>
+    <script src="/fp_book_club_ts/assets/js/7.9bbcc712.js" defer></script><script src="/fp_book_club_ts/assets/js/app.cd9437cc.js" defer></script>
+  </body>
+</html>
