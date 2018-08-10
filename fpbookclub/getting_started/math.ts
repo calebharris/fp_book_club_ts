@@ -65,7 +65,35 @@ export function factorialFor(n: number): number {
 export const factorial = factorialFor;
 
 /**
- * Fibonacci sequence
+ * Tree-recursive Fibonacci sequence implementation
+ **/
+export function fibTree(n: number): number {
+  switch (n) {
+    case 1:
+      return 0;
+    case 2:
+      return 1;
+    default:
+      return fibTree(n - 1) + fibTree(n - 2);
+  }
+}
+
+/**
+ * Tail-recursive Fibonacci sequence implementation
+ **/
+export function fibTail(n: number): number {
+  function go(n: number, a: number, b: number): number {
+    if (n <= 1)
+      return a;
+    else
+      return go(n - 1, b, a + b);
+  }
+
+  return go(n, 0, 1);
+}
+
+/**
+ * Iterative Fibonacci sequence implementation
  **/
 export function fib(n: number): number {
   let acc1 = 0, acc2 = 1;

@@ -346,8 +346,9 @@ shortcut for `i = i - 1`). There's nothing wrong with using a `while` loop, and 
 when either will do, use a `for` loop.
 
 Now you know more than you probably wanted to about recursion. Whenever [Functional Programming in Scala] uses
-tail-recursion to loop over a structure, we'll use iteration instead, because that's what you'll see in real-world
-TypeScript programs. We'll still have plenty of opportunities to use recursion to solve problems.
+tail-recursion to loop over a structure, we'll do the same thing, in keeping with the spirit of FP. But keep in mind
+that in the real world, you'll see more iteration and less recursion, and will probably want to use iteration in your
+own code to avoid running out of stack space.
 
 ### Exercise 2.1. Fibonacci numbers
 

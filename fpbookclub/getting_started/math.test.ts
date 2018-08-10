@@ -1,5 +1,5 @@
 import { AssertionError } from "assert";
-import { abs, factorialFor, factorialRecursive, factorialWhile, fib, formatResult, isSorted } from "./math";
+import { abs, factorialFor, factorialRecursive, factorialWhile, fib, fibTail, fibTree, formatResult, isSorted } from "./math";
 
 describe("abs", () => {
   test("calculates the absolute value of a number", () => {
@@ -51,6 +51,36 @@ describe("fib", () => {
 
   test("returns 2 for an input of 4", () => {
     expect(fib(4)).toEqual(2);
+  });
+});
+
+describe("fibTail", () => {
+  test("returns acceptable base cases", () => {
+    expect(fibTail(1)).toEqual(0);
+    expect(fibTail(2)).toEqual(1);
+  });
+
+  test("returns 1 for an input of 3", () => {
+    expect(fibTail(3)).toEqual(1);
+  });
+
+  test("returns 2 for an input of 4", () => {
+    expect(fibTail(4)).toEqual(2);
+  });
+});
+
+describe("fibTree", () => {
+  test("returns acceptable base cases", () => {
+    expect(fibTree(1)).toEqual(0);
+    expect(fibTree(2)).toEqual(1);
+  });
+
+  test("returns 1 for an input of 3", () => {
+    expect(fibTree(3)).toEqual(1);
+  });
+
+  test("returns 2 for an input of 4", () => {
+    expect(fibTree(4)).toEqual(2);
   });
 });
 

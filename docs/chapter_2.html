@@ -7,7 +7,7 @@
     <meta name="description" content="">
     
     
-    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.a4a48216.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/6.141ea5e1.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.1679b0bc.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.0f8b112b.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/7.6cf07ea0.js">
+    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.7f3b2251.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/6.b8b1a248.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.cda51ec0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3c7491ba.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.1679b0bc.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.0f8b112b.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/7.6cf07ea0.js">
     <link rel="stylesheet" href="/fp_book_club_ts/assets/css/0.styles.f335e7b4.css">
   </head>
   <body>
@@ -265,8 +265,9 @@ condition depends on it.</p> <p>Most TypeScript programmers would find this code
 variable is (<code>i</code>), what its initial value is (<code>let i = n</code>), and how it changes on each iteration (<code>--i</code>, which is a
 shortcut for <code>i = i - 1</code>). There's nothing wrong with using a <code>while</code> loop, and sometimes there is no other choice. But
 when either will do, use a <code>for</code> loop.</p> <p>Now you know more than you probably wanted to about recursion. Whenever [Functional Programming in Scala] uses
-tail-recursion to loop over a structure, we'll use iteration instead, because that's what you'll see in real-world
-TypeScript programs. We'll still have plenty of opportunities to use recursion to solve problems.</p> <h3 id="exercise-2-1-fibonacci-numbers"><a href="#exercise-2-1-fibonacci-numbers" aria-hidden="true" class="header-anchor">#</a> Exercise 2.1. Fibonacci numbers</h3> <p>Write a recursive function to get the <em>n</em>th <a href="https://en.wikipedia.org/wiki/Fibonacci_number" title="Fibonacci number - Wikipedia" target="_blank" rel="noopener noreferrer">Fibonacci number<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>. The first two Fibonacci numbers are 0 and 1.
+tail-recursion to loop over a structure, we'll do the same thing, in keeping with the spirit of FP. But keep in mind
+that in the real world, you'll see more iteration and less recursion, and will probably want to use iteration in your
+own code to avoid running out of stack space.</p> <h3 id="exercise-2-1-fibonacci-numbers"><a href="#exercise-2-1-fibonacci-numbers" aria-hidden="true" class="header-anchor">#</a> Exercise 2.1. Fibonacci numbers</h3> <p>Write a recursive function to get the <em>n</em>th <a href="https://en.wikipedia.org/wiki/Fibonacci_number" title="Fibonacci number - Wikipedia" target="_blank" rel="noopener noreferrer">Fibonacci number<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>. The first two Fibonacci numbers are 0 and 1.
 The nth number is always the sum of the previous two—the sequence begins 0, 1, 1, 2, 3, 5. Your definition should use a
 local tail-recursive function.</p> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">function</span> <span class="token function">fib</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">number</span>
 </code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>Once you have a working recursive implementation, make it stack-safe by converting it to an iterative solution (i.e.
@@ -433,6 +434,6 @@ applications in FP ends up feeling very similar to writing small utilities.</p> 
         </a>
         →
       </span></p></div> </div> <!----></div></div>
-    <script src="/fp_book_club_ts/assets/js/6.141ea5e1.js" defer></script><script src="/fp_book_club_ts/assets/js/app.a4a48216.js" defer></script>
+    <script src="/fp_book_club_ts/assets/js/6.b8b1a248.js" defer></script><script src="/fp_book_club_ts/assets/js/app.7f3b2251.js" defer></script>
   </body>
 </html>
