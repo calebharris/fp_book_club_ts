@@ -65,6 +65,28 @@ export function factorialFor(n: number): number {
 export const factorial = factorialFor;
 
 /**
+ * Fibonacci sequence
+ **/
+export function fib(n: number): number {
+  let acc1 = 0, acc2 = 1;
+
+  for (let i = n; i > 1; --i) {
+    let temp = acc1 + acc2;
+    acc1 = acc2;
+    acc2 = temp;
+  }
+
+  return acc1;
+}
+
+export function isSorted<A>(vals: A[], ordered: (l: A, r: A) => boolean): boolean {
+  if (vals.length <= 1)
+    return true;
+  else
+    return ordered(vals[0], vals[1]) && isSorted(vals.slice(1), ordered);
+}
+
+/**
  * A simple higher-order function for formatting the result of a computation
  **/
 export function formatResult(name: string, x: number, f: (n: number) => number): string {
