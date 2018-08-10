@@ -98,6 +98,15 @@ export function product(ns: List<number>): number {
 }
 ```
 
+One bit of new syntax shows up twice in the `List` function: the `...` operator. It's actually two different operators
+that happen to look the same and do related things. In `function List<A>(...vals: A[])`, the `...` is the
+*rest-parameter* operator. Other languages call this *variadic function* syntax. Either way, the result is a function
+that accepts a variable number of arguments of type `A`, which are represented inside the function as an array.
+
+Later, in `List(...vals.slice(1))`, the `...` is called the *spread operator*. If we think of a rest parameter as
+"collapsing" a parameter list into an array, then the spread operator does the opposite. It spreads an array into a
+parameter list.
+
 If you're familiar with object-oriented programming, and someone asks you to create a data type called `List` with two
 implementations, you probably immediately reach for some kind of subtyping, maybe with `List` as the parent interface or
 abstract class and two implementors or subclasses, `Nil` and `Cons`. We don't see that in the code above, so what
@@ -111,6 +120,8 @@ functions for ADTs.
 TypeScript, being both a "lightweight" language and something of a hybrid beast between OOP and FP, does not directly
 support either ADTs or pattern matching, but does have some lower-level features that allow us to "build up" to those
 techniques. Strap in, we've got some reading to do.
+
+### Representing algebraic data types in TypeScript
 
 Our goal is to define an ADT that represents a singly linked list. Lists of this kind are useful tools for exploring FP
 because they can be defined and constructed recursively: each subpart of the list is itself a list.  Therefore, we need
@@ -203,6 +214,38 @@ function sum(ns: List<number>): number {
     case "cons": return ns.head + sum(ns.tail);
   }
 }
+```
+
+### Exercise 3.1 TBD
+
+Exercise 3.1 from FP in Scala, which is a pattern matching exercise, does not apply. Think of something else?
+
+### Data sharing in functional data structures
+
+How do we write functions that actually do things with immutable data structures? For instance, how can we add or remove
+elements from a `List`? To add a `1` to the front of a list named `xs`, we just create a new `Cons` with the old list as
+the tail: `new Cons(1, xs)`. Since `List` is immutable, we dont' have to worry about anyone changing a list out from
+under us, so it's safe to reuse in new lists, without pessimistically copying it. According to the book:
+
+   > ...*in the large*, FP can often achieve greater efficiency than approaches that rely on side effects, due to much
+   > greater sharing of data and computation.
+
+Similarly, to remove an element from the front of a list, we just return its tail.
+
+```
+                       Data Sharing
+
+┌─────┬─────┐  ┌─────┬─────┐  ┌─────┬─────┐  ┌─────┬─────┐
+│ "a" │  ●──┼─>│ "b" │  ●──┼─>│ "c" │  ●──┼─>│ "d" │  ●  │
+└─────┴─────┘  └─────┴─────┘  └─────┴─────┘  └─────┴─────┘
+   ↑              ↑
+   |              ╰──────────────────╮
+   |                                 |
+   ╰─ List("a", "b", "c", "d")       │
+      |                              |
+      |         ╭───────╮            │
+      ╰─────────┤ .tail ├─────────> List("b", "c", "d")
+                ╰───────╯
 ```
 
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
