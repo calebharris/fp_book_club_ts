@@ -52,6 +52,17 @@ export function List<A>(...vals: A[]): List<A> {
 }
 
 /**
+ * Creates a new list by appending a2 to a1
+ **/
+export function append<A>(a1: List<A>, a2: List<A>): List<A> {
+  switch (a1.tag) {
+    case "nil":
+      return a2;
+    case "cons":
+      return new Cons(a1.head, append(a1.tail, a2));
+  }
+}
+/**
  * Uses recursion and pattern matching to add up a list of numbers
  **/
 export function sum(ns: List<number>): number {

@@ -291,5 +291,29 @@ Implement `dropWhile`, which removes elements from the front of a list as long a
 function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 ```
 
+A "more surprising" example of data sharing, this `append` implementation's runtime and memory usage are determined
+entirely by the first list. The second is just tacked onto the end, so to speak.
+
+```typescript
+function append<A>(a1: List<A>, a2: List<A>): List<A> {
+  switch (a1.tag) {
+    case "nil":
+      return a2;
+    case "cons":
+      return new Cons(a1.head, append(a1.tail, a2));
+  }
+}
+```
+
+### Exercise 3.6. `init`
+
+Implement a function, `init`, that returns a `List` consisting of all but the last element of another `List`. Given
+`List(1, 2, 3, 4)` your function should return `List(1, 2, 3)`. Why can't this function be implemented in constant time,
+like `tail`?
+
+```typescript
+function init<A>(l: List<A>): List<A>
+```
+
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"

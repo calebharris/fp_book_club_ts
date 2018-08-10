@@ -1,4 +1,4 @@
-import { List, Cons, Nil, product, sum } from "./list";
+import { List, Cons, Nil, append, product, sum } from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -32,5 +32,16 @@ describe("product()", () => {
 
   test("returns the correct product", () => {
     expect(product(List(1, 2, 3, 4))).toEqual(24.0);
+  });
+});
+
+describe("append()", () => {
+  test("is equal to the other argument when either is Nil", () => {
+    expect(append(Nil, List(1, 2))).toEqual(List(1, 2));
+    expect(append(List(1, 2), Nil)).toEqual(List(1, 2));
+  });
+
+  test("contains elements from both lists in order", () => {
+    expect(append(List("a"), List("b", "c"))).toEqual(List("a", "b", "c"));
   });
 });
