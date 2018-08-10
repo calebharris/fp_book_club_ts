@@ -274,7 +274,7 @@ function factorial(n: number): number {
 
 ::: tip Note
 You can find expanded code for this and the following examples in the code repo at
-`/fpbookclub/getting_started/math.ts`.
+[/fpbookclub/getting_started/math.ts][repo_gs].
 :::
 
 We write loops functionally, without mutating a loop variable, with *recursive* functions. The variable `go` holds a
@@ -677,6 +677,7 @@ Next up... functional data structures, starting with lists.
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
 [mdn_arw]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions "Arrow functions - MDN"
+[repo_gs]: https://github.com/calebharris/fp_book_club_ts/tree/master/fpbookclub/getting_started "Getting started - Functional Programming in TypeScript on GitHub"
 [wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"
 [wikip_para]: https://en.wikipedia.org/wiki/Parametric_polymorphism "Parametric polymorphism - Wikipedia"
 [wikip_subt]: https://en.wikipedia.org/wiki/Subtyping "Subtyping - Wikipedia"

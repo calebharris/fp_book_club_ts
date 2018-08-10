@@ -121,7 +121,7 @@ TypeScript, being both a "lightweight" language and something of a hybrid beast 
 support either ADTs or pattern matching, but does have some lower-level features that allow us to "build up" to those
 techniques. Strap in, we've got some reading to do.
 
-### Representing algebraic data types in TypeScript
+## Representing algebraic data types in TypeScript
 
 Our goal is to define an ADT that represents a singly linked list. Lists of this kind are useful tools for exploring FP
 because they can be defined and constructed recursively: each subpart of the list is itself a list.  Therefore, we need
@@ -220,7 +220,7 @@ function sum(ns: List<number>): number {
 
 Exercise 3.1 from FP in Scala, which is a pattern matching exercise, does not apply. Think of something else?
 
-### Data sharing in functional data structures
+## Data sharing in functional data structures
 
 How do we write functions that actually do things with immutable data structures? For instance, how can we add or remove
 elements from a `List`? To add a `1` to the front of a list named `xs`, we just create a new `Cons` with the old list as
@@ -249,6 +249,11 @@ Similarly, to remove an element from the front of a list, we just return its tai
 ```
 
 And now... some exercises for manipulating lists.
+
+::: tip Note
+As we complete these exercises, we'll be creating a reusable `List` module. You can find the code for `List` in the code
+repo at [/fpbookclub/data_structures/list.ts][repo_list].
+:::
 
 ### Exercise 3.2. `tail`
 
@@ -286,4 +291,5 @@ Implement `dropWhile`, which removes elements from the front of a list as long a
 function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 ```
 
+[repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
