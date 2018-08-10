@@ -216,7 +216,7 @@ function sum(ns: List<number>): number {
 }
 ```
 
-### Exercise 3.1 TBD
+### Exercise 3.1. TBD
 
 Exercise 3.1 from FP in Scala, which is a pattern matching exercise, does not apply. Think of something else?
 
@@ -246,6 +246,44 @@ Similarly, to remove an element from the front of a list, we just return its tai
       |         ╭───────╮            │
       ╰─────────┤ .tail ├─────────> List("b", "c", "d")
                 ╰───────╯
+```
+
+And now... some exercises for manipulating lists.
+
+### Exercise 3.2. `tail`
+
+Implement the `tail` function for removing the first element of a list. Notice that this function takes constant time.
+
+```typescript
+function drop<A>(l: List<A>): List<A>
+```
+
+### Exercise 3.3. `setHead`
+
+Now implement `setHead`, which *replaces* the first element of a list with a different value. For example,
+`setHead(List(1, 2, 3), 4)` should return `List(4, 2, 3)`.
+
+```typescript
+function setHead<A>(l: List<A>, head: A): List<A>
+```
+
+The following exercises demonstrate the efficiency of data sharing.
+
+### Exercise 3.4. `drop`
+
+Generalize `tail` to `drop`, which removes the first `n` elements from a list. Note that this function takes time
+proportional to `n`, and we do not have to make any copies.
+
+```typescript
+function drop<A>(l: List<A>, n: number): List<A>
+```
+
+### Exercise 3.5. `dropWhile`
+
+Implement `dropWhile`, which removes elements from the front of a list as long as they match a predicate.
+
+```typescript
+function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 ```
 
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
