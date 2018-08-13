@@ -75,16 +75,15 @@ export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
 }
 
 /**
- * Adds up a list of numbers
- **/
-export function sum(ns: List<number>): number {
-  return foldRight(ns, 0, (n, sum) => n + sum);
-}
-
-/**
  * Multiplies a list of numbers together
  **/
 export function product(ns: List<number>): number {
   return foldRight(ns, 1.0, (n, prod) => n * prod);
 }
 
+/**
+ * Adds up a list of numbers
+ **/
+export function sum(ns: List<number>): number {
+  return foldRight(ns, 0, (n, sum) => n + sum);
+}

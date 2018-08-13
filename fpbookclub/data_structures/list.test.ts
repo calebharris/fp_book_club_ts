@@ -15,13 +15,14 @@ describe("List()", () => {
   });
 });
 
-describe("sum()", () => {
-  test("returns zero when passed an empty List", () => {
-    expect(sum(List())).toEqual(0);
+describe("append()", () => {
+  test("is equal to the other argument when either is Nil", () => {
+    expect(append(Nil, List(1, 2))).toEqual(List(1, 2));
+    expect(append(List(1, 2), Nil)).toEqual(List(1, 2));
   });
 
-  test("returns the correct sum", () => {
-    expect(sum(List(1, 2, 3))).toEqual(6);
+  test("contains elements from both lists in order", () => {
+    expect(append(List("a"), List("b", "c"))).toEqual(List("a", "b", "c"));
   });
 });
 
@@ -35,13 +36,12 @@ describe("product()", () => {
   });
 });
 
-describe("append()", () => {
-  test("is equal to the other argument when either is Nil", () => {
-    expect(append(Nil, List(1, 2))).toEqual(List(1, 2));
-    expect(append(List(1, 2), Nil)).toEqual(List(1, 2));
+describe("sum()", () => {
+  test("returns zero when passed an empty List", () => {
+    expect(sum(List())).toEqual(0);
   });
 
-  test("contains elements from both lists in order", () => {
-    expect(append(List("a"), List("b", "c"))).toEqual(List("a", "b", "c"));
+  test("returns the correct sum", () => {
+    expect(sum(List(1, 2, 3))).toEqual(6);
   });
 });
