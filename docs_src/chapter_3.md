@@ -404,5 +404,48 @@ Compute the length of a list using `foldRight`.
 function length<A>(l: List<A>): number
 ```
 
+### Exercise 3.10. `foldLeft`
+
+Our implementation of `foldRight` is not tail-recursive and therefore not stack-safe. Write another function,
+`foldLeft`, that is stack-safe. Recall that even tail recursion isn't stack-safe in TypeScript. Because our `List`
+library will be reused in future exercises, we should probably spend some time making it scale well. Therefore, this is
+one of the few times that we'll sacrifice our functional ideals for practical usability gains. Your function should use
+an iterative loop and local state mutations, rather than recursion, to achieve stack safety. It may be helpful to start
+by writing a tail-recursive version of `foldLeft` and then transform it into an iterative version.
+
+```typescript
+function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B
+```
+
+### Exercise 3.11. Refactor `sum`, `product`, and `length`
+
+Rewrite `sum`, `product`, and `length` in terms of `foldLeft`.
+
+### Exercise 3.12. `reverse`
+
+Write a function that returns the reverse of a list. See if you can do it using a fold.
+
+```typescript
+function reverse<A>(l: List<A>): List<A>
+```
+
+### Exercise 3.13. `foldRight` and `foldLeft` in terms of each other
+
+Can you write `foldLeft` in terms of `foldRight`? How about the other way around? If we can express `foldRight` in terms
+of `foldLeft`, we gain the ability to fold a list right-wise in a stack-safe way.
+
+### Exercise 3.14. Refactor `append`
+
+Rewrite `append` using either fold.
+
+### Exercise 3.15 `concat`
+
+Write a function that concatenates a list of lists into a single list, using functions we've already defined. The
+runtime of `concat` should be proportional to the total length of all lists.
+
+```typescript
+function concat<A>(ll: List<List<A>>): List<A>
+```
+
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
