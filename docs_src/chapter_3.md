@@ -260,7 +260,7 @@ repo at [/fpbookclub/data_structures/list.ts][repo_list].
 Implement the `tail` function for removing the first element of a list. Notice that this function takes constant time.
 
 ```typescript
-function drop<A>(l: List<A>): List<A>
+function tail<A>(l: List<A>): List<A>
 ```
 
 ### Exercise 3.3. `setHead`
