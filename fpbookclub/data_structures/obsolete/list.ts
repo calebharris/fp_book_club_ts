@@ -3,6 +3,9 @@
  * discriminated union, a.k.a. algebraic data type (ADT). Based on
  * guidance at
  * https://www.typescriptlang.org/docs/handbook/advanced-types.html
+ *
+ * Note: this was List before the introduction of `foldRight` and the
+ * reimplementation of `sum` and `product` in terms of `foldRight`
  **/
 
 /**
@@ -62,29 +65,30 @@ export function append<A>(a1: List<A>, a2: List<A>): List<A> {
       return new Cons(a1.head, append(a1.tail, a2));
   }
 }
-
 /**
- * Uses recursion and pattern matching to apply a function that "folds"
- * every element of the list into a single value
+ * Uses recursion and pattern matching to add up a list of numbers
  **/
-export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
-  switch (l.tag) {
-    case "nil": return z;
-    case "cons": return f(l.head, foldRight(l.tail, z, f));
+export function sum(ns: List<number>): number {
+  switch (ns.tag) {
+    // the sum of the empty list is 0
+    case "nil": return 0;
+
+    // the sum of a list is the value in the head plus the sum of the tail
+    case "cons": return ns.head + sum(ns.tail);
   }
 }
 
 /**
- * Adds up a list of numbers
- **/
-export function sum(ns: List<number>): number {
-  return foldRight(ns, 0, (n, sum) => n + sum);
-}
-
-/**
- * Multiplies a list of numbers together
+ * Multiplies a list of numbers together, using the same technique as `sum`
  **/
 export function product(ns: List<number>): number {
-  return foldRight(ns, 1.0, (n, prod) => n * prod);
+  switch (ns.tag) {
+    case "nil": return 1.0;
+    case "cons":
+      if (ns.head === 0.0)
+        return 0.0;
+      else
+        return ns.head * product(ns.tail);
+  }
 }
 
