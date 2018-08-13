@@ -315,5 +315,94 @@ like `tail`?
 function init<A>(l: List<A>): List<A>
 ```
 
+## Recursion over lists and generalizing to higher-order functions
+
+Take another look at `sum` and `product`. These versions are simplified a bit compared to what you saw before.
+
+```typescript
+function sum(ns: List<number>): number {
+  switch (ns.tag) {
+    case "nil":  return 0;
+    case "cons": return ns.head + sum(ns.tail);
+  }
+}
+
+function product(ns: List<number>): number {
+  switch (ns.tag) {
+    case "nil":  return 1.0;
+    case "cons": return ns.head * product(ns.tail);
+  }
+}
+```
+
+Notice how similar they are? They both return a constant value in the `"nil"` case. In the `"cons"` case, they both call
+themselves recursively and combine the result with `head` using a binary operator. When you see this level of structural
+similarity, you can often write one generalized polymoprhic function with the same shape that takes function parameters
+for the differing bits of logic. In this example, our general function needs a normal single-valued parameter for the
+`"nil"` case and a function parameter for the operation to apply in the `"cons"` case.
+
+```typescript
+function foldRight<A, B>(l: List<A>,
+                         z: B,
+                         f: (a: A, b: B) => B): B {
+  switch (l.tag) {
+    case "nil": return z;
+    case "cons": return f(l.head, foldRight(l.tail, z, f));
+  }
+}
+
+function sum(ns: List<number>): number {
+  return foldRight(ns, 0, (a, b) => a + b);
+}
+
+function product(ns: List<number>): number {
+  return foldRight(ns, 1.0, (a, b) => a * b);
+}
+```
+
+`foldRight` can operate on lists of any element type, and, it turns out, can return any type of value, not just the type
+contained in the list! It just so happens that the types of the results of `sum` and `product` match the element types
+of their `List` arguments (that is, `number`). In a sense, `foldRight` replaces the data constructors of the list,
+`Cons` and `Nil`, with `f` and `z`, respectively:
+
+```typescript
+Cons(1, Cons(2, Nil))
+f   (1, f   (2, z  ))
+```
+
+Here's a more complete example, tracing the evaluation of `foldRight(List(1, 2, 3), 0, (x, y) => x + y)` by repeatedly
+substituting the definition of `foldRight` for its usages.
+
+```typescript
+foldRight(Cons(1, Cons(2, Cons(3, Nil))), 0, (x, y) => x + y)
+1 + foldRight(Cons(2, Cons(3, Nil)), 0, (x, y) => x + y)
+1 + (2 + foldRight(Cons(3, Nil), 0, (x, y) => x + y))
+1 + (2 + (3 + foldRight(Nil, 0, (x, y) => x + y)))
+1 + (2 + (3 + (0)))
+6
+```
+
+You can see that `foldRight` has to traverse the list all the way to the end (using stack frames for each recursive call
+as it goes) before it can fully evaluate the result. In other words, it is not tail recursive.
+
+### Exercise 3.7. `foldRight` and short-circuiting
+
+In our simplified version of `product`, above, we left out the "short-circuit" behavior of immediately returning 0 when
+any list element is 0. Can we regain this behavior, now that `product` is implemented in terms of `foldRight`? Why or
+why not?
+
+### Exercise 3.8. Relationship between `foldRight` and `List` data constructors
+
+See what happens when you pass `Nil` and `Cons` themselves to `foldRight`, like this: `foldRight(List(1, 2, 3), Nil, (h,
+t) => Cons(h, t))`. What does this say about the relationship between `foldRight` and the data constructors of `List`?
+
+### Exercise 3.9. `length` via `foldRight`
+
+Compute the length of a list using `foldRight`.
+
+```typescript
+function length<A>(l: List<A>): number
+```
+
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
