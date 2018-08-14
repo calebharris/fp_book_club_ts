@@ -50,4 +50,12 @@ describe("tail()", () => {
   test("of Nil is Nil", () => {
     expect(tail(Nil)).toEqual(Nil);
   });
+
+  test("of a one-element list is Nil", () => {
+    expect(tail(List(1))).toEqual(Nil);
+  });
+
+  test("of a multi-element list is everything after the head", () => {
+    expect(tail(List(1, 2))).toEqual(List(2));
+  });
 });
