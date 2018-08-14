@@ -93,7 +93,7 @@ export function sum(ns: List<number>): number {
  **/
 export function tail<A>(l: List<A>): List<A> {
   switch (l.tag) {
-    case "nil": return Nil;
+    case "nil": throw new Error("Attempt to take tail of empty list");
     case "cons": return l.tail;
   }
 }

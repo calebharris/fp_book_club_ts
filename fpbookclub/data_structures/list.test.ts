@@ -47,8 +47,8 @@ describe("sum()", () => {
 });
 
 describe("tail()", () => {
-  test("of Nil is Nil", () => {
-    expect(tail(Nil)).toEqual(Nil);
+  test("of Nil throws an exception", () => {
+    expect(() => tail(Nil)).toThrow();
   });
 
   test("of a one-element list is Nil", () => {
