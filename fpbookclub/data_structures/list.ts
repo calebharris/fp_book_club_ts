@@ -87,3 +87,13 @@ export function product(ns: List<number>): number {
 export function sum(ns: List<number>): number {
   return foldRight(ns, 0, (n, sum) => n + sum);
 }
+
+/**
+ * Returns the tail of a list
+ **/
+export function tail<A>(l: List<A>): List<A> {
+  switch (l.tag) {
+    case "nil": return Nil;
+    case "cons": return l.tail;
+  }
+}

@@ -1,4 +1,4 @@
-import { List, Cons, Nil, append, product, sum } from "./list";
+import { List, Cons, Nil, append, product, sum, tail } from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -43,5 +43,11 @@ describe("sum()", () => {
 
   test("returns the correct sum", () => {
     expect(sum(List(1, 2, 3))).toEqual(6);
+  });
+});
+
+describe("tail()", () => {
+  test("of Nil is Nil", () => {
+    expect(tail(Nil)).toEqual(Nil);
   });
 });
