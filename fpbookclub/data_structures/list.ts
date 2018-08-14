@@ -82,6 +82,16 @@ export function product(ns: List<number>): number {
 }
 
 /**
+ * Replaces the head of a list with a different value
+ **/
+export function setHead<A>(l: List<A>, a: A): List<A> {
+  switch (l.tag) {
+    case "nil": throw new Error("Attempt to set head of empty list");
+    case "cons": return new Cons(a, l.tail);
+  }
+}
+
+/**
  * Adds up a list of numbers
  **/
 export function sum(ns: List<number>): number {

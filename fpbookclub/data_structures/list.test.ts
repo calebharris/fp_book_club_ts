@@ -1,4 +1,4 @@
-import { List, Cons, Nil, append, product, sum, tail } from "./list";
+import { List, Cons, Nil, append, product, setHead, sum, tail } from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -33,6 +33,20 @@ describe("product()", () => {
 
   test("returns the correct product", () => {
     expect(product(List(1, 2, 3, 4))).toEqual(24.0);
+  });
+});
+
+describe("setHead()", () => {
+  test("of Nil throws an exception", () => {
+    expect(() => setHead(Nil, "x")).toThrow();
+  });
+
+  test("of one-element list returns new one-element list", () => {
+    expect(setHead(List(1), 2)).toEqual(List(2));
+  });
+
+  test("of multi-element list returns list differing only in first element", () => {
+    expect(setHead(List(1, 2), 3)).toEqual(List(3, 2));
   });
 });
 
