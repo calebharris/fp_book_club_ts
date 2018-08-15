@@ -1,4 +1,4 @@
-import { List, Cons, Nil, append, product, setHead, sum, tail } from "./list";
+import { List, Cons, Nil, append, drop, product, setHead, sum, tail } from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -23,6 +23,25 @@ describe("append()", () => {
 
   test("contains elements from both lists in order", () => {
     expect(append(List("a"), List("b", "c"))).toEqual(List("a", "b", "c"));
+  });
+});
+
+describe("drop()", () => {
+  test("of Nil throws an exception", () => {
+    expect(() => drop(Nil, 5)).toThrow();
+  });
+
+  test("throws an exception when the list's length is <= 0", () => {
+    expect(() => drop(List("x", "y"), 2)).toThrow();
+    expect(() => drop(List("x", "y"), 3)).toThrow();
+  });
+
+  test("returns the list when n is 0", () => {
+    expect(drop(List("x", "y", "z"), 0)).toEqual(List("x", "y", "z"));
+  });
+
+  test("returns a copy of the list missing the first n elements", () => {
+    expect(drop(List("x", "y", "z"), 2)).toEqual(List("z"));
   });
 });
 

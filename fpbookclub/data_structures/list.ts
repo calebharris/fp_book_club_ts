@@ -64,6 +64,19 @@ export function append<A>(a1: List<A>, a2: List<A>): List<A> {
 }
 
 /**
+ * Returns a new list missing the first `n` elements of `l`
+ **/
+export function drop<A>(l: List<A>, n: number): List<A> {
+  switch (l.tag) {
+    case "nil":
+      throw new Error("Attempt to drop from empty list");
+    case "cons":
+      if (n <= 0) return l;
+      else return drop(l.tail, n - 1);
+  }
+}
+
+/**
  * Uses recursion and pattern matching to apply a function that "folds"
  * every element of the list into a single value
  **/
