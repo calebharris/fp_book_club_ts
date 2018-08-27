@@ -77,6 +77,26 @@ export function drop<A>(l: List<A>, n: number): List<A> {
 }
 
 /**
+ * Returns a new list missing the first contiguous sequence of elements that
+ * match the predicate `p`
+ **/
+export function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+  switch (l.tag) {
+    case "nil":
+      throw new Error("Attempt to drop from empty list");
+    case "cons":
+      if (p(l.head)) {
+        switch (l.tail.tag) {
+          case "nil": return l.tail;
+          default: return dropWhile(l.tail, p);
+        }
+      } else {
+        return l;
+      }
+  }
+}
+
+/**
  * Uses recursion and pattern matching to apply a function that "folds"
  * every element of the list into a single value
  **/

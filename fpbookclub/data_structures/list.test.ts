@@ -1,4 +1,15 @@
-import { List, Cons, Nil, append, drop, product, setHead, sum, tail } from "./list";
+import {
+  List,
+  Cons,
+  Nil,
+  append,
+  drop,
+  dropWhile,
+  product,
+  setHead,
+  sum,
+  tail
+} from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -42,6 +53,24 @@ describe("drop()", () => {
 
   test("returns a copy of the list missing the first n elements", () => {
     expect(drop(List("x", "y", "z"), 2)).toEqual(List("z"));
+  });
+});
+
+describe("dropWhile()", () => {
+  test("of Nil throws an exception", () => {
+    expect(() => dropWhile(Nil, a => a === a));
+  });
+
+  test("returns the whole list if p is the `false` constant function", () => {
+    expect(dropWhile(List(1, 2, 3), a => false)).toEqual(List(1, 2, 3));
+  });
+
+  test("returns Nil if p is the `true` constant function", () => {
+    expect(dropWhile(List(1, 2, 3), a => true)).toEqual(Nil);
+  });
+
+  test("returns the list minus the matching prefix", () => {
+    expect(dropWhile(List(1, 3, 4, 6), a => a % 2 === 1)).toEqual(List(4, 6));
   });
 });
 
