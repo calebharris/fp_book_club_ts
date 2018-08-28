@@ -97,6 +97,21 @@ export function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
 }
 
 /**
+ * Returns all but the last element of `l`
+ **/
+export function init<A>(l: List<A>): List<A> {
+  switch (l.tag) {
+    case "nil":
+      throw new Error("Attempt to call init on empty list");
+    case "cons":
+      switch (l.tail.tag) {
+        case "nil": return Nil;
+        default: return new Cons(l.head, init(l.tail));
+      }
+  }
+}
+
+/**
  * Uses recursion and pattern matching to apply a function that "folds"
  * every element of the list into a single value
  **/

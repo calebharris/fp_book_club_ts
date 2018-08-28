@@ -5,6 +5,7 @@ import {
   append,
   drop,
   dropWhile,
+  init,
   product,
   setHead,
   sum,
@@ -58,7 +59,7 @@ describe("drop()", () => {
 
 describe("dropWhile()", () => {
   test("of Nil throws an exception", () => {
-    expect(() => dropWhile(Nil, a => a === a));
+    expect(() => dropWhile(Nil, a => a === a)).toThrow();
   });
 
   test("returns the whole list if p is the `false` constant function", () => {
@@ -71,6 +72,20 @@ describe("dropWhile()", () => {
 
   test("returns the list minus the matching prefix", () => {
     expect(dropWhile(List(1, 3, 4, 6), a => a % 2 === 1)).toEqual(List(4, 6));
+  });
+});
+
+describe("init()", () => {
+  test("of Nil throws an exception", () => {
+    expect(() => init(Nil)).toThrow();
+  });
+
+  test("of one-element list is Nil", () => {
+    expect(init(List("a"))).toEqual(Nil);
+  });
+
+  test("of longer list returns all but last element", () => {
+    expect(init(List("a", "b", "c"))).toEqual(List("a", "b"));
   });
 });
 
