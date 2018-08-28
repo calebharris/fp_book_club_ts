@@ -315,6 +315,18 @@ like `tail`?
 function init<A>(l: List<A>): List<A>
 ```
 
+Due to the structure and immutability of a `Cons`, any time we want to replace the tail of a list, we have to create a
+new `Cons` element with the new `tail` value and the old `head` value. If that particular `Cons` was itself the `tail`
+of a different `Cons`, _that_ element now needs to be copied as well, and so on until we reach the head of the list.
+According to the book:
+
+   > Writing purely functional data structures that support different operations efficiently is all about finding
+   > clever ways to exploit data sharing. As an example of what’s possible, in the Scala standard library there’s a
+   > purely functional sequence implementation, Vector (documentation [here][scala_vector]), with constant-time random
+   > access, updates, head, tail, init, and constant-time additions to either the front or rear of the sequence. See the
+   > [chapter notes][fpscala_notes_3] for links to further reading about how to design such data structures.
+
+
 ## Recursion over lists and generalizing to higher-order functions
 
 Take another look at `sum` and `product`. These versions are simplified a bit compared to what you saw before.
@@ -447,5 +459,8 @@ runtime of `concat` should be proportional to the total length of all lists.
 function concat<A>(ll: List<List<A>>): List<A>
 ```
 
+[fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
+fpinscala/fpinscala Wiki"
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
+[scala_vector]: https://www.scala-lang.org/api/current/scala/collection/immutable/Vector.html "Vector - Scala Standard Library"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"
