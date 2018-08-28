@@ -459,6 +459,35 @@ runtime of `concat` should be proportional to the total length of all lists.
 function concat<A>(ll: List<List<A>>): List<A>
 ```
 
+### More functions for working with lists
+
+The next set of exercises introduces a few more useful list functions. For each one, we follow the pattern of trying to
+accomplish some specific tasks, noticing the commonality between them, writing the general function, and then
+refactoring the tasks using our new tool. The purpose of doing these exercises is not to commit to memory every list
+function and when to use it, but to begin to develop an intuition for detecting patterns in working with lists and
+functional data structures in general. As we proceed through the book, we'll see that these patterns apply to a variety
+data structures beyond the humble list, and that there are opportunities for extracting these patterns into highly
+abstract functions that we can use in any domain.
+
+### Exercise 3.16. Add `1` to each element
+
+Write a function that transforms a list of integers by adding 1 to each element. (Reminder: this should be a pure
+function that returns a new List!)
+
+### Exercise 3.17. Convert `number` to `string`
+
+Write a function that turns each value in a `List<number>` into a `string`. You can use the expression `n.toString()` to
+convert some `n: number` to a `string`.
+
+### Exercise 3.18. `map`
+
+Write a function `map` that generalizes modifying each element in a list while maintaining the structure of the list.
+Here is its signature:
+
+```typescript
+function map<A, B>(la: List<A>, lb: List<B>, f: (a: A) => B): List<B>
+```
+
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
 fpinscala/fpinscala Wiki"
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
