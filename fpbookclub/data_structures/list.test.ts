@@ -1,4 +1,4 @@
-import { List, Cons, Nil, append, product, sum } from "./list";
+import { List, Cons, Nil, tail, setHead, drop, dropWhile, append, product, sum } from "./list";
 
 describe("List()", () => {
   test("returns Nil when passed no arguments", () => {
@@ -12,6 +12,36 @@ describe("List()", () => {
       expect(l.head).toEqual("Hello!");
       expect(l.tail).toBe(Nil);
     }
+  });
+});
+
+describe("tail()", () => {
+  test("removes the first element", () => {
+    expect(tail(List(1, 2))).toEqual(List(2));
+  });
+  test("returns nil when the only element of a list is removed", () => {
+    expect(tail(List(1))).toEqual(Nil);
+  });
+  test("does something when nil", () => {
+    expect(tail(List())).toEqual(Nil);
+  });
+});
+
+describe("setHead()", () => {
+  test("replaces first element", () => {
+    expect(setHead(List(1, 2, 3), 4)).toEqual(List(4,2,3));
+  });
+});
+
+describe("drop()", () => {
+  test("removes 2 elements", () => {
+    expect(drop(List(1,2,3,4), 2)).toEqual(List(3,4));
+  });
+});
+
+describe("dropWhile()", () => {
+  test("removes stuff", () => {
+    expect(dropWhile(List(2,2,2,2,3,4,5), i => i % 2 === 0)).toEqual(List(3,4,5));
   });
 });
 

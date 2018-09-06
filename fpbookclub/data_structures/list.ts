@@ -52,6 +52,42 @@ export function List<A>(...vals: A[]): List<A> {
 }
 
 /**
+ * Removes the first element from a list (3.2)
+ **/
+export function tail<A>(a1: List<A>): List<A> {
+  switch (a1.tag) {
+    case "cons":
+      return a1.tail;
+    case "nil":
+      return Nil;
+  }
+}
+
+export function setHead<A>(l: List<A>, head: A): List<A> {
+  switch (l.tag) {
+    case "cons":
+      return new Cons(head, l.tail);
+    case "nil":
+      return List(head); // or Nil??
+  }
+}
+
+export function drop<A>(l: List<A>, n: number): List<A> {
+  if (n <= 0 || l.tag === "nil") {
+    return l;
+  }
+  return drop(l.tail, n - 1);
+}
+
+export function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A> {
+  if (l.tag === "cons" && f(l.head)) {
+    return dropWhile(l.tail, f);
+  }
+  return l;
+}
+
+
+/**
  * Creates a new list by appending a2 to a1
  **/
 export function append<A>(a1: List<A>, a2: List<A>): List<A> {
