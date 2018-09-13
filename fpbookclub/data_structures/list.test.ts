@@ -2,14 +2,19 @@ import {
   List,
   Cons,
   Nil,
+  addOne,
   append,
+  concat,
   drop,
   dropWhile,
   init,
+  length,
   product,
+  reverse,
   setHead,
   sum,
-  tail
+  tail,
+  toString
 } from "./list";
 
 describe("List()", () => {
@@ -27,6 +32,18 @@ describe("List()", () => {
   });
 });
 
+describe("addOne()", () => {
+  test("adds one to each element in a list", () => {
+    expect(addOne(List(10, 11, 12))).toEqual(List(11, 12, 13));
+  });
+});
+
+describe("toString()", () => {
+  test("converts each element to a string", () => {
+    expect(toString(List(1, 2, 3))).toEqual(List("1", "2", "3"));
+  });
+});
+
 describe("append()", () => {
   test("is equal to the other argument when either is Nil", () => {
     expect(append(Nil, List(1, 2))).toEqual(List(1, 2));
@@ -35,6 +52,16 @@ describe("append()", () => {
 
   test("contains elements from both lists in order", () => {
     expect(append(List("a"), List("b", "c"))).toEqual(List("a", "b", "c"));
+  });
+});
+
+describe("concat()", () => {
+  test("returns a flattened list", () => {
+    expect(concat(List(
+      List(1, 2),
+      List(3, 4),
+      List(5, 6)
+    ))).toEqual(List(1, 2, 3, 4, 5, 6));
   });
 });
 
@@ -89,6 +116,20 @@ describe("init()", () => {
   });
 });
 
+describe("length()", () => {
+  test("returns 0 when list is Nil", () => {
+    expect(length(Nil)).toEqual(0);
+  });
+
+  test("returns 1 for single-element list", () => {
+    expect(length(List("a"))).toEqual(1);
+  });
+
+  test("returns 2 for two-element list", () => {
+    expect(length(List("a", "b"))).toEqual(2);
+  });
+});
+
 describe("product()", () => {
   test("returns 1.0 when passed an empty List", () => {
     expect(product(List())).toEqual(1.0);
@@ -96,6 +137,16 @@ describe("product()", () => {
 
   test("returns the correct product", () => {
     expect(product(List(1, 2, 3, 4))).toEqual(24.0);
+  });
+});
+
+describe("reverse()", () => {
+  test("of Nil is Nil", () => {
+    expect(reverse(List())).toEqual(Nil);
+  });
+
+  test("returns the reverse of a list", () => {
+    expect(reverse(List(1, 2, 3))).toEqual(List(3, 2, 1));
   });
 });
 

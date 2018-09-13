@@ -54,13 +54,25 @@ export function List<A>(...vals: A[]): List<A> {
 /**
  * Creates a new list by appending a2 to a1
  **/
+//export function appendOld<A>(a1: List<A>, a2: List<A>): List<A> {
+//  switch (a1.tag) {
+//    case "nil":
+//      return a2;
+//    case "cons":
+//      return new Cons(a1.head, append(a1.tail, a2));
+//  }
+//}
+
 export function append<A>(a1: List<A>, a2: List<A>): List<A> {
-  switch (a1.tag) {
-    case "nil":
-      return a2;
-    case "cons":
-      return new Cons(a1.head, append(a1.tail, a2));
-  }
+  return foldRight(a1, a2, (a, b) => new Cons(a, b));
+}
+
+export function addOne(l: List<number>): List<number> {
+  return foldRight(l, List(), (a, b) => new Cons(a + 1, b));
+}
+
+export function concat<A>(ll: List<List<A>>): List<A> {
+  return foldRight(ll, List(), (a, b) => append(a, b));
 }
 
 /**
@@ -100,26 +112,47 @@ export function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
  * Returns all but the last element of `l`
  **/
 export function init<A>(l: List<A>): List<A> {
-  switch (l.tag) {
-    case "nil":
-      throw new Error("Attempt to call init on empty list");
-    case "cons":
-      switch (l.tail.tag) {
-        case "nil": return Nil;
-        default: return new Cons(l.head, init(l.tail));
-      }
+  if (l.tag === "nil") {
+    throw new Error("Attempt to get init of empty list");
+  } else if (l.tail === Nil) {
+    return Nil;
   }
+  return new Cons(l.head, init(l.tail));
+}
+
+export function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+  var state = z;
+  while (l.tag !== "nil") {
+    state = f(state, l.head);
+    l = l.tail;
+  }
+  return state;
 }
 
 /**
  * Uses recursion and pattern matching to apply a function that "folds"
  * every element of the list into a single value
  **/
+//export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
+//  switch (l.tag) {
+//    case "nil": return z;
+//    case "cons": return f(l.head, foldRight(l.tail, z, f));
+//  }
+//}
+
 export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
-  switch (l.tag) {
-    case "nil": return z;
-    case "cons": return f(l.head, foldRight(l.tail, z, f));
-  }
+  return foldLeft(reverse(l), z, (b, a) => f(a, b));
+}
+
+/**
+ * Returns the length of l
+ **/
+export function length<A>(l: List<A>): number {
+  return foldLeft(l, 0, (b, a) => b + 1);
+}
+
+export function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
+  return foldRight(la, List(), (a, b) => new Cons(f(a), b));
 }
 
 /**
@@ -127,6 +160,13 @@ export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
  **/
 export function product(ns: List<number>): number {
   return foldRight(ns, 1.0, (n, prod) => n * prod);
+}
+
+/**
+ * Returns the reverse of a list
+ **/
+export function reverse<A>(l: List<A>): List<A> {
+  return foldLeft(l, List(), (b, a) => new Cons(a, b));
 }
 
 /**
@@ -154,4 +194,8 @@ export function tail<A>(l: List<A>): List<A> {
     case "nil": throw new Error("Attempt to take tail of empty list");
     case "cons": return l.tail;
   }
+}
+
+export function toString(l: List<number>): List<string> {
+  return foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
 }
