@@ -1,6 +1,4 @@
-export type CurriedFunction2<A, B, C> = (a: A) => (b: B) => C;
-
-export function curry<A, B, C>(f: (a: A, b: B) => C): CurriedFunction2<A, B, C> {
+export function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => (b: B) => C {
   return function(a: A) {
     return partial1(a, f);
   };
@@ -12,7 +10,7 @@ export function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C {
   };
 }
 
-export function uncurry<A, B, C>(f: CurriedFunction2<A, B, C>): (a: A, b: B) => C {
+export function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C {
   return function(a: A, b: B): C {
     return f(a)(b);
   };
