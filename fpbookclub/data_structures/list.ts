@@ -51,26 +51,30 @@ export function List<A>(...vals: A[]): List<A> {
   }
 }
 
+export function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+    return foldRight(a1, [List() as List<number>, reverse(a2)], (a, [acc, other]) => {
+      if (other.tag === "cons") {
+        return [new Cons(a + other.head, acc), other.tail];
+      } else {
+        return [acc, other];
+      }
+    })[0];
+}
+
+export function addOne(l: List<number>): List<number> {
+  return map(l, a => a + 1);
+}
+
 /**
  * Creates a new list by appending a2 to a1
  **/
-//export function appendOld<A>(a1: List<A>, a2: List<A>): List<A> {
-//  switch (a1.tag) {
-//    case "nil":
-//      return a2;
-//    case "cons":
-//      return new Cons(a1.head, append(a1.tail, a2));
-//  }
-//}
-
 export function append<A>(a1: List<A>, a2: List<A>): List<A> {
   return foldRight(a1, a2, (a, b) => new Cons(a, b));
 }
 
-export function addOne(l: List<number>): List<number> {
-  return foldRight(l, List(), (a, b) => new Cons(a + 1, b));
-}
-
+/**
+ * Returns a flattened List containing all elements of the given sublists in order
+ **/
 export function concat<A>(ll: List<List<A>>): List<A> {
   return foldRight(ll, List(), (a, b) => append(a, b));
 }
@@ -120,6 +124,14 @@ export function init<A>(l: List<A>): List<A> {
   return new Cons(l.head, init(l.tail));
 }
 
+export function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+  return flatMap(l, a => p(a) ? List(a) : List());
+}
+
+export function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B> {
+  return concat(map(l, f));
+}
+
 export function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
   var state = z;
   while (l.tag !== "nil") {
@@ -133,13 +145,6 @@ export function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
  * Uses recursion and pattern matching to apply a function that "folds"
  * every element of the list into a single value
  **/
-//export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
-//  switch (l.tag) {
-//    case "nil": return z;
-//    case "cons": return f(l.head, foldRight(l.tail, z, f));
-//  }
-//}
-
 export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
   return foldLeft(reverse(l), z, (b, a) => f(a, b));
 }
@@ -197,5 +202,5 @@ export function tail<A>(l: List<A>): List<A> {
 }
 
 export function toString(l: List<number>): List<string> {
-  return foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
+  return map(l, a => a.toString());
 }

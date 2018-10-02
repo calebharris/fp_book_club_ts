@@ -2,11 +2,14 @@ import {
   List,
   Cons,
   Nil,
+  addCorresponding,
   addOne,
   append,
   concat,
   drop,
   dropWhile,
+  filter,
+  flatMap,
   init,
   length,
   product,
@@ -29,6 +32,12 @@ describe("List()", () => {
       expect(l.head).toEqual("Hello!");
       expect(l.tail).toBe(Nil);
     }
+  });
+});
+
+describe("addCorresponding()", () => {
+  test("adfas", () => {
+    expect(addCorresponding(List(1, 2, 3), List(4, 5, 6))).toEqual(List(5, 7, 9))
   });
 });
 
@@ -99,6 +108,18 @@ describe("dropWhile()", () => {
 
   test("returns the list minus the matching prefix", () => {
     expect(dropWhile(List(1, 3, 4, 6), a => a % 2 === 1)).toEqual(List(4, 6));
+  });
+});
+
+describe("filter()", () => {
+  test("returns only elements matching the predicate", () => {
+    expect(filter(List(1, 2, 3), a => a % 2 === 1)).toEqual(List(1, 3));
+  });
+});
+
+describe("flatMap()", () => {
+  test("returns a flattened List", () => {
+    expect(flatMap(List(1, 2), a => List(a))).toEqual(List(1, 2));
   });
 });
 
