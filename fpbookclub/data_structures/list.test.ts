@@ -47,12 +47,6 @@ describe("addOne()", () => {
   });
 });
 
-describe("toString()", () => {
-  test("converts each element to a string", () => {
-    expect(toString(List(1, 2, 3))).toEqual(List("1", "2", "3"));
-  });
-});
-
 describe("append()", () => {
   test("is equal to the other argument when either is Nil", () => {
     expect(append(Nil, List(1, 2))).toEqual(List(1, 2));
@@ -208,3 +202,10 @@ describe("tail()", () => {
     expect(tail(List(1, 2))).toEqual(List(2));
   });
 });
+
+describe("toString()", () => {
+  test("converts each element to a string", () => {
+    expect(toString(List(1, 2, 3))).toEqual(List("1", "2", "3"));
+  });
+});
+

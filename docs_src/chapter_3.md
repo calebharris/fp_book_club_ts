@@ -485,7 +485,7 @@ Write a function `map` that generalizes modifying each element in a list while m
 Here is its signature:
 
 ```typescript
-function map<A, B>(la: List<A>, lb: List<B>, f: (a: A) => B): List<B>
+function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
 ```
 
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
