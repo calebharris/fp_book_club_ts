@@ -5,6 +5,7 @@ module.exports = {
     lineNumbers: true
   },
   themeConfig: {
+    lastUpdated: true,
     nav: [
       { text: "Home", link: "/" },
       {
