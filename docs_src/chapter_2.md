@@ -360,8 +360,39 @@ local tail-recursive function.
 function fib(n: number): number
 ```
 
+??? answer
+```typescript
+function fib(n: number): number {
+  function go(n: number, a: number, b: number): number {
+    if (n <= 1)
+      return a;
+    else
+      return go(n - 1, b, a + b);
+  }
+
+  return go(n, 0, 1);
+}
+```
+???
+
 Once you have a working recursive implementation, make it stack-safe by converting it to an iterative solution (i.e.
 use a loop).
+
+??? answer
+```typescript
+function fib(n: number): number {
+  let acc1 = 0, acc2 = 1;
+
+  for (let i = n; i > 1; --i) {
+    let temp = acc1 + acc2;
+    acc1 = acc2;
+    acc2 = temp;
+  }
+
+  return acc1;
+}
+```
+???
 
 ### Our first higher-order function
 
@@ -478,6 +509,17 @@ Implement `isSorted`, which checks whether an array of `A` values is sorted acco
 ```typescript
 function isSorted<A>(as: A[], ordered: (l: A, r: A) => boolean): boolean
 ```
+
+??? answer
+```typescript
+function isSorted<A>(vals: A[], ordered: (l: A, r: A) => boolean): boolean {
+  if (vals.length <= 1)
+    return true;
+  else
+    return ordered(vals[0], vals[1]) && isSorted(vals.slice(1), ordered);
+}
+```
+???
 
 ### Calling HOFs with anonymous functions
 
@@ -638,6 +680,16 @@ Implement `curry`, which converts a function `f` of two arguments into a functio
 function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C)
 ```
 
+??? answer
+```typescript
+function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C) {
+  return function(a: A) {
+    return partial1(a, f);
+  };
+}
+```
+???
+
 ### Exercise 2.4. Uncurrying
 
 Implement `uncurry`, which reverses the transformation of `curry`. Since `=>` in type signatures associates to the
@@ -647,6 +699,16 @@ right, `(a: A) => ((b: B) => C)` can be written as `(a: A) => (b: B) => C`.
 function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C
 ```
 
+??? answer
+```typescript
+function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C {
+  return function(a: A, b: B): C {
+    return f(a)(b);
+  };
+}
+```
+???
+
 ### Exercise 2.5. Function composition
 
 Implement `compose`, which feeds the output of one function into the input of another.
@@ -654,6 +716,16 @@ Implement `compose`, which feeds the output of one function into the input of an
 ```typescript
 function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C
 ```
+
+??? answer
+```typescript
+function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C {
+  return function(a: A) {
+    return f(g(a));
+  }
+}
+```
+???
 
 This is a very common thing to want to do in functional programming. In fact, all three previous exercises will yield
 functions that we'll want to re-use in later exercises, so you might want to put them in a `util` module.
