@@ -8,6 +8,9 @@ lang: en-US
 
 ## Updates
 
+### 3 October 2018
+* Add missing exercises 3.19, 3.20, and 3.21
+
 ### 2 October 2018
 * Add inline exercise answers to Chapter 2
 * Add notes up to exercise 3.28 (Trees, yay!)

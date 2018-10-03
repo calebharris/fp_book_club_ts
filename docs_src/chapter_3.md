@@ -487,10 +487,28 @@ Here is its signature:
 ```typescript
 function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
 ```
+### Exercise 3.19. `filter`
 
-::: warning Under Construction
-Exercises 3.19, 3.20, and 3.21 to be added later
-:::
+Write `filter`, a function that removes elements from a list unless they satisfy a predicate. Then practice using it by
+removing all odd numbers from a `List<number>`. Is it possible to implement `filter` in terms of `map`? Why, or why not?
+
+```typescript
+function filter<A>(l: List<A>, p: (a: A) => boolean): List<A>
+```
+
+### Exercise 3.20. `flatMap`
+
+Write a function named `flatMap` that works similarly to `map`, except the provided function returns a `List` instead of
+a raw value. That `List` should be inserted into the resulting `List`. For example, `flatMap(List(1, 2, 3), i => List(i,
+i))` should return `List(1, 1, 2, 2, 3, 3)`.
+
+```typescript
+function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B>
+```
+
+### Exercise 3.21. `filter` in terms of `flatMap`
+
+Re-implement `filter` using `flatMap`. As a bonus, can you implement `map` in terms of `flatMap`?
 
 ### Exercise 3.22. Add corresponding elements
 
