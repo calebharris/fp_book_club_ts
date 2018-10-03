@@ -488,6 +488,143 @@ Here is its signature:
 function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
 ```
 
+::: warning Under Construction
+Exercises 3.19, 3.20, and 3.21 to be added later
+:::
+
+### Exercise 3.22. Add corresponding elements
+
+Write a function that, given two lists, returns a new list consisting of the sums of corresponding elements in the
+argument lists. For example, given `List(1, 2, 3)` and `List(4, 5, 6)`, it should return `List(5, 7, 9)`.
+
+### Exercise 3.23. `zipWith`
+
+Generalize the previous function so that it's not specific to numbers or addition. Call it `zipWith`, and then refactor
+the previous function to use `zipWith`.
+
+### Loss of efficiency when assembling list functions from simpler components
+
+Sometimes, when we express `List` operations in terms of general-purpose functions, we end up with inefficient
+implementations, even though the code ends up being very concise and readable. We may wind up making several passes over
+input lists, or having to write explicit loops to allow for early termination.
+
+### Exercise 3.23. `hasSubsequence`
+
+Write a function, called `hasSubsequence`, to check whether a `List` contains another `List` as a subsequence. For
+example, `List("a", "b", "r", "a")` has subsequences `List("b", "r")` and `List("a")`, among others. This is meant to
+illustrate the previous point about efficiency, so you will probably have some difficulty expressing this in a purely
+functional, efficient manner. We'll return to this problem, and hopefully find a better answer, in Chapter 5.
+
+```typescript
+function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean
+```
+
+## Trees
+
+`List` is just one example of an algebraic data type (ADT), which we discussed earlier in the chapter. In this section we'll
+introduce the `Tree`, which is a recursive, hierarchical data structure.
+
+::: tip Tuple types in TypeScript
+
+We briefly touched on tuples in Chapter 1. A tuple is a bit like a `List`, except its size and the types of all its
+elements, which need not be the same type, are known at compile time. A tuple of "arity", or size, 2 is often referred
+to simply as a pair. Tuples are themselves ADTs. TypeScript borrows JavaScript's array syntax to define both tuple types
+and tuple values.
+
+```
+> const p: [string, number] = ["Bob", 42];
+> p[0];
+'Bob'
+> p[0] = 41;
+[eval].ts(5,1): error TS2322: Type '2' is not assignable to type 'string'.
+```
+
+In fact, TypeScript tuples *are* just JavaScript arrays with some additional type information. TypeScript keeps track of
+the type of each element of a tuple, and throws errors like the one above if you attempt to assign a value to a position
+in a tuple with an incompatible type.
+:::
+
+Here's a simple binary tree data structure. You should recognize the tagged union technique we introduced earlier with
+`List`.
+
+```typescript
+type Tree<A> = Leaf<A> | Branch<A>
+
+class Leaf<A> {
+  tag: "leaf" = "leaf";
+  readonly value: A;
+
+  constructor(value: A) {
+    this.value = value;
+  }
+}
+
+class Branch<A> {
+  tag: "branch" = "branch";
+  readonly left: Tree<A>;
+  readonly right: Tree<A>;
+
+  constructor(left: Tree<A>, right: Tree<A>) {
+    this.left = left;
+    this.right = right;
+  }
+}
+```
+
+```
+                          A Tree
+
+                          Branch
+                      ┌─────┬─────┐
+             ┌────────┼──●  │  ●──┼───────┐
+             │        └─────┴─────┘       │
+             ↓         left  right        ↓
+           Branch                       Branch
+       ┌─────┬─────┐                ┌─────┬─────┐
+   ┌───┼──●  │  ●──┼───┐        ┌───┼──●  │  ●──┼───┐
+   │   └─────┴─────┘   │        │   └─────┴─────┘   │
+   ↓    left  right    ↓        ↓    left  right    ↓
+  Leaf                Leaf     Leaf                Leaf
+┌─────┐             ┌─────┐  ┌─────┐             ┌─────┐
+│ "a" │             │ "b" │  │ "c" │             │ "d" │
+└─────┘             └─────┘  └─────┘             └─────┘
+ value               value    value               value
+```
+
+### Exercise 3.25. `size`
+
+Write a function named `size` that counts the number of leaves and branches (collectively called "nodes") in a tree.
+
+```typescript
+function size<A>(ta: Tree<A>): number
+```
+
+### Exercise 3.26. `maximum`
+
+Write a function `maximum` that returns the maximum value contained in a tree of numbers. You can use TypeScript's
+built-in `Math.max(x, y)` function to calculate the maximum of two numbers `x` and `y`.
+
+```typescript
+function maximum(tn: Tree<number>): number
+```
+
+### Exercise 3.27. `depth`
+
+Write a function `depth` that returns the maximum path length from the "root", or top, of a tree to any leaf.
+
+```typescript
+function depth<A>(ta: Tree<A>): number
+```
+
+### Exercise 3.28. `map`
+
+Write the `Tree` version of `map`. As with the `List` version, it should return a `Tree` with the same shape as the
+input `Tree`, but with elements transformed by a provided function.
+
+```typescript
+function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
+```
+
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
 fpinscala/fpinscala Wiki"
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
