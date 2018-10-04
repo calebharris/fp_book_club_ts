@@ -10,6 +10,7 @@ lang: en-US
 
 ### 3 October 2018
 * Add missing exercises 3.19, 3.20, and 3.21
+* Add TypeScript-appropriate exercise 3.1
 
 ### 2 October 2018
 * Add inline exercise answers to Chapter 2
