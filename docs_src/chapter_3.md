@@ -216,9 +216,81 @@ function sum(ns: List<number>): number {
 }
 ```
 
-### Exercise 3.1. TBD
+### Exercise 3.1. Type inference
 
-Exercise 3.1 from FP in Scala, which is a pattern matching exercise, does not apply. Think of something else?
+Given these declarations:
+
+```typescript
+interface Nil { tag: "nil"; }
+
+interface SingleCons<A> {
+  tag: "cons";
+  head: A;
+  tail: SingleList<A>;
+}
+type SingleList<A> = SingleCons<A> | Nil;
+
+interface DoubleCons<A> {
+  tag: "cons";
+  head: A;
+  tail: DoubleList<A>;
+  prev: DoubleList<A>;
+}
+type DoubleList<A> = DoubleCons<A> | Nil;
+
+type AnyList<A> = SingleList<A> | DoubleList<A>;
+```
+
+What is the result of compiling the following snippets?
+
+```typescript
+function foo<A>(l: SingleList<A>) {
+  if (l.tag === "cons") {
+    console.log(l.head);
+  }
+}
+```
+
+??? answer
+This snippet compiles. The function argument `l` is constrained to be of type `SingleList<A>`. Within that type, only
+`SingleCons<A>` has a `tag` property that can contain the value `"cons"`, so the compiler has enough information to
+lookup the `head` property inside the `if` statement.
+???
+
+```typescript
+function bar<A>(l: AnyList<A>) {
+  if (l.tag === "cons") {
+    console.log(l.head);
+  }
+}
+```
+
+??? answer
+This snippet compiles. The function argument `l` is no longer constrained to a `SingleList<A>`; now it can be either
+that or a `DoubleList<A>`. Within those types, both `SingleCons<A>` and `DoubleCons<A>` have a `tag` of `"cons"`. So the
+compiler can't narrow `l` down to only one data constructor inside the `if` statement. But, it doesn't matter, because
+both possibilities support the `head` property, and it has the same type for each.
+???
+
+```typescript
+function baz<A>(l: AnyList<A>) {
+  if (l.tag === "cons") {
+    console.log(l.prev);
+  }
+}
+```
+
+??? answer
+This snippet does not compile. Again, inside the `if` statement, the type of `l` has been inferred to be either
+`SingleCons<A>` or `DoubleCons<A>`. But we try to access the `prev` property, which only exists on `DoubleCons`.
+Attempting to compile this leads to an error message similar to:
+
+```
+TSError: ⨯ Unable to compile TypeScript:
+test.ts(34,19): error TS2339: Property 'prev' does not exist on type 'SingleCons<A> | DoubleCons<A>'.
+  Property 'prev' does not exist on type 'SingleCons<A>'.
+```
+???
 
 ## Data sharing in functional data structures
 
