@@ -715,6 +715,34 @@ input `Tree`, but with elements transformed by a provided function.
 function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
 ```
 
+::: tip ADTs and encapsulation
+As you've worked through the exercises in this chapter, you may have caught yourself thinking, "Wow, it sure seems like
+we're exposing an awful lot of the internals of our data structures to the users of our API." To quote the book:
+
+> In FP, we approach concerns about encapsulation differently—we don’t typically have delicate mutable state which could
+> lead to bugs or violation of invariants if exposed publicly. Exposing the data constructors of a type is often fine,
+> and the decision to do so is approached much like any other decision about what the public API of a data type should
+> be.
+
+ADTs are typically used in scenarios where the set of possible data constructors is known to be fixed, or closed. Since
+we do not expect to have to support adding new cases to our types very often, the advantages of techniques like pattern
+matching and directly exposing the structure of data types to API consumers outweigh the disadvantages, such as the
+amount of code that would have to be touched to add a new case.
+:::
+
+### Exercise 3.29
+
+Write a new function, called `fold`, that abstracts over the similarities between `size`, `maximum`, `depth`, and `map`.
+Then, reimplement those functions in terms of `fold`. Can you describe the connection between this `fold` and the left
+and right folds of `List`?
+
+## Summary
+
+Breathe a sigh of relief, you made it through Chapter 3! Hopefully, you've become more comfortable with writing and and
+generalizing pure functions in TypeScript. The rabbit hole only gets deeper from here. Next up: how to handle errors
+while adhering to functional principals. In other words, without exceptions.
+
+
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
 fpinscala/fpinscala Wiki"
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
