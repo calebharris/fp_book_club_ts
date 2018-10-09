@@ -8,6 +8,9 @@ lang: en-US
 
 ## Updates
 
+### 8 October 2018
+* Add inline answers to exercises 3.22, 3.23, and 3.24
+
 ### 3 October 2018
 * Add missing exercises 3.19, 3.20, and 3.21
 * Add TypeScript-appropriate exercise 3.1
