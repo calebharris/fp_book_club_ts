@@ -36,8 +36,24 @@ describe("List()", () => {
 });
 
 describe("addCorresponding()", () => {
-  test("adfas", () => {
+  test("adds corresponding elements", () => {
     expect(addCorresponding(List(1, 2, 3), List(4, 5, 6))).toEqual(List(5, 7, 9))
+  });
+
+  test("results in a list the same length as the shortest argument - left", () => {
+    expect(addCorresponding(List(1, 2), List(3, 4, 5))).toEqual(List(4, 6));
+  });
+
+  test("results in a list the same length as the shortest argument - right", () => {
+    expect(addCorresponding(List(1, 2, 3), List(4, 5))).toEqual(List(5, 7));
+  });
+
+  test("retuns Nil if the left argument is Nil", () => {
+    expect(addCorresponding(List(), List(1, 2))).toEqual(Nil);
+  });
+
+  test("retuns Nil if the right argument is Nil", () => {
+    expect(addCorresponding(List(1, 2), List())).toEqual(Nil);
   });
 });
 

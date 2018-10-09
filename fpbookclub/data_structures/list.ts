@@ -51,14 +51,22 @@ export function List<A>(...vals: A[]): List<A> {
   }
 }
 
+//export function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+//return zipWith(a1, a2, (n1, n2) => n1 + n2);
+//}
+
 export function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
-    return foldRight(a1, [List() as List<number>, reverse(a2)], (a, [acc, other]) => {
-      if (other.tag === "cons") {
-        return [new Cons(a + other.head, acc), other.tail];
+  return reverse(foldLeft(
+    a1,
+    [Nil as List<number>, a2],
+    ([acc, rem], a) => {
+      if (rem.tag === "cons") {
+        return [new Cons(a + rem.head, acc), rem.tail];
       } else {
-        return [acc, other];
+        return [acc, rem];
       }
-    })[0];
+    }
+  )[0]);
 }
 
 export function addOne(l: List<number>): List<number> {
