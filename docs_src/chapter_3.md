@@ -766,6 +766,18 @@ Write a function named `size` that counts the number of leaves and branches (col
 function size<A>(ta: Tree<A>): number
 ```
 
+??? answer
+```typescript
+function size(t: Tree<unknown>): number {
+  if (t.tag === "leaf") {
+    return 1;
+  } else {
+    return 1 + size(t.left) + size(t.right);
+  }
+}
+```
+???
+
 ### Exercise 3.26. `maximum`
 
 Write a function `maximum` that returns the maximum value contained in a tree of numbers. You can use TypeScript's
@@ -774,6 +786,18 @@ built-in `Math.max(x, y)` function to calculate the maximum of two numbers `x` a
 ```typescript
 function maximum(tn: Tree<number>): number
 ```
+
+??? answer
+```typescript
+function maximum(t: Tree<number>): number {
+  if (t.tag === "leaf") {
+    return t.value;
+  } else {
+    return Math.max(maximum(t.left), maximum(t.right));
+  }
+}
+```
+???
 
 ### Exercise 3.27. `depth`
 

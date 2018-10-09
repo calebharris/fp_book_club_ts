@@ -32,3 +32,25 @@ export class Branch<A> {
     this.right = right;
   }
 }
+
+/**
+ * Returns the maximum value from a tree of numbers
+ **/
+export function maximum(t: Tree<number>): number {
+  if (t.tag === "leaf") {
+    return t.value;
+  } else {
+    return Math.max(maximum(t.left), maximum(t.right));
+  }
+}
+
+/**
+ * Returns the total number of nodes in a tree
+ **/
+export function size(t: Tree<unknown>): number {
+  if (t.tag === "leaf") {
+    return 1;
+  } else {
+    return 1 + size(t.left) + size(t.right);
+  }
+}

@@ -8,6 +8,9 @@ lang: en-US
 
 ## Updates
 
+### 9 October 2018
+* Add inline answers to 3.25 and 3.26
+
 ### 8 October 2018
 * Add inline answers to exercises 3.22, 3.23, and 3.24
 
