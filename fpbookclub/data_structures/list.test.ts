@@ -10,6 +10,7 @@ import {
   dropWhile,
   filter,
   flatMap,
+  hasSubsequence,
   init,
   length,
   product,
@@ -130,6 +131,28 @@ describe("filter()", () => {
 describe("flatMap()", () => {
   test("returns a flattened List", () => {
     expect(flatMap(List(1, 2), a => List(a))).toEqual(List(1, 2));
+  });
+});
+
+describe("hasSubsequence()", () => {
+  test("returns true if the subsequence is Nil", () => {
+    expect(hasSubsequence(List(1, 2, 3), List())).toBeTruthy();
+  });
+
+  test("returns true if the subsequence exists", () => {
+    expect(hasSubsequence(List("a", "b", "c"), List("b", "c"))).toBeTruthy();
+  });
+
+  test("returns false if the subsequence doesn't exist", () => {
+    expect(hasSubsequence(List("a", "b", "c"), List("x", "y"))).toBeFalsy();
+  });
+
+  test("returns false if only a partial subsequence exists", () => {
+    expect(hasSubsequence(List("a", "b", "c"), List("a", "y"))).toBeFalsy();
+  });
+
+  test("returns false if an interrupted subsequence exists", () => {
+    expect(hasSubsequence(List("a", "b", "c", "a", "c"), List("a", "c"))).toBeTruthy();
   });
 });
 

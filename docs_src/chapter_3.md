@@ -587,10 +587,66 @@ Re-implement `filter` using `flatMap`. As a bonus, can you implement `map` in te
 Write a function that, given two lists, returns a new list consisting of the sums of corresponding elements in the
 argument lists. For example, given `List(1, 2, 3)` and `List(4, 5, 6)`, it should return `List(5, 7, 9)`.
 
+??? answer
+```typescript
+function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+  return foldRight(
+    a1,
+    [List() as List<number>, reverse(a2)],
+    (a, [acc, other]) => {
+      if (other.tag === "cons") {
+        return [new Cons(a + other.head, acc), other.tail];
+      } else {
+        return [acc, other];
+      }
+    }
+  )[0];
+}
+```
+???
+
 ### Exercise 3.23. `zipWith`
 
 Generalize the previous function so that it's not specific to numbers or addition. Call it `zipWith`, and then refactor
 the previous function to use `zipWith`.
+
+??? answer
+```typescript
+function zipWith<A, B, C>(
+    la: List<A>,
+    lb: List<B>,
+    f: (a: A, b: B) => C): List<C> {
+  if (la.tag === "nil" || lb.tag === "nil") {
+    return Nil;
+  } else {
+    return new Cons(f(la.head, lb.head), zipWith(la.tail, lb.tail, f));
+  }
+}
+
+// or, using a fold:
+function zipWith<A, B, C>(
+    la: List<A>,
+    lb: List<B>,
+    f: (a: A, b: B) => C): List<C> {
+  return reverse(foldLeft<A, [List<C>, List<B>]>(
+    la,
+    [Nil, lb],
+    ([acc, rem], a) => {
+      if (rem.tag === "cons") {
+        return [new Cons(f(a, rem.head), acc), rem.tail];
+      } else {
+        return [acc, rem];
+      }
+    }
+  )[0]);
+}
+
+// and the refactored `addCorresponding`:
+function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+  return zipWith(a1, a2, (n1, n2) => n1 + n2);
+}
+```
+???
 
 ### Loss of efficiency when assembling list functions from simpler components
 
@@ -598,7 +654,7 @@ Sometimes, when we express `List` operations in terms of general-purpose functio
 implementations, even though the code ends up being very concise and readable. We may wind up making several passes over
 input lists, or having to write explicit loops to allow for early termination.
 
-### Exercise 3.23. `hasSubsequence`
+### Exercise 3.24. `hasSubsequence`
 
 Write a function, called `hasSubsequence`, to check whether a `List` contains another `List` as a subsequence. For
 example, `List("a", "b", "r", "a")` has subsequences `List("b", "r")` and `List("a")`, among others. This is meant to
@@ -609,6 +665,27 @@ functional, efficient manner. We'll return to this problem, and hopefully find a
 function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean
 ```
 
+??? answer
+```typescript
+// This is just one of many possible implementations, none of which can be
+// both succinct and efficient. This version of the function, for example,
+// is terse, but must process every element of `sup`, even if the subsequence
+// has already been found. Our `List` API just doesn't give us the tools we
+// need to accomplish elegantly this task.
+function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean {
+  const folded = foldLeft(sup, sub, (rem, cur) => {
+    if (rem.tag === "nil") {
+      return Nil;
+    } else if (cur == rem.head) {
+      return rem.tail;
+    } else {
+      return sub;
+    }
+  });
+  return folded === Nil;
+}
+```
+???
 ## Trees
 
 `List` is just one example of an algebraic data type (ADT), which we discussed earlier in the chapter. In this section we'll

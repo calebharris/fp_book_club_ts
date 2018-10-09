@@ -51,22 +51,8 @@ export function List<A>(...vals: A[]): List<A> {
   }
 }
 
-//export function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
-//return zipWith(a1, a2, (n1, n2) => n1 + n2);
-//}
-
 export function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
-  return reverse(foldLeft(
-    a1,
-    [Nil as List<number>, a2],
-    ([acc, rem], a) => {
-      if (rem.tag === "cons") {
-        return [new Cons(a + rem.head, acc), rem.tail];
-      } else {
-        return [acc, rem];
-      }
-    }
-  )[0]);
+  return zipWith(a1, a2, (n1, n2) => n1 + n2);
 }
 
 export function addOne(l: List<number>): List<number> {
@@ -118,6 +104,23 @@ export function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
         return l;
       }
   }
+}
+
+/**
+ * Returns `true` if `sup` contains the entirety of `sub`, uninterrupted,
+ * starting in any position, and `false` otherwise.
+ **/
+export function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean {
+  const folded = foldLeft(sup, sub, (rem, cur) => {
+    if (rem.tag === "nil") {
+      return Nil;
+    } else if (cur == rem.head) {
+      return rem.tail;
+    } else {
+      return sub;
+    }
+  });
+  return folded === Nil;
 }
 
 /**
@@ -211,4 +214,25 @@ export function tail<A>(l: List<A>): List<A> {
 
 export function toString(l: List<number>): List<string> {
   return map(l, a => a.toString());
+}
+
+/**
+ * Returns a list comprising the results of applying `f` to corresponding
+ * elements of the provided lists
+ **/
+export function zipWith<A, B, C>(
+    la: List<A>,
+    lb: List<B>,
+    f: (a: A, b: B) => C): List<C> {
+  return reverse(foldLeft<A, [List<C>, List<B>]>(
+    la,
+    [Nil, lb],
+    ([acc, rem], a) => {
+      if (rem.tag === "cons") {
+        return [new Cons(f(a, rem.head), acc), rem.tail];
+      } else {
+        return [acc, rem];
+      }
+    }
+  )[0]);
 }
