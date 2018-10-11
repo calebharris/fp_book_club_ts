@@ -8,6 +8,9 @@ lang: en-US
 
 ## Updates
 
+### 11 October 2018
+* Add inline answers for 3.2 to 3.12
+
 ### 9 October 2018
 * Add inline answers to 3.25 and 3.26
 

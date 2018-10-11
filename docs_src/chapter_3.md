@@ -335,6 +335,22 @@ Implement the `tail` function for removing the first element of a list. Notice t
 function tail<A>(l: List<A>): List<A>
 ```
 
+??? answer
+```typescript
+// This version throws an exception if the caller passes an empty list, but
+// there are several equally "correct" ways to handle this scenario, such as
+// returning `Nil`. It's up to you as the library designer to choose a method!
+function tail<A>(l: List<A>): List<A> {
+  if (l.tag === "nil") {
+    throw new Error("Attempt to take tail of empty list");
+  }
+
+  return l.tail;
+}
+
+```
+???
+
 ### Exercise 3.3. `setHead`
 
 Now implement `setHead`, which *replaces* the first element of a list with a different value. For example,
@@ -343,6 +359,18 @@ Now implement `setHead`, which *replaces* the first element of a list with a dif
 ```typescript
 function setHead<A>(l: List<A>, head: A): List<A>
 ```
+
+??? answer
+```typescript
+function setHead<A>(l: List<A>, a: A): List<A> {
+  if (l.tag === "nil") {
+    throw new Error("Attempt to set head of empty list");
+  }
+
+  return new Cons(a, l.tail);
+}
+```
+???
 
 The following exercises demonstrate the efficiency of data sharing.
 
@@ -355,6 +383,19 @@ proportional to `n`, and we do not have to make any copies.
 function drop<A>(l: List<A>, n: number): List<A>
 ```
 
+??? answer
+```typescript
+function drop<A>(l: List<A>, n: number): List<A> {
+  if (l.tag === "nil") {
+      throw new Error("Attempt to drop from empty list");
+  }
+
+  if (n <= 0) return l;
+  else return drop(l.tail, n - 1);
+}
+```
+???
+
 ### Exercise 3.5. `dropWhile`
 
 Implement `dropWhile`, which removes elements from the front of a list as long as they match a predicate.
@@ -362,6 +403,25 @@ Implement `dropWhile`, which removes elements from the front of a list as long a
 ```typescript
 function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 ```
+
+??? answer
+```typescript
+function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+  if (l.tag === "nil") {
+      throw new Error("Attempt to drop from empty list");
+  }
+
+  if (p(l.head)) {
+    switch (l.tail.tag) {
+      case "nil": return l.tail;
+      default: return dropWhile(l.tail, p);
+    }
+  }
+
+  return l;
+}
+```
+???
 
 A "more surprising" example of data sharing, this `append` implementation's runtime and memory usage are determined
 entirely by the first list. The second is just tacked onto the end, so to speak.
@@ -386,6 +446,22 @@ like `tail`?
 ```typescript
 function init<A>(l: List<A>): List<A>
 ```
+
+??? answer
+```typescript
+function init<A>(l: List<A>): List<A> {
+  if (l.tag === "nil") {
+    throw new Error("Attempt to get init of empty list");
+  }
+
+  if (l.tail === Nil) {
+    return Nil;
+  }
+
+  return new Cons(l.head, init(l.tail));
+}
+```
+???
 
 Due to the structure and immutability of a `Cons`, any time we want to replace the tail of a list, we have to create a
 new `Cons` element with the new `tail` value and the old `head` value. If that particular `Cons` was itself the `tail`
@@ -475,10 +551,21 @@ In our simplified version of `product`, above, we left out the "short-circuit" b
 any list element is 0. Can we regain this behavior, now that `product` is implemented in terms of `foldRight`? Why or
 why not?
 
+??? answer
+We cannot, because the way `foldRight` iterates through the list is hidden as an implementation detail. There is nothing
+in `foldRight`'s signature that would let us specify a short-circuiting behavior.
+???
+
 ### Exercise 3.8. Relationship between `foldRight` and `List` data constructors
 
 See what happens when you pass `Nil` and `Cons` themselves to `foldRight`, like this: `foldRight(List(1, 2, 3), Nil, (h,
-t) => Cons(h, t))`. What does this say about the relationship between `foldRight` and the data constructors of `List`?
+t) => new Cons(h, t))`. What does this say about the relationship between `foldRight` and the data constructors of
+`List`?
+
+??? answer
+You get a copy of the original list. You could say that `foldRight` replaces the `Nil` constructor with the `z` value
+and the `Cons` constructor with the result of applying the function `f`.
+???
 
 ### Exercise 3.9. `length` via `foldRight`
 
@@ -487,6 +574,14 @@ Compute the length of a list using `foldRight`.
 ```typescript
 function length<A>(l: List<A>): number
 ```
+
+??? answer
+```typescript
+function length<A>(l: List<A>): number {
+  return foldRight(l, 0, (a, b) => b + 1);
+}
+```
+???
 
 ### Exercise 3.10. `foldLeft`
 
@@ -501,9 +596,49 @@ by writing a tail-recursive version of `foldLeft` and then transform it into an 
 function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B
 ```
 
+??? answer
+```typescript
+// tail-recursive solution
+function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+  const go = (la: List<A>, acc: B): B => {
+    if (la.tag === "nil") return acc;
+    else return go(la.tail, f(acc, la.head));
+  };
+
+  return go(l, z);
+}
+
+// iterative solution
+function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+  var state = z;
+  while (l.tag !== "nil") {
+    state = f(state, l.head);
+    l = l.tail;
+  }
+  return state;
+}
+```
+???
+
 ### Exercise 3.11. Refactor `sum`, `product`, and `length`
 
 Rewrite `sum`, `product`, and `length` in terms of `foldLeft`.
+
+??? answer
+```typescript
+function sum(ns: List<number>): number {
+  return foldLeft(ns, 0, (sum, n) => n + sum);
+}
+
+function product(ns: List<number>): number {
+  return foldLeft(ns, 1.0, (prod, n) => n * prod);
+}
+
+function length<A>(l: List<A>): number {
+  return foldLeft(l, 0, (len, a) => len + 1);
+}
+```
+???
 
 ### Exercise 3.12. `reverse`
 
@@ -512,6 +647,14 @@ Write a function that returns the reverse of a list. See if you can do it using 
 ```typescript
 function reverse<A>(l: List<A>): List<A>
 ```
+
+??? answer
+```typescript
+function reverse<A>(l: List<A>): List<A> {
+  return foldLeft(l, List(), (rev, a) => new Cons(a, rev));
+}
+```
+???
 
 ### Exercise 3.13. `foldRight` and `foldLeft` in terms of each other
 
