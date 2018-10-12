@@ -37,9 +37,7 @@ export class Branch<A> {
  * Returns the maximum path length from the root node to a leaf
  **/
 export function depth<A>(t: Tree<A>): number {
-  if (t.tag === "leaf") return 1;
-
-  return Math.max(depth(t.left), depth(t.right)) + 1;
+  return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
 }
 
 /**
@@ -59,29 +57,19 @@ export function fold<A, B>(t: Tree<A>,
  * containing the result of applying `f` to each leaf in the input tree
  **/
 export function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
-  if (t.tag === "leaf") return new Leaf(f(t.value));
-
-  return new Branch(map(t.left, f), map(t.right, f));
+  return fold(t, a => new Leaf(f(a)) as Tree<B>, (l, r) => new Branch(l, r));
 }
 
 /**
  * Returns the maximum value from a tree of numbers
  **/
 export function maximum(t: Tree<number>): number {
-  if (t.tag === "leaf") {
-    return t.value;
-  } else {
-    return Math.max(maximum(t.left), maximum(t.right));
-  }
+  return fold(t, n => n, (l, r) => Math.max(l, r));
 }
 
 /**
  * Returns the total number of nodes in a tree
  **/
 export function size(t: Tree<unknown>): number {
-  if (t.tag === "leaf") {
-    return 1;
-  } else {
-    return 1 + size(t.left) + size(t.right);
-  }
+  return fold(t, x => 1, (l, r) => l + r + 1);
 }
