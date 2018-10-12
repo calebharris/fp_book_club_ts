@@ -977,6 +977,16 @@ input `Tree`, but with elements transformed by a provided function.
 function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
 ```
 
+??? answer
+```typescript
+function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
+  if (t.tag === "leaf") return new Leaf(f(t.value));
+
+  return new Branch(map(t.left, f), map(t.right, f));
+}
+```
+???
+
 ::: tip ADTs and encapsulation
 As you've worked through the exercises in this chapter, you may have caught yourself thinking, "Wow, it sure seems like
 we're exposing an awful lot of the internals of our data structures to the users of our API." To quote the book:
@@ -997,6 +1007,48 @@ amount of code that would have to be touched to add a new case.
 Write a new function, called `fold`, that abstracts over the similarities between `size`, `maximum`, `depth`, and `map`.
 Then, reimplement those functions in terms of `fold`. Can you describe the connection between this `fold` and the left
 and right folds of `List`?
+
+??? answer
+```typescript
+function fold<A, B>(t: Tree<A>,
+                           f: (a: A) => B,
+                           g: (l: B, r: B) => B): B {
+  if (t.tag === "leaf") return f(t.value);
+
+  return g(fold(t.left, f, g), fold(t.right, f, g));
+}
+
+function size(t: Tree<unknown>): number {
+  return fold(t, x => 1, (l, r) => l + r + 1);
+}
+
+function maximum(t: Tree<number>): number {
+  return fold(t, n => n, (l, r) => Math.max(l, r));
+}
+
+function depth(t: Tree<unknown>): number {
+  return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
+}
+
+function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
+  return fold(t, a => new Leaf(f(a)) as Tree<B>, (l, r) => new Branch(l, r));
+}
+```
+
+Folding over a tree and folding over a list do the same thing, conceptually: collapse a data structure into a value
+(which may itself be a data structure) by incrementally applying functions to each node of the structure, carrying along
+an intermediate value in an "accumulator". Our `fold` implementation for trees is similar to `foldRight` for lists in
+that the caller needs to specify how to deal with each data constructor. Recall `foldRight`:
+
+```typescript
+function foldRight<A, B>(l: List<A>, z: B, f: (a: A) => B): B
+```
+
+The function `f` handles the `Cons` data constructor, while `Nil` is simply replaced with the "zero" value, `z`. For
+trees, we need to specify two functions, `f` for `Leaf` nodes and `g` for `Branch` nodes. Analagously to the `List`
+case, passing the data constructor functions for `f` and `g` copies the tree: `fold(t, a => new Leaf(a), (l, r) => new
+Branch(l, r))`.
+???
 
 ## Summary
 
