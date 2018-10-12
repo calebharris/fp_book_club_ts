@@ -36,7 +36,7 @@ export class Branch<A> {
 /**
  * Returns the maximum path length from the root node to a leaf
  **/
-export function depth<A>(t: Tree<A>): number {
+export function depth(t: Tree<unknown>): number {
   return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
 }
 
@@ -50,7 +50,6 @@ export function fold<A, B>(t: Tree<A>,
 
   return g(fold(t.left, f, g), fold(t.right, f, g));
 }
-
 
 /**
  * Returns a new tree of the same shape as the input tree, with each leaf

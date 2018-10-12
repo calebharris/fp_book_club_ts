@@ -906,8 +906,16 @@ class Branch<A> {
 Write a function named `size` that counts the number of leaves and branches (collectively called "nodes") in a tree.
 
 ```typescript
-function size<A>(ta: Tree<A>): number
+function size(ta: Tree<unknown>): number
 ```
+
+::: tip The unknown type
+The `unknown` type signifies to TypeScript that we do not know what type of values the passed-in tree contains, and also
+that we do not care. Our `size` function needs to know nothing about the values to do its job. Attempting to reference
+the values in the Leaf nodes would cause a compile error. The `unknown` type can help enforce the constraint that a
+function maintain a strict ignorance about values contained in the structures it deals with, and therefore prevent
+accidentally coupling the function to a type.
+:::
 
 ??? answer
 ```typescript
@@ -947,8 +955,18 @@ function maximum(t: Tree<number>): number {
 Write a function `depth` that returns the maximum path length from the "root", or top, of a tree to any leaf.
 
 ```typescript
-function depth<A>(ta: Tree<A>): number
+function depth(ta: Tree<unknown>): number
 ```
+
+??? answer
+```typescript
+function depth(t: Tree<unknown>): number {
+  if (t.tag === "leaf") return 1;
+
+  return Math.max(depth(t.left), depth(t.right)) + 1;
+}
+```
+???
 
 ### Exercise 3.28. `map`
 
