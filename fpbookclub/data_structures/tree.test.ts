@@ -32,7 +32,7 @@ describe("depth",  () => {
     expect(fns.depth(new Branch(new Leaf("hello"), new Leaf("world")))).toEqual(2);
   });
 
-  test("of an unbalanced tree", () => {
+  test("of an unbalanced tree returns longest path", () => {
     expect(fns.depth(
         new Branch(
           new Leaf("hello"),
@@ -46,12 +46,15 @@ describe("depth",  () => {
 });
 
 describe("map", () => {
-  test("works", () => {
-    expect(
-      fns.map(new Branch(new Leaf("one"), new Leaf("two")),
-        s => s.toUpperCase()
-      )
-    ).toEqual(new Branch(new Leaf("ONE"), new Leaf("TWO")));
+  test("with identity function creates identical copy", () => {
+    const id: <A>(a: A) => A = a => a;
+    const ogTree = new Branch(new Leaf("one"), new Leaf("two"));
+    const copyTree = fns.map(ogTree, id);
+    expect(copyTree).toEqual(copyTree);
+    expect(copyTree).not.toBe(ogTree);
   });
 
+  test("applies the function", () => {
+    expect(fns.map(new Leaf("lowercase"), s => s.toUpperCase())).toEqual(new Leaf("LOWERCASE"));
+  });
 });
