@@ -8,6 +8,10 @@ lang: en-US
 
 ## Updates
 
+### 12 October 2018
+* Add inline answers for all remaining Tree exercises in Ch. 3
+* Use and explain `unknown` in some Tree functions
+
 ### 11 October 2018
 * Add inline answers for 3.2 to 3.12
 
