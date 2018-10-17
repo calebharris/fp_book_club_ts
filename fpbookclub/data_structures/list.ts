@@ -137,9 +137,13 @@ export function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
 }
 
 export function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B> {
-  return concat(map(l, f));
+  return foldRight(l, List(), (a, acc) => append(f(a), acc));
 }
 
+/**
+ * Folds every element of the list into a single value by recursively applying
+ * the provided function, starting at the left-hand side of the list.
+ **/
 export function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
   var state = z;
   while (l.tag !== "nil") {
@@ -150,15 +154,11 @@ export function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
 }
 
 /**
- * Uses recursion and pattern matching to apply a function that "folds"
- * every element of the list into a single value
+ * Folds every element of the list into a single value by recursively applying
+ * the provided function, starting at the right-hand side of the list.
  **/
 export function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
-//  return foldLeft(reverse(l), z, (b, a) => f(a, b));
-  switch (l.tag) {
-    case "nil": return z;
-    case "cons": return f(l.head, foldRight(l.tail, z, f));
-  }
+  return foldLeft(reverse(l), z, (b, a) => f(a, b));
 }
 
 /**
@@ -168,8 +168,12 @@ export function length<A>(l: List<A>): number {
   return foldLeft(l, 0, (len, a) => len + 1);
 }
 
+/**
+ * Returns a new list where each element is the result of applying `f`
+ * to the corresponding element in `la`
+ **/
 export function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
-  return foldRight(la, List(), (a, b) => new Cons(f(a), b));
+  return flatMap(la, a => List(f(a)));
 }
 
 /**

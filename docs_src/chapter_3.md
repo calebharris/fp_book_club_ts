@@ -661,9 +661,61 @@ function reverse<A>(l: List<A>): List<A> {
 Can you write `foldLeft` in terms of `foldRight`? How about the other way around? If we can express `foldRight` in terms
 of `foldLeft`, we gain the ability to fold a list right-wise in a stack-safe way.
 
+??? answer
+To implement `foldLeft` in terms of `foldRight`, we can't just reverse the list and call `foldRight`, because `reverse`
+calls `foldLeft`, which would lead to an infinite loop. We could rewrite `reverse`, but that's no fun!
+
+Thinking about `reverse` leads us to a useful insight: we need to somehow "reverse" the usual order of execution of
+`foldRight`. One strategy is to delay evaluation of the combiner function, `f`. So rather than immediately computing a
+result, we can use `foldRight` to build up a function that, when evaluated, applies the combiner function to the list
+elements in first-to-last order, instead of `foldRight`'s usual last-to-first order.
+
+```typescript
+function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+  // This is the result type for our inner call to `foldRight`, a function
+  // that transforms a value of type `B` to a result also of type `B`. Such a
+  // function is called an "endomorphism", hence the name of our type alias:
+  // `END_B`.
+  type END_B = (b: B) => B;
+
+  // This is the `z` value for the call to `foldRight`, which is a simple
+  // identity function.
+  const id: END_B = b => b;
+
+  // This is the combiner function for the call to `foldRight`. It takes a
+  // list element, `a`, and an `END_B` function, `g`, and returns another
+  // `END_B` function that, when applied, calls our original combiner
+  // function, `f`, with the provided `B` value and the captured `A` value,
+  // and then passes the result to the captured `END_B` function.
+  const deferred = (a: A, g: END_B) => (b: B) => g(f(b, a));
+
+  // We use `foldRight` to build up our reversing function, call it with the
+  // original `z` value, and return the result.
+  return foldRight<A, END_B>(l, id, deferred)(z);
+}
+```
+
+Implementing `foldRight` in terms of `foldLeft` is much more straightforward. We just reverse the list and pass it to
+`foldLeft`. Since this gives us a nice, stack-safe `foldRight` implementation, we'll keep it.
+
+```typescript
+function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
+  return foldLeft(reverse(l), z, (b, a) => f(a, b));
+}
+```
+???
+
 ### Exercise 3.14. Refactor `append`
 
 Rewrite `append` using either fold.
+
+??? answer
+```typescript
+function append<A>(a1: List<A>, a2: List<A>): List<A> {
+  return foldRight(a1, a2, (a, b) => new Cons(a, b));
+}
+```
+???
 
 ### Exercise 3.15 `concat`
 
@@ -673,6 +725,14 @@ runtime of `concat` should be proportional to the total length of all lists.
 ```typescript
 function concat<A>(ll: List<List<A>>): List<A>
 ```
+
+??? answer
+```typescript
+function concat<A>(ll: List<List<A>>): List<A> {
+  return foldRight(ll, List(), (a, b) => append(a, b));
+}
+```
+???
 
 ### More functions for working with lists
 
@@ -689,19 +749,44 @@ abstract functions that we can use in any domain.
 Write a function that transforms a list of integers by adding 1 to each element. (Reminder: this should be a pure
 function that returns a new List!)
 
+??? answer
+```typescript
+function addOne(l: List<number>): List<number> {
+  return foldRight(l, List(), (a, b) => new Cons(a + 1, b));
+}
+```
+???
+
 ### Exercise 3.17. Convert `number` to `string`
 
 Write a function that turns each value in a `List<number>` into a `string`. You can use the expression `n.toString()` to
 convert some `n: number` to a `string`.
 
+??? answer
+```typescript
+function toString(l: List<number>): List<string> {
+  return foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
+}
+```
+???
+
 ### Exercise 3.18. `map`
 
 Write a function `map` that generalizes modifying each element in a list while maintaining the structure of the list.
-Here is its signature:
+Then, refactor your answers to the previous two exercises using `map`. Here is its signature:
 
 ```typescript
 function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
 ```
+
+??? answer
+```typescript
+function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
+  return foldRight(la, List(), (a, b) => new Cons(f(a), b));
+}
+```
+???
+
 ### Exercise 3.19. `filter`
 
 Write `filter`, a function that removes elements from a list unless they satisfy a predicate. Then practice using it by
@@ -710,6 +795,14 @@ removing all odd numbers from a `List<number>`. Is it possible to implement `fil
 ```typescript
 function filter<A>(l: List<A>, p: (a: A) => boolean): List<A>
 ```
+
+??? answer
+```typescript
+function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+  return foldRight(l, List(), (a, acc) => p(a) ? new Cons(a, acc) : acc);
+}
+```
+???
 
 ### Exercise 3.20. `flatMap`
 
@@ -721,9 +814,29 @@ i))` should return `List(1, 1, 2, 2, 3, 3)`.
 function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B>
 ```
 
+??? answer
+```typescript
+function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B> {
+  return foldRight(l, List(), (a, acc) => append(f(a), acc));
+}
+```
+???
+
 ### Exercise 3.21. `filter` in terms of `flatMap`
 
 Re-implement `filter` using `flatMap`. As a bonus, can you implement `map` in terms of `flatMap`?
+
+??? answer
+```typescript
+function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+  return flatMap(l, a => p(a) ? List(a) : List());
+}
+
+function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
+  return flatMap(la, a => List(f(a)));
+}
+```
+???
 
 ### Exercise 3.22. Add corresponding elements
 
