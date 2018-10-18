@@ -6,10 +6,7 @@ abstract class OptionBase<A> {
   }
 
   map<B>(f: (a: A) => B): Option<B> {
-    if (this instanceof Some) {
-      return new Some(f(this.value));
-    }
-    return NONE;
+    throw new Error("Not implemented");
   }
 }
 
