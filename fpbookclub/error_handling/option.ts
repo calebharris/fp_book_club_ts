@@ -1,7 +1,23 @@
 export type Option<A> = Some<A> | None;
 
 abstract class OptionBase<A> {
-  isSome(): boolean {
+  filter(p: (a: A) => boolean): Option<A> {
+
+    throw new Error("Not implemented");
+  }
+
+  getOrElse(onEmpty: () => A): A {
+    if (this.isSome()) {
+      return this.value;
+    }
+    return onEmpty();
+  }
+
+  isNone(): this is None {
+    return (this instanceof None);
+  }
+
+  isSome(): this is Some<A> {
     return (this instanceof Some);
   }
 
@@ -25,3 +41,7 @@ export class None extends OptionBase<never> {
 }
 
 export const NONE = new None();
+
+export function none<A>(): Option<A> {
+  return NONE;
+}
