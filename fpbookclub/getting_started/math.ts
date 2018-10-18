@@ -4,6 +4,14 @@
 
 import * as assert from "assert";
 
+import {
+  Cons,
+  List,
+  Nil,
+  length,
+  sum
+} from "../data_structures/list";
+
 /**
  * Our venerable abs function. You know what it does.
  **/
@@ -119,4 +127,11 @@ export function isSorted<A>(vals: A[], ordered: (l: A, r: A) => boolean): boolea
  **/
 export function formatResult(name: string, x: number, f: (n: number) => number): string {
   return `The ${name} of ${x} is ${f(x)}`;
+}
+
+export function mean(xs: List<number>): number {
+  if (xs.tag === "nil")
+    throw new Error("Attempt to take mean of empty list");
+
+  return sum(xs) / length(xs);
 }

@@ -8,6 +8,12 @@ lang: en-US
 
 ## Updates
 
+### 18 October 2018
+* Start pushing some stuff about Option from Ch. 4
+
+### 17 October
+* Add inline answers for all remaining Ch. 3 exercises
+
 ### 12 October 2018
 * Add inline answers for all remaining Tree exercises in Ch. 3
 * Use and explain `unknown` in some Tree functions

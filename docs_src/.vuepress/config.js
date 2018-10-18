@@ -28,7 +28,8 @@ module.exports = {
         items: [
           { text: "Chapter 1", link: "/chapter_1" },
           { text: "Chapter 2", link: "/chapter_2" },
-          { text: "Chapter 3", link: "/chapter_3" }
+          { text: "Chapter 3", link: "/chapter_3" },
+          { text: "Chapter 4", link: "/chapter_4" }
         ]
       },
       { text: "GitHub", link: "https://github.com/calebharris/fp_book_club_ts" }
@@ -36,7 +37,8 @@ module.exports = {
     sidebar: [
       "/chapter_1",
       "/chapter_2",
-      "/chapter_3"
+      "/chapter_3",
+      "/chapter_4"
     ],
     sidebarDepth: 2
   }
