@@ -3,7 +3,6 @@ import {
   Some,
   None,
   NONE,
-  none
 } from "./option";
 
 describe("getOrElse()", () => {
@@ -12,16 +11,16 @@ describe("getOrElse()", () => {
   });
 
   test("returns the default for None", () => {
-    expect(none<string>().getOrElse(() => "world")).toEqual("world");
+    expect(NONE.getOrElse(() => "world")).toEqual("world");
   });
 });
 
-describe("isSome()", () => {
-  test("returns true for a Some", () => {
-    expect(new Some("hello").isSome()).toBeTruthy();
+describe("map()", () => {
+  test("applies the function for on a Some", () => {
+    expect(new Some("hello").map(s => s.length)).toEqual(new Some(5));
   });
 
-  test("returns false for a None", () => {
-    expect(NONE.isSome()).toBeFalsy();
+  test("just returns None for a None", () => {
+    expect(NONE.map((s: string) => s.length)).toEqual(new None());
   });
 });
