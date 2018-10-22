@@ -8,6 +8,9 @@ lang: en-US
 
 ## Updates
 
+### 22 October 2018
+* Add exercise 4.1
+
 ### 21 October 2018
 * Figure out good representation of Option
 * Add (overly long) notes explaining Option's implementation

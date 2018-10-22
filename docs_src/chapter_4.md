@@ -325,6 +325,17 @@ makes sense for it not to have a type parameter. But, because it extends `Option
 parameter and "pass it on" to `OptionBase`, or extend `OptionBase` with a specific type. We know we don't want to
 parameterize `None`, so we must fix a specific type, and `never` makes the most sense: `None` can `never` hold a value.
 
+### Exercise 4.1. Implement `Option` functions
+
+Implement the five functions declared on `OptionBase`: `map`, `getOrElse`, `filter`, `flatMap`, and `orElse`.
+
+* It's fine to use our pattern-matching approximation and directly examine whether `this` is `Some` or `None`, but you
+  should really only need to do that in `map` and `getOrElse`. All the other functions should be expressible in terms of
+  `map`, `getOrElse`, and each other.
+* The type signatures of `map` and `flatMap` should be enough to guide their implementation.
+* `getOrElse` returns the contained value of a `Some`, or the value returned by the thunk in case of a `None`.
+* `orElse` is similar to `getOrElse`, but the return type of the thunk, and of itself, is `Option`.
+
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"

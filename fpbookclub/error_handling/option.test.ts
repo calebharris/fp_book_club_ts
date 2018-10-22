@@ -5,6 +5,12 @@ import {
   NONE,
 } from "./option";
 
+describe("filter()", () => {
+});
+
+describe("flatMap()", () => {
+});
+
 describe("getOrElse()", () => {
   test("returns the value of a Some", () => {
     expect(new Some("hello").getOrElse(() => "world")).toEqual("hello");
@@ -23,4 +29,7 @@ describe("map()", () => {
   test("just returns None for a None", () => {
     expect(NONE.map((s: string) => s.length)).toEqual(new None());
   });
+});
+
+describe("orElse()", () => {
 });
