@@ -117,7 +117,7 @@ abstract class OptionBase<A> {
   // 2. `this` parameter
   map<B>(this: Option<A>, f: (a: A) => B): Option<B> { ... }
 
-  // 3. `extends` keyword introduces type bound
+  // 3. `extends` keyword introducing type bound
   // 4. `() => U` function type is a "thunk"
   getOrElse<T extends U, U>(this: Option<T>, onNone: () => U): U { ... }
 
@@ -126,7 +126,7 @@ abstract class OptionBase<A> {
   orElse<T extends U, U>(this: Option<T>, ou: () => Option<U>) { ... }
 }
 
-// 5. `extends` keyword creates inheritance relationship
+// 5. `extends` keyword creating inheritance relationship
 export class Some<A> extends OptionBase<A> {
   readonly tag: "some" = "some";
   readonly value: A;
@@ -193,13 +193,139 @@ Invocation and `this`"][js_this] by Yehuda Katz and [the "Functions" section of 
 :::
 
 The reason we need to include a `this` parameter in the method signatures of our `OptionBase` is that we want to take
-advantage of the compiler help we get when using tagged unions (which we discussed in
-[Chapter 3](chapter_3.html#representing-algebraic-data-types-in-typescript)). Because `OptionBase` is an abstract class,
-it is open to be extended by other concrete classes beyond our `Some` and `None`. That means the TypeScript compiler can
-never know all the possible types that can be an `OptionBase`, which defeats our tagged union structure. The workaround
-is to fix the type of `this` in our methods to `Option`, which is our tagged union type and therefore closed to
-additions. Doing so makes attempting to call our `OptionBase` methods on anything other than a `Some` or `None` a
-compile error.
+advantage of the compiler help we get when using tagged unions (which we discussed in [Chapter 3][ch_3_adt]). Because
+`OptionBase` is an abstract class, it is open to be extended by other concrete classes beyond our `Some` and `None`.
+That means the TypeScript compiler can never know all the possible types that can be an `OptionBase`, which defeats our
+tagged union structure. The workaround is to fix the type of `this` in our methods to `Option`, which is our tagged
+union type and therefore closed to additions. Doing so makes attempting to call our `OptionBase` methods on anything
+other than a `Some` or `None` a compile error.
+
+#### 3. Type bounds
+
+Our `Option` module uses the `extends` keyword in two separate but related ways. The first is in the parameter lists of
+`getOrElse` and `orElse`. In a type parameter list, the syntax `<T extends U, U>` declares two type parameters and a
+relationship between them in which `T` must be equal to or a subtype of `U`. This is known as a *type bound*,
+specifically an *upper type bound*. The right hand side of the `extends` keyword need not be another type variable, but
+could be a concrete type, as in `<T extends string>`.
+
+So why do we need this? Bear with me, this is a bit of a long explanation. First, we need to talk about *variance*.
+Variance, in this context, refers to how the relationship between types that might be substituted for type parameters
+affects the relationship between instances of generic types. Consider the following class hierarchy:
+
+```typescript
+class Pet {
+  name: string;
+}
+
+class Fish extends Pet { }
+
+class Dog extends Pet {
+  breed: string;
+}
+```
+
+In this snippet, `Fish` and `Dog` are subtypes of `Pet` (we still haven't explained what `extends` means when used like
+this, but hopefully the meaning is starting to become clear). What does that say about the relationship between
+`Option<Pet>` and `Option<Fish>`? Well, that depends on the *variance* of `Option`. There are three possibilities,
+called *covariance*, *contravariance*, and *invariance*:
+
+* If `Option<Fish>` is a subtype of `Option<Pet>`, we say that `Option` is *covariant*.
+* If `Option<Fish>` is a supertype of `Option<Pet>` (i.e. the relationship is reversed), we say that `Option` is
+  *contravariant*.
+* If `Option<Fish>` is neither a subtype nor a supertype of `Option<Pet>` (i.e. there is no relationship and one cannot
+  be used where the other is expected), we say that `Option` is *invariant*.
+
+In TypeScript, generic classes are covariant: an instance of `Option<Fish>` can be used wherever an `Option<Pet>` is
+expected. Functions are bit more complicated: they are covariant in their return type, but contravariant in their
+argument types. To understand why, consider the `map` function of `Option`. It expects a function that takes a parameter
+of type `A` and returns a value of type `B`. Let's assume that `A` and `B` have been resolved to `Pet` and `string`,
+respectively. The code below is simplified and does not include a `this` parameter, which doesn't impact this
+discussion:
+
+```typescript
+function map<string>(f: (a: Pet) => string): Option<string>
+```
+
+It's clear that the `f` we pass to `map` can return a `string` or any subtype of `string`, since the calling code can
+deal with the result as though it were a `string` without caring about its finer-grained type. But `f` must be able to
+accept a `Pet` value. If we attempt to pass a function that requires something more specific, like a `Dog`, we might run
+into trouble. Our function might, for example, try to access the `breed` property, which isn't guaranteed to exist for
+all `Pet`s. Thus, the only way to ensure type safety is to require `f` to accept a `Pet` *or any supertype of* `Pet`,
+demonstrating that functions are contravariant in their argument types.
+
+OK, we're almost there. We know what variance is, and we know what type bounds are. So what does this have to do with
+`orElse` and `getOrElse`? Let's look again at the signature of `getOrElse`.
+
+```typescript
+getOrElse<T extends U, U>(this: Option<T>, onEmpty: () => U): U
+```
+
+Recall that `OptionBase` has one type parameter, `A`. But why doesn't `A` show up in `getOrElse`? Well, it's all
+`None`'s fault. `None` extends `OptionBase<never>`. We haven't talked about this yet, but `never` is the so-called
+*bottom type* in TypeScript, representing the type of expressions that either are never evaluated or never return. It's
+called the bottom type because it is a subtype of every other type. One of the rules of `never` is that values of type
+`never` are only assignable to variables of type `never`.
+
+Remember `mean`? It results in an `Option<number>`, which could be either a `Some<number>` or a `None`. Say we want to
+execute this snippet:
+
+```typescript
+const vals = ...;
+const avg: number = mean(vals).getOrElse(() => -1);
+```
+
+ Now, imagine that `getOrElse` didn't have any fancy extra type parameters, instead just using the base type's `A`
+parameter, like so:
+
+```typescript
+getOrElse(this: Option<A>, onEmpty: () => A): A
+```
+
+ If `vals` in the above fragment contained a non-empty list, `mean` would return a `Some<number>`, and `getOrElse` would
+return the contained number. But, if `vals` were an empty list, then we'd end up with a `None`, and `getOrElse` would
+return a value of type `never`. By the rule of `never` we discussed earlier, we cannot assign a `never` value to
+variable of type `number`, and we end up with a compile error. We need a way to specify that `getOrElse` returns a
+supertype of `A`. Since everything is a supertype of `never`, this would work for the `None` case. In other words, we
+need to specify a new type parameter whose *lower bound* is `A`.
+
+TypeScript does not have direct syntax for defining lower bounds, but it is possible to do so when we can express the
+lower bound as an inverted upper bound. Look back at the real `getOrElse`. The type parameter list, `<T extends U, U>`,
+establishes `U` as the upper bound of `T`. We can also say that `T` is the lower bound of `U`. Now, we just need to
+relate `A` to `T` and `U` somehow. The `this` parameter, `this: Option<T>`, effectively makes `T` an alias of `A`.
+Voila! We have established `A` as the lower bound of `U`.
+
+Returning to our example snippet, if `mean` returns `None`, then `A` is resolved to `never`, but `U` in `getOrElse` is
+resolved to `number` because of the function we pass in to provide the default value: `() => -1`. This works because
+`number` is a supertype of `never`. That means the whole expression returns a value of type `number`, and we have
+restored type safety!
+
+Whew! That took a while. Don't worry if this stuff about variance isn't immediately clear to you. As long as you can
+follow the types in the given function signatures, you'll still be able to understand this chapter and complete the
+exercises. Also, check out the [online notes about variance][fpis_var] for *Functional Programming in Scala*.
+
+#### 4. Thunks
+
+It would be advantageous if the default values provided to `getOrElse` and `orElse` were not evaluated unless they had
+to be. In other words, we'd like them to be *lazily evaluated*. TypeScript does not provide an explicit mechanism for
+lazy evaluation. But, a common technique in FP to achieve the effect of lazy evaluation is to accept, instead of a
+value, a function that returns a value of the needed type. Such a function is called a *thunk*, and you'll see them
+often throughout these notes.
+
+#### 5. Inheritance
+
+Finally, we come to the use of `extends` in the definition of the `Some` and `None` classes, which both extend
+`OptionBase`. This sets up an inheritance relationship, meaning that `Some` and `None` *inherit* methods and properties
+defined on `OptionBase`.
+
+#### 6. The bottom type
+
+We've already encountered `never` in our journey to understand variance. There's not much more to say here, except that
+we'll see `never` used in the future, as it is here, to collapse possibilities. Since `None` cannot hold a value, it
+makes sense for it not to have a type parameter. But, because it extends `OptionBase`, it must either declare a type
+parameter and "pass it on" to `OptionBase`, or extend `OptionBase` with a specific type. We know we don't want to
+parameterize `None`, so we must fix a specific type, and `never` makes the most sense: `None` can `never` hold a value.
 
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
+[ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"
+[fpis_var]: https://github.com/fpinscala/fpinscala/wiki/Chapter-4:-Handling-errors-without-exceptions#variance-in-optiona "fpinscala Wiki"

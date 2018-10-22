@@ -8,6 +8,10 @@ lang: en-US
 
 ## Updates
 
+### 21 October 2018
+* Figure out good representation of Option
+* Add (overly long) notes explaining Option's implementation
+
 ### 18 October 2018
 * Start pushing some stuff about Option from Ch. 4
 
