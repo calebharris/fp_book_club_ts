@@ -339,6 +339,115 @@ Implement the five functions declared on `OptionBase`: `map`, `getOrElse`, `filt
 * `getOrElse` returns the contained value of a `Some`, or the value returned by the thunk in case of a `None`.
 * `orElse` is similar to `getOrElse`, but the return type of the thunk, and of itself, is `Option`.
 
+#### When to use the basic Option functions
+
+When working with `Option` values, we can always explicity test for `Some` vs. `None` and act accordingly. But usually,
+we'll use the higher-order functions you implemented in the first exercise of this chapter. These allow us to build up
+complex executions using `Option`s without having to sprinkle our code with `if`-checks, and defer error-handling to the
+end.
+
+Let's look at a few examples, using the following snippet of a human resources application:
+
+```typescript
+class Employee {
+  name: string;
+  department: string;
+  manager: Option<Employee>
+}
+
+function lookupByName(name: string): Option<Employee> { ... }
+```
+
+To look up an employee named Joe, and if he exists, get his department, we could write:
+
+```typescript
+let joeDept: Option<string>;
+const joe = lookupByName("Joe");
+if (joe.tag === "some")
+  joeDept = new Some(joe.value);
+else
+  joeDept = NONE;
+```
+
+But this is exactly what `map` does for us. It's much simpler to write:
+
+```typescript
+const joeDept = lookupByName("Joe").map(emp => emp.department);
+```
+
+We achieve the same result: `joeDept` is a `Some<string>` if Joe exists, and a `None` if not. The code to extract Joe's
+department only runs in the `Some` case. Note that we also did away with the need for intermediate mutable state. Here
+are some other ways we can compose these functions together:
+
+```typescript
+// `Some(manager)` if Joe exists and has a manager
+// `None` if Joe doesn't exist or doesn't have a manager
+lookupByName("Joe").flatMap(emp => emp.manager);
+
+// Joe's department if he exists
+// "Default Dept." if not
+lookupByName("Joe").map(emp => emp.department).getOrElse("Default Dept.");
+```
+
+### Exercise 4.2. Implement `variance` in terms of `flatMap`
+
+Implement a `variance` function using Option's `flatMap`. The variance of a set of numbers is the average of the square
+of each element's distance from the set's mean. You can use the formula `Math.pow(x - m, 2)` for each element `x` in the
+list to calculate the distance, where `m` is the mean of the list.
+
+```typescript
+function variance(xs: List<number>): Option<number>
+```
+
+With `flatMap`, we can build up a computation with multiple stages that will abort as soon as the first failure is
+encountered. We can inject `filter` stages to convert successes to failures if any intermediate results don't meet a
+particular expectation. These kind of transformation of an `Option` using `map`, `flatMap`, and `filter`, with
+`getOrElse` doing error-handling at the end, is a common pattern in FP.
+
+```typescript
+const dept: string = lookupByName("Joe")
+                       .map(emp => emp.department)
+                       .filter(dept => dept != "Accounting")
+                       .getOrElse("Default Dept.");
+```
+
+`Option` gives us convenient transformations, consolidation of error-handling, *and* an added layer of protection from
+mistakes. The compiler will not let us forget to handle the possibility of `None`.
+
+### Option composition, lifting, and wrapping exception-oriented APIs
+
+Although it may seem like `Option` could end up infecting our entire code base, that does not happen in practice due to
+our ability to convert easily functions that deal with plain values into functions that operate on `Option`. When we
+convert a function this way, we say that we've *lifted* the function into the *context* of `Option`. We could just as
+easily lift a function into `List`, or any of the data types we'll explore later in the book.
+
+We already have the ability to lift a function of one argument using `map`:
+
+```typescript
+function lift<A, B>(f: (a: A) => B): (o: Option<A>) => Option<B> {
+  return o => o.map(f);
+}
+```
+
+We can use `lift` on any function we happen to have lying around to make it compatible with `Option`. For example:
+
+```typescript
+const absOpt: (o: Option<number>) => Option<number> = lift(Math.abs);
+```
+
+### Exercise 4.3. `map2`
+
+Write a function, `map2`, that combines two `Option`-wrapped values using a provided function. Only when both input
+`Option`s are `Some` should `map2` produce a `Some`. Otherwise, it should return `None`. Since the syntax
+`optionC = optionA.map2(optionB, f)` feels a little off, let's put `map2` at the top level of our module, rather than
+inside `OptionBase`. That leaves us with a more natural-feeling `optionC = map2(optionA, optionB, f)`.
+
+```typescript
+function map2<A, B, C>(oa: Option<A>,
+                       ob: Option<B>,
+                       f: (a: A, b: B) => C): Option<C>
+```
+
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"

@@ -39,3 +39,7 @@ export class None<A> extends OptionBase<A> {
 }
 
 export const NONE: Option<never> = new None();
+
+export function lift<A, B>(f: (a: A) => B): (o: Option<A>) => Option<B> {
+  return o => o.map(f);
+}

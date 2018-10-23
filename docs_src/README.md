@@ -7,9 +7,13 @@ lang: en-US
 ---
 
 ## Updates
+### 23 October 2018
+* Fix definition of `None`
+* Add exercises 4.2 and 4.3
+* Add notes through `lift`
 
 ### 22 October 2018
-* Add exercise 4.1
+* Add exercises 4.1
 
 ### 21 October 2018
 * Figure out good representation of Option
