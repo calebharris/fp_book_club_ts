@@ -59,7 +59,7 @@ A functional solution to this problem is to encode into the function's return ty
 value. Behold, the `Option` type!
 
 ```typescript
-type Option<A> = Some<A> | None;
+type Option<A> = Some<A> | None<A>;
 
 class Some<A> {
   readonly tag: "some" = "some";
@@ -70,11 +70,11 @@ class Some<A> {
   }
 }
 
-class None extends OptionBase<never> {
+class None<A> extends OptionBase<A> {
   readonly tag: "none" = "none";
 }
 
-const NONE = new None();
+const NONE: Option<never> = new None();
 ```
 
 `Option`, like `List`, has one type parameter, which is the type of value that it might contain. An `Option` can be
@@ -102,6 +102,8 @@ It now always has a defined result, which is `None` when the input list is empty
 `Option` is convenient because we can factor out common error-handling patterns into higher-order functions, meaning we
 can dispense with much of the boilerplate that comes with exception-oriented code.
 
+#### Basic functions on Option
+
 We're going to use a different style of function definition than we used with `List`, where we placed all our functions
 at the top level of the module and exported each of them. Here, when possible, we'll place the functions "inside" our
 `Option` type, so they can be called with an object-oriented style of syntax (e.g. `opt.map(a => a.toString())` instead
@@ -109,7 +111,7 @@ of `map(opt, a => a.toString())`). In order to accomplish that, we need to intro
 syntax. Examine this expanded definition of `Option`:
 
 ```typescript
-export type Option<A> = Some<A> | None;
+export type Option<A> = Some<A> | None<A>;
 
 // 1. `abstract class` defines class that cannot be instantiated
 abstract class OptionBase<A> {
@@ -137,12 +139,12 @@ export class Some<A> extends OptionBase<A> {
   }
 }
 
-// 6. `never` is the "bottom type"
-export class None extends OptionBase<never> {
+export class None extends OptionBase<A> {
   readonly tag: "none" = "none";
 }
 
-export const NONE = new None();
+// 6. `never` is the "bottom type"
+export const NONE: Option<never> = new None();
 ```
 
 #### 1. Abstract classes
@@ -181,7 +183,6 @@ As you can see, the implicit `this` parameter has type `OptionBase<A>`. Many oth
 further control over `this`. We get a parameter whose type matches that of the enclosing class, and that's that. But
 TypeScript allows us to explicitly declare the `this` parameter and give it an arbitrary type. So the previous snippet
 is actually valid TypeScript code.
-
 
 ::: tip JavaScript's "this" value
 TypeScript's mission is to remain a strict superset of JavaScript. Therefore, its type system is uniquely shaped to
@@ -322,8 +323,10 @@ defined on `OptionBase`.
 We've already encountered `never` in our journey to understand variance. There's not much more to say here, except that
 we'll see `never` used in the future, as it is here, to collapse possibilities. Since `None` cannot hold a value, it
 makes sense for it not to have a type parameter. But, because it extends `OptionBase`, it must either declare a type
-parameter and "pass it on" to `OptionBase`, or extend `OptionBase` with a specific type. We know we don't want to
-parameterize `None`, so we must fix a specific type, and `never` makes the most sense: `None` can `never` hold a value.
+parameter and "pass it on" to `OptionBase`, or extend `OptionBase` with a specific type. Our final solution is a bit of
+a compromise. We give the class `None` a type parameter and then declare a constant, `NONE`, of type `Option<never>`.
+Whenever we return a `None`, we'll return this value. The type parameter on `None` is necessary for the compiler to
+understand, in some cases, that the `OptionBase` methods are compatible with both `Some` and `None`.
 
 ### Exercise 4.1. Implement `Option` functions
 

@@ -1,4 +1,4 @@
-export type Option<A> = Some<A> | None;
+export type Option<A> = Some<A> | None<A>;
 
 abstract class OptionBase<A> {
   filter(this: Option<A>, p: (a: A) => boolean): Option<A> {
@@ -34,8 +34,8 @@ export class Some<A> extends OptionBase<A> {
   }
 }
 
-export class None extends OptionBase<never> {
+export class None<A> extends OptionBase<A> {
   readonly tag: "none" = "none";
 }
 
-export const NONE = new None();
+export const NONE: Option<never> = new None();
