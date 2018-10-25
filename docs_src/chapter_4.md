@@ -139,7 +139,7 @@ export class Some<A> extends OptionBase<A> {
   }
 }
 
-export class None extends OptionBase<A> {
+export class None<A> extends OptionBase<A> {
   readonly tag: "none" = "none";
 }
 
