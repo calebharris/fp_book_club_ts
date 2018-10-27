@@ -70,11 +70,9 @@ class Some<A> {
   }
 }
 
-class None<A> extends OptionBase<A> {
+class None<A> {
   readonly tag: "none" = "none";
 }
-
-const NONE: Option<never> = new None();
 ```
 
 `Option`, like `List`, has one type parameter, which is the type of value that it might contain. An `Option` can be
@@ -133,6 +131,7 @@ export class Some<A> extends OptionBase<A> {
   readonly tag: "some" = "some";
   readonly value: A;
 
+  // 6. classes must call `super()` if they extend other classes
   constructor(value: A) {
     super();
     this.value = value;
@@ -140,11 +139,22 @@ export class Some<A> extends OptionBase<A> {
 }
 
 export class None<A> extends OptionBase<A> {
+  // 7. `never` is the "bottom type"
+  // 8. `static` creates "class" property
+  static readonly NONE: Option<never> = new None();
+
   readonly tag: "none" = "none";
+
+  // 9. `private` prevents access by external code
+  private constructor() {
+    super();
+  }
 }
 
-// 6. `never` is the "bottom type"
-export const NONE: Option<never> = new None();
+// 10. smart constructors for `None` and `Some`
+export const none: <A>() => Option<A> = () => None.NONE;
+
+export const some: <A>(a: A) => Option<A> = a => new Some(a);
 ```
 
 #### 1. Abstract classes
@@ -318,7 +328,15 @@ Finally, we come to the use of `extends` in the definition of the `Some` and `No
 `OptionBase`. This sets up an inheritance relationship, meaning that `Some` and `None` *inherit* methods and properties
 defined on `OptionBase`.
 
-#### 6. The bottom type
+#### 6. super()
+
+We'll try to use class hierarchies sparingly throughout these notes. This is in no small part because defining
+inheritance relationships between classes creates a rigid, inflexible linkage and requires some boilerplate code. For
+example, classes that extend other classes must call `super()` if they define a constructor, which invokes the
+constructor of the superclass. This ensures that required properties in the superclass have been defined before the
+subclass attempts to access them.
+
+#### 7. The bottom type
 
 We've already encountered `never` in our journey to understand variance. There's not much more to say here, except that
 we'll see `never` used in the future, as it is here, to collapse possibilities. Since `None` cannot hold a value, it
@@ -327,6 +345,29 @@ parameter and "pass it on" to `OptionBase`, or extend `OptionBase` with a specif
 a compromise. We give the class `None` a type parameter and then declare a constant, `NONE`, of type `Option<never>`.
 Whenever we return a `None`, we'll return this value. The type parameter on `None` is necessary for the compiler to
 understand, in some cases, that the `OptionBase` methods are compatible with both `Some` and `None`.
+
+#### 8. `static` properties
+
+A property marked `static` has a different lifetime than the other properties (a.k.a. *instance properties*) of a class.
+It has the same lifetime as the class definition itself. In other words, all instances of `None` share the same value
+for their `NONE` property. The `None.NONE` property is an implementation of the [singleton pattern][wp_single] of
+object-oriented programming.
+
+#### 9. `private` properties and methods
+
+A property or method of a class marked as `private` can only be accessed by code within the same class. We want to
+expose just one value of type `None` to clients of our `Option` module, in part as an optimization. To get the compiler
+to help us enforce this constraint, we mark the constructor of `None` as `private`, making it difficult for clients to
+create new `None` values.
+
+#### 10. Smart constructors
+
+*Smart constructors* encapsulate the logic of creating new values using our data constructors. As we said, we only want
+clients to use our predefined singleton `None` value, rather than creating their own. To make it easier, we offer this
+`none()` smart constructor, which simply returns the singleton. It's easier to tell clients to just use the function to
+get `None` values, rather than having them always use the `None.NONE` reference. For the sake of symmetry, and allowing
+clients to omit a number of `new` invocations, we also provide a `some()` smart constructor. Using these functions,
+which are annotated with a return type of `Option<A>`, also helps the compiler make better type inferences.
 
 ### Exercise 4.1. Implement `Option` functions
 
@@ -452,3 +493,4 @@ function map2<A, B, C>(oa: Option<A>,
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"
 [fpis_var]: https://github.com/fpinscala/fpinscala/wiki/Chapter-4:-Handling-errors-without-exceptions#variance-in-optiona "fpinscala Wiki"
+[wp_single]: https://en.wikipedia.org/wiki/Singleton_pattern "Singleton pattern - Wikipedia"
