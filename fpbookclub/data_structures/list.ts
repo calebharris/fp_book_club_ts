@@ -31,13 +31,8 @@ export const Nil: Nil = { tag: "nil" };
  **/
 export class Cons<A> {
   tag: "cons" = "cons";
-  readonly head: A;
-  readonly tail: List<A>;
 
-  constructor(head: A, tail: List<A>) {
-    this.head = head;
-    this.tail = tail;
-  }
+  constructor(readonly head: A, readonly tail: List<A>) { }
 }
 
 /**

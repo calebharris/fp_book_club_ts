@@ -50,13 +50,8 @@ export const Nil: Nil = { tag: "nil" };
  **/
 export class Cons<A> {
   tag: "cons" = "cons";
-  readonly head: A;
-  readonly tail: List<A>;
 
-  constructor(head: A, tail: List<A>) {
-    this.head = head;
-    this.tail = tail;
-  }
+  constructor(readonly head: A, readonly tail: List<A>) { }
 }
 
 /**
@@ -106,6 +101,33 @@ that accepts a variable number of arguments of type `A`, which are represented i
 Later, in `List(...vals.slice(1))`, the `...` is called the *spread operator*. If we think of a rest parameter as
 "collapsing" a parameter list into an array, then the spread operator does the opposite. It spreads an array into a
 parameter list.
+
+A second bit of new syntax is in the `constructor` of `Cons`. Recall that the [`Charge` class of Chapter 1][ch_1_chg]
+defines a couple properties and initializes them in its constructor.
+
+```typescript
+class Charge {
+  readonly cc: CreditCard;
+  readonly amount: number;
+
+  constructor(cc: CreditCard, amount: number) {
+    this.cc = cc;
+    this.amount = amount;
+  }
+}
+```
+
+This is a pretty common thing to need to do, so TypeScript provides a shortcut. The following code achieves the exact
+same result, but is much less verbose.
+
+```typescript
+class Charge {
+  constructor(readonly cc: CreditCard, readonly amount: number) { }
+}
+```
+
+The `Cons` constructor, along with the constructor functions of many data types throughout this book, uses this
+shortcut.
 
 If you're familiar with object-oriented programming, and someone asks you to create a data type called `List` with two
 implementations, you probably immediately reach for some kind of subtyping, maybe with `List` as the parent interface or
@@ -1169,7 +1191,7 @@ Breathe a sigh of relief, you made it through Chapter 3! Hopefully, you've becom
 generalizing pure functions in TypeScript. The rabbit hole only gets deeper from here. Next up: how to handle errors
 while adhering to functional principals. In other words, without exceptions.
 
-
+[ch_1_chg]: chapter_1.html#adding-a-payments-object "Chapter 1 - Functional Programming in TypeScript"
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
 fpinscala/fpinscala Wiki"
 [repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
