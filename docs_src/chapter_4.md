@@ -518,6 +518,58 @@ function map2<A, B, C>(oa: Option<A>,
                        f: (a: A, b: B) => C): Option<C>
 ```
 
+Now we can use `map2` to lift `quoteRate`:
+
+```typescript
+function parseAndQuoteRate(age: string,
+                           numSpeedingTickets: string): Option<number> {
+  return map2(
+      parseIntOpt(age),
+      parseIntOpt(numSpeedingTickets),
+      quoteRate
+  );
+}
+```
+
+With `map2`, we never have to modify an existing function of two arguments to make them "`Option`-aware". As a bonus,
+try using `map2` to implement `lift2`. Can you see how to implement `map3`, `map4`, `lift3`, `lift4`, etc.?
+
+### Exercise 4.4. `sequence`
+
+Write a function named `sequence` that combines a list of `Options` into a single `Option` containing a list of all the
+`Some`-wrapped values in the original list. If any of the original `Options` was a `None`, the function should return
+`None`. Otherwise, it should return a `Some` of a list of values. Once again, we should define this at the top level of
+the `Option` module. You could argue that it belongs in the `List` module, but there is actually a more abstract data
+type we'll introduce later that'll make a good home for `sequence`.
+
+```typescript
+function sequence<A>(a: List<Option<A>>): Option<List<A>>
+```
+
+Sometimes, we'll want to first apply a function that might fail to a list of simple values, and then `sequence` over the
+resulting list of `Option`s. For example, we might want to attempt to parse a list of integers out of a list of strings.
+To accomplish this, we could first `map` over the list and then call `sequence`:
+
+```typescript
+function parseInts(a: List<string>): Option<List<number>> {
+  return sequence(map(a, parseIntOpt));
+}
+```
+
+But this is inefficient, because we loop over the list twice: once to apply `parseIntOpt`, and once to `sequence` the
+result into a single `Option`. This is a fairly common thing to want to do, so let's create a more optimized function to
+accomplish it.
+
+### Exercise 4.5. `traverse`
+
+Write the `traverse` function, which `sequences` a list of values, applying a mapping function to each value in-line.
+It's easy to write this function in terms of `map` and `sequence`, but the whole point of the exercise is to find a more
+efficient implementaiton. To test yourself, implement `sequence` in terms of `traverse`.
+
+```typescript
+function traverse<A, B>(a: List<A>, f: (a: A) => Option<B>): Option<List<B>>
+```
+
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"
