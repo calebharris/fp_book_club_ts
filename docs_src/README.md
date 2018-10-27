@@ -9,7 +9,7 @@ lang: en-US
 ## Updates
 ### 27 October 2018
 * Refactor `Option` code, expand explanations
-* Add notes up to 4.3
+* Add notes up to 4.5, which is all of `Option`
 
 ### 23 October 2018
 * Fix definition of `None`
