@@ -41,5 +41,6 @@ module.exports = {
       "/chapter_4"
     ],
     sidebarDepth: 2
-  }
+  },
+  title: "Functional Programming in TypeScript"
 }
