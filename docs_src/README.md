@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 27 October 2018
+* Refactor `Option` code, expand explanations
+* Add notes up to 4.3
+
 ### 23 October 2018
 * Fix definition of `None`
 * Add exercises 4.2 and 4.3

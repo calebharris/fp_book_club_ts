@@ -476,6 +476,35 @@ We can use `lift` on any function we happen to have lying around to make it comp
 const absOpt: (o: Option<number>) => Option<number> = lift(Math.abs);
 ```
 
+We didn't have to rewrite `Math.abs`; we were able to just lift it into the `Option` context *ex post facto*. We can do
+this for any function. For example, suppose we're setting up a website for a car insurance company, which includes a
+form that users can fill out and submit for an instant rate quote. We'll need to parse the data from the form and call a
+function to calculate the rate:
+
+```typescript
+function quoteRate(age: number, numSpeedingTickets: number): number
+```
+
+Our function takes two numeric arguments, but we'll only have access to the form data as string values. That means we'll
+need to parse the string data into numbers, which isn't guaranteed to succeed. The user might, for example, enter
+something like "None of your business" as their age.
+
+Given a `string`, we can attempt to parse it into an integer number with the function `parseInt`. If the `string` does
+not represent a valid integer, `parseInt` returns the special value `NaN` (short for *not a number*). You may recall
+that returning special values to encode failures puts some undue burden on a function's caller. It would be nice to
+convert `parseInt` into an `Option`-based API, which turns out to be fairly easy:
+
+```typescript
+function parseIntOpt(s: string): Option<number> {
+  const i = parseInt(s);
+  if (isNaN(i)) return none();
+  return some(i);
+}
+```
+
+Now we have a convenient way to parse form data into `Option` values. But our `quoteRate` function takes two raw
+numbers. How can we lift `quoteRate`, a function with two parameters, into `Option`?
+
 ### Exercise 4.3. `map2`
 
 Write a function, `map2`, that combines two `Option`-wrapped values using a provided function. Only when both input
