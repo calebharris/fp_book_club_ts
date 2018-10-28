@@ -63,11 +63,8 @@ type Option<A> = Some<A> | None<A>;
 
 class Some<A> {
   readonly tag: "some" = "some";
-  readonly value: A;
 
-  constructor(value: A) {
-    this.value = value;
-  }
+  constructor(readonly value: A) { }
 }
 
 class None<A> {
@@ -129,12 +126,10 @@ abstract class OptionBase<A> {
 // 5. `extends` keyword creating inheritance relationship
 export class Some<A> extends OptionBase<A> {
   readonly tag: "some" = "some";
-  readonly value: A;
 
   // 6. classes must call `super()` if they extend other classes
-  constructor(value: A) {
+  constructor(readonly value: A) {
     super();
-    this.value = value;
   }
 }
 

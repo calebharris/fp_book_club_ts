@@ -61,11 +61,9 @@ abstract class OptionBase<A> {
  **/
 export class Some<A> extends OptionBase<A> {
   readonly tag: "some" = "some";
-  readonly value: A;
 
-  constructor(value: A) {
+  constructor(readonly value: A) {
     super();
-    this.value = value;
   }
 }
 
