@@ -2,7 +2,6 @@ import * as t from "./tree";
 
 const { Leaf, Branch, ...fns } = t;
 
-
 describe("size", () => {
   test("of a Leaf is 1", () => {
     expect(fns.size(new Leaf("x"))).toEqual(1);
