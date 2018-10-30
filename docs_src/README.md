@@ -7,6 +7,11 @@ lang: en-US
 ---
 
 ## Updates
+### 30 October 2018
+* Add `Try` in `option` module
+* Introduce `Either`
+* Exercise 4.6. Basic functions on `Either`
+
 ### 27 October 2018
 * Refactor `Option` code, expand explanations
 * Add notes up to 4.5, which is all of `Option`
