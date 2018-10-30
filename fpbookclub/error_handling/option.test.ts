@@ -1,9 +1,22 @@
 import {
   Option,
+  Try,
   lift,
   none,
   some
 } from "./option";
+
+describe("Try()", () => {
+  const tryDecodeURI = (s: string) => Try(() => decodeURI(s));
+
+  test("returns Some on a successful execution", () => {
+    expect(tryDecodeURI("example")).toEqual(some("example"));
+  });
+
+  test("returns None on thrown exception", () => {
+    expect(tryDecodeURI("%")).toEqual(none());
+  });
+});
 
 describe("filter()", () => {
   test("returns None for a None", () => {

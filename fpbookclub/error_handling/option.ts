@@ -95,6 +95,18 @@ export const none: <A>() => Option<A> = () => None.NONE;
 export const some: <A>(a: A) => Option<A> = a => new Some(a);
 
 /**
+ * Evaluate `f` and return the result in a `Some` if it completes
+ * successfully. If it throws an exception, return `None`.
+ **/
+export const Try: <A>(f: () => A) => Option<A> = f => {
+  try {
+    return some(f());
+  } catch (e) {
+    return none();
+  }
+}
+
+/**
  * Lift `f` into the `Option` context
  **/
 export const lift: <A, B>(f: (a: A) => B) => (o: Option<A>) => Option<B> =
