@@ -529,6 +529,29 @@ function parseAndQuoteRate(age: string,
 With `map2`, we never have to modify an existing function of two arguments to make them "`Option`-aware". As a bonus,
 try using `map2` to implement `lift2`. Can you see how to implement `map3`, `map4`, `lift3`, `lift4`, etc.?
 
+### Converting exception-based APIs to `Option`
+
+There are a number of JavaScript APIs that throw exceptions, rather than returning special values like `parseInt`.  For
+example, the built-in `decodeURI` function throws a `URIError` if its argument is not a well-formed URI.
+
+```typescript
+function encodeURI(uri: string): string
+```
+
+We can write a general-purpose function to wrap these exception-throwing APIs inside `Option`-returning equivalents:
+
+```typescript
+const Try: <A>(f: () => A) => Option<A> = f => {
+  try {
+    return some(f());
+  } catch (e) {
+    return none();
+  }
+}
+
+const tryEncodeURI = (s: string) => Try(encodeURI(s));
+```
+
 ### Exercise 4.4. `sequence`
 
 Write a function named `sequence` that combines a list of `Options` into a single `Option` containing a list of all the
@@ -564,6 +587,97 @@ efficient implementaiton. To test yourself, implement `sequence` in terms of `tr
 ```typescript
 function traverse<A, B>(a: List<A>, f: (a: A) => Option<B>): Option<List<B>>
 ```
+
+## The `Either` data type
+
+`Option` is cool, but using it for representing error conditions is problematic because it throws away information about
+the error. We get either a success in the form of a `Some(value)` — or nothing. Let's explore a small elaboration on
+`Option`: the `Either` type, which will let us track the reason for an error.
+
+```typescript
+type Either<E, A> = Left<E> | Right<A>;
+
+abstract class EitherBase<E, A> {
+  flatMap<F extends G, G, B>(
+      this: Either<F, A>,
+      f: (a: A) => Either<G, B>): Either<G, B> { ... }
+
+  map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, A> { ... }
+
+  orElse<F extends G, G, T extends U, U>(
+      this: Either<F, T>,
+      b: () => Either<G, U>): Either<G, U> { ... }
+}
+
+class Left<E> extends EitherBase<E, never> {
+  readonly tag: "left" = "left";
+
+  constructor(readonly value: E) {
+    super();
+  }
+}
+
+class Right<A> extends EitherBase<never, A> {
+  readonly tag: "right" = "right";
+
+  constructor(readonly value: A) {
+    super();
+  }
+}
+
+const left: <E, A>(val: E) => Either<E, A> = val => new Left(val);
+
+const right: <E, A>(val: A) => Either<E, A> = val => new Right(val);
+
+const map2: <EE extends E, E, A, B, C>(
+    a: Either<E, A>,
+    b: Either<EE, B>,
+    f: (a: A, b: B) => C) => Either<EE, C> = ...
+```
+
+Just like `Option`, `Either` has two cases. Unlike `Option`, both cases of `Either` hold a value. By tradition, when
+`Either` is used to capture error information, `Left` signifies an error and `Right` a successful result. For this
+reason, we've chosen `E` as our left type parameter, to suggest the word "error". However, `Either` is not limited to
+representing success or failure, and in fact is broadly useful, for there are many situations in which our computations
+can return one of two type.
+
+Because we're choosing to have our `Right` data constructor represent success, we'll want functions like `map` and
+`flatMap` to operate only on `Right`, and ignore `Left`. This leaves us with a *right-biased* `Either`.
+
+Here's `mean` again, this time returning a `string` representing an error:
+
+```typescript
+function mean(xs: List<number>): Either<string, number> {
+  const len = length(xs)
+  if (len === 0)
+    return left("mean of empty list");
+  return right(sum(xs) / len);
+}
+```
+
+### Converting exception-based APIs to `Either`
+
+Just like we did for `Option`, we can wrap an exception-throwing function in an `Either` by returning the thrown
+exception as a `Left`. We need to do a little extra work, because in JavaScript, you can throw anything, not just an
+`Error`.
+
+```typescript
+const Try: <A>(f: () => A) => Either<Error, A> = f => {
+  try {
+    return right(f());
+  } catch (e) {
+    if (e instanceof Error) return left(e);
+    return left(new Error(e));
+  }
+}
+
+const tryDecodeURI = (s: string) => Try(decodeURI(s));
+```
+
+### Exercise 4.6. Basic functions on `Either`
+
+Implement versions of `map`, `flatMap`, and `orElse` on `Either` that operate on the right side only. Also implement
+`map2` as a top-level function in the `either` module.
 
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
