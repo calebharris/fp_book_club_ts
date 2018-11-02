@@ -15,8 +15,7 @@ abstract class OptionBase<A> {
    * Otherwise returns `None`.
    **/
   filter(this: Option<A>, p: (a: A) => boolean): Option<A> {
-    if (this.tag === "some" && p(this.value)) return this;
-    return none();
+    return this.flatMap(a => p(a) ? some(a) : none());
   }
 
   /**
@@ -24,8 +23,7 @@ abstract class OptionBase<A> {
    * Otherwise returns `None`.
    **/
   flatMap<B>(this: Option<A>, f: (a: A) => Option<B>): Option<B> {
-    if (this.tag === "none") return none();
-    return f(this.value);
+    return this.map(f).getOrElse(() => none());
   }
 
   /**
@@ -51,8 +49,7 @@ abstract class OptionBase<A> {
    * `ou`.
    **/
   orElse<T extends U, U>(this: Option<T>, ou: () => Option<U>): Option<U> {
-    if (this.tag === "none") return ou();
-    return this;
+    return this.map(a => some(a)).getOrElse(() => ou());
   }
 }
 
