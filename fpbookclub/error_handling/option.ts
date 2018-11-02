@@ -108,3 +108,12 @@ export const Try: <A>(f: () => A) => Option<A> = f => {
  **/
 export const lift: <A, B>(f: (a: A) => B) => (o: Option<A>) => Option<B> =
   f => o => o.map(f);
+
+/**
+ * If `a` and `b` are both `Some`, apply `f` to their contained values and
+ * return the result in a `Some`. Otherwise, return `None`.
+ **/
+export const map2: <A, B, C>(a: Option<A>,
+                             b: Option<B>,
+                             f: (a: A, b: B) => C) => Option<C> =
+  (oa, ob, f) => oa.flatMap(a => ob.map(b => f(a, b)));
