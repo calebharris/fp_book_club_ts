@@ -9,8 +9,16 @@ import {
   List,
   Nil,
   length,
+  map,
   sum
 } from "../data_structures/list";
+
+import {
+  Option,
+  Try,
+  some,
+  none
+} from "../error_handling/option";
 
 /**
  * Our venerable abs function. You know what it does.
@@ -134,4 +142,12 @@ export function mean(xs: List<number>): number {
     throw new Error("Attempt to take mean of empty list");
 
   return sum(xs) / length(xs);
+}
+
+export function variance(xs: List<number>): Option<number> {
+  const maybeMean = Try(() => mean(xs));
+  return maybeMean.map( m => {
+    const distSquares = map(xs, x => Math.pow(x - m, 2));
+    return sum(distSquares) / length(distSquares);
+  });
 }
