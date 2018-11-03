@@ -1,0 +1,12 @@
+---
+extends:
+    - "tslint:recommended"
+    - "tslint-eslint-rules"
+rules:
+    arrow-parens:
+        options: ["ban-single-arg-parens"]
+    interface-name: false
+    max-classes-per-file:
+        options: [5, "exclude-class-expressions"]
+    member-access:
+        options: ["no-public"]

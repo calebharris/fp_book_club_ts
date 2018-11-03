@@ -32,7 +32,7 @@ class Cafe {
                                         // `Coffee` object
 
     const cup = new Coffee();
-    cc.charge(cup.price);                  //side effect: charges the card
+    cc.charge(cup.price);               // side effect: charges the card
     return cup;
   }
 }
@@ -111,7 +111,7 @@ buyCoffees(cc: CreditCard, n: number): [Coffee[], Charge] {
 
   // this part is a bit ugly, but we're just splitting the array of
   // [Coffee, Charge] tuples into one Coffee array and one Charge array
-  const [coffees, charges] = purchases.reduce(
+  const [coffs, chgs] = purchases.reduce(
     ([coffees, charges], [coffee, charge]) => {
         coffees.push(coffee);
         charges.push(charge);
@@ -121,7 +121,7 @@ buyCoffees(cc: CreditCard, n: number): [Coffee[], Charge] {
   );
 
   // reduce the list of Charges to one by sequentially applying combine()
-  return [coffees, charges.reduce((l, r) => l.combine(r))];
+  return [coffs, chgs.reduce((l, r) => l.combine(r))];
 }
 ```
 

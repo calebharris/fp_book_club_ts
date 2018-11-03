@@ -1,18 +1,18 @@
 import * as impure from "./impure_example";
-import * as testable from "./testable_example";
 import * as pure from "./pure_example";
+import * as testable from "./testable_example";
 
 describe("the impure version of Cafe", () => {
-  //destructuring assignment to be able to call CreditCard() and Cafe() without
-  //  the `impure` prefix.
+  // destructuring assignment to be able to call CreditCard() and Cafe() without
+  // the `impure` prefix.
   const { CreditCard, Cafe } = impure;
 
   test("causes a side effect when you buyCoffee()", () => {
     const cc = new CreditCard();
     const cup = new Cafe().buyCoffee(cc);
 
-    //not much to usefully assert here. How do we know the charge happened,
-    //and was for the right amount?
+    // not much to usefully assert here. How do we know the charge happened,
+    // and was for the right amount?
     expect(cup).toBeTruthy();
   });
 });
@@ -20,18 +20,19 @@ describe("the impure version of Cafe", () => {
 describe("the more testable version of Cafe", () => {
   const { CreditCard, Cafe } = testable;
 
-  //type aliases, again to remove the need for the module variable prefix
+  // type aliases, again to remove the need for the module variable prefix
   type Payments = testable.Payments;
   type CreditCard = testable.CreditCard;
 
   test("still causes a side effect when you buyCoffee()", () => {
-    //note the need for a mock object
-    //this weird syntax is just creating an anonymous implementation of
-    //  Payments and immediately instantiating it
+    // note the need for a mock object
+    // this weird syntax is just creating an anonymous implementation of
+    // Payments and immediately instantiating it
     const mockPayments = new class implements Payments {
       didCharge: boolean = false;
 
-      charge(cc: CreditCard, amount: number): void {
+      charge(card: CreditCard, amount: number): void {
+        // tslint:disable-next-line:no-console
         console.log("Another side effect");
         this.didCharge = true;
       }

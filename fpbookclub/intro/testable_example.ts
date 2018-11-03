@@ -3,7 +3,7 @@
  * effects
  *
  * Adapted from Functional Programming in Scala listing 1.2
- **/
+ */
 
 export class Coffee {
   readonly price: number = 2.99;
@@ -13,7 +13,7 @@ export class CreditCard {}
 
 export interface Payments {
   /** Exists purely for its side-effects, since it doesn't return a value */
-  charge(cc: CreditCard, amount: number): void
+  charge(cc: CreditCard, amount: number): void;
 }
 
 export class Cafe {
