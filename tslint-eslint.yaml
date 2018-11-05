@@ -1,0 +1,20 @@
+---
+extends:
+    - "tslint-eslint-rules"
+rules:
+    no-constant-condition: true
+    no-control-regex: true
+    no-duplicate-case: true
+    no-empty-character-class: true
+    no-ex-assign: true
+    no-extra-boolean-cast: true
+    no-extra-semi: true
+    no-inner-declarations: true
+    no-invalid-regexp: true
+    no-regex-spaces: true
+    no-unexpected-multiline: true
+    valid-typeof: true
+    ter-no-proto: true
+    ter-no-script-url: true
+    ter-no-self-compare: true
+    object-curly-spacing: true

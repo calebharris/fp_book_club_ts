@@ -10,10 +10,8 @@ export class Coffee {
 
 export class CreditCard {
   charge(price: number) {
-    // The next comment just turns off a static analysis rule that forbids calls
-    // to the console, which are generally not appropriate for production code,
-    // but useful in this case.
-    // tslint:disable-next-line:no-console
+    // Disable a "linter" rule. See https://palantir.github.io/tslint/
+    // tslint:disable-next-line no-console
     console.log("Side effect! Charging the credit card...");
   }
 }

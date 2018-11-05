@@ -1,10 +1,14 @@
 ---
 extends:
     - "tslint:recommended"
-    - "tslint-eslint-rules"
+    - "./tslint-eslint.yaml"
+      #linterOptions:
+      #    exclude: ["fpbookclub/intro/*.ts"]
 rules:
     arrow-parens:
         options: ["ban-single-arg-parens"]
+    curly:
+        options: ["as-needed"]
     interface-name: false
     max-classes-per-file:
         options: [5, "exclude-class-expressions"]

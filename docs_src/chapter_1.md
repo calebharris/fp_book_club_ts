@@ -92,11 +92,10 @@ class Charge {
    * and the other Charge
    **/
   combine(other: Charge): Charge {
-    if (this.cc == other.cc) {
+    if (this.cc == other.cc)
       return new Charge(this.cc, this.amount + other.amount);
-    } else {
+    else
       throw new Error("Can't combine charges to different cards");
-    }
   }
 }
 ```
