@@ -1,13 +1,13 @@
 /**
  * abs.ts - a simple TypeScript program
- **/
+ */
 
 // A comment!
 /* A multiline (or block)
      comment */
 /**
  * A documentation comment
- **/
+ */
 
 // Exporting something makes it visible to
 // code outside of this module
@@ -29,4 +29,5 @@ function formatAbs(x: number) {
 // This line will be executed when the module
 // is loaded, or when this file is executed
 // directly
+// tslint:disable-next-line no-console
 console.log(formatAbs(-42));                    // writes to standard out
