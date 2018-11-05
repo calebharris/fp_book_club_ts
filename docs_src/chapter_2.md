@@ -570,7 +570,7 @@ const equalsOne: (x: number) => number = (x: number) => {
 ```
 
 Because of some possible unexpected behavior traditional functions can cause (which we'll cover in
-[Chapter 3][ch_3_this]), we'll use the arrow function syntax whenever we can.
+the next section), we'll use the arrow function syntax whenever we can.
 
 ### Functions as values in TypeScript
 
@@ -749,7 +749,6 @@ We learned...
 
 Next up... functional data structures, starting with lists.
 
-[ch_3_this]: chapter_4.html#_2-this-parameters "Chapter 4 - Functional Programming in TypeScript"
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
 [mdn_arw]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions "Arrow functions - MDN"
