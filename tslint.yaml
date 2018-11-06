@@ -12,3 +12,8 @@ rules:
         options: [5, "exclude-class-expressions"]
     member-access:
         options: ["no-public"]
+    ordered-imports:
+        options:
+            grouped-imports: true
+            import-sources-order: "lowercase-last"
+            named-imports-order: "lowercase-last"

@@ -1,6 +1,6 @@
 /**
  * math.ts - some math utils helpful mainly for learning functional programming
- **/
+ */
 
 import * as assert from "assert";
 
@@ -10,19 +10,19 @@ import {
   Nil,
   length,
   map,
-  sum
+  sum,
 } from "../data_structures/list";
 
 import {
   Option,
   Try,
+  none,
   some,
-  none
 } from "../error_handling/option";
 
 /**
  * Our venerable abs function. You know what it does.
- **/
+ */
 export function abs(n: number): number {
   if (n < 0)
     return -n;
@@ -32,15 +32,15 @@ export function abs(n: number): number {
 
 /**
  * A recursive factorial function
- **/
+ */
 export function factorialRecursive(n: number): number {
   assert(Number.isSafeInteger(n));
 
-  const go = function(n: number, acc: number): number {
-    if (n <= 0)
+  function go(i: number, acc: number): number {
+    if (i <= 0)
       return acc;
     else
-      return go(n - 1, n * acc);
+      return go(i - 1, i * acc);
   }
 
   return go(n, 1);
@@ -48,11 +48,13 @@ export function factorialRecursive(n: number): number {
 
 /**
  * A factorial function with a while loop
- **/
+ */
 export function factorialWhile(n: number): number {
   assert(Number.isSafeInteger(n));
 
-  let acc = 1, i = n;   // declare and initialize mutable variables
+  let acc = 1;   // declare and initialize mutable variables
+  let i = n;
+
   while (i > 0) {       // execute block until i <= 0
     acc = acc * i;
     i = i - 1;
@@ -63,26 +65,25 @@ export function factorialWhile(n: number): number {
 
 /**
  * A factorial function with a for loop
- **/
+ */
 export function factorialFor(n: number): number {
   assert(Number.isSafeInteger(n));
   let acc = 1;
 
-  for (let i = n; i > 0; --i) {  // set i to n and then loop until i <= 0
+  for (let i = n; i > 0; --i)    // set i to n and then loop until i <= 0
     acc *= i;
-  }
 
   return acc;
 }
 
 /**
  * An simpler alias for our preferred factorial implementation
- **/
+ */
 export const factorial = factorialFor;
 
 /**
  * Tree-recursive Fibonacci sequence implementation
- **/
+ */
 export function fibTree(n: number): number {
   switch (n) {
     case 1:
@@ -96,13 +97,13 @@ export function fibTree(n: number): number {
 
 /**
  * Tail-recursive Fibonacci sequence implementation
- **/
+ */
 export function fibTail(n: number): number {
-  function go(n: number, a: number, b: number): number {
-    if (n <= 1)
+  function go(i: number, a: number, b: number): number {
+    if (i <= 1)
       return a;
     else
-      return go(n - 1, b, a + b);
+      return go(i - 1, b, a + b);
   }
 
   return go(n, 0, 1);
@@ -110,12 +111,13 @@ export function fibTail(n: number): number {
 
 /**
  * Iterative Fibonacci sequence implementation
- **/
+ */
 export function fib(n: number): number {
-  let acc1 = 0, acc2 = 1;
+  let acc1 = 0;
+  let acc2 = 1;
 
   for (let i = n; i > 1; --i) {
-    let temp = acc1 + acc2;
+    const temp = acc1 + acc2;
     acc1 = acc2;
     acc2 = temp;
   }
@@ -132,7 +134,7 @@ export function isSorted<A>(vals: A[], ordered: (l: A, r: A) => boolean): boolea
 
 /**
  * A simple higher-order function for formatting the result of a computation
- **/
+ */
 export function formatResult(name: string, x: number, f: (n: number) => number): string {
   return `The ${name} of ${x} is ${f(x)}`;
 }

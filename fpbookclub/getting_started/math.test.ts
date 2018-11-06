@@ -1,7 +1,9 @@
-import * as math from "./math";
 import { AssertionError } from "assert";
+
 import { List } from "../data_structures/list";
-import { Option, some, none } from "../error_handling/option";
+import { Option, none, some } from "../error_handling/option";
+
+import * as math from "./math";
 
 describe("abs", () => {
   test("calculates the absolute value of a number", () => {

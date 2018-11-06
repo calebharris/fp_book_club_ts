@@ -261,11 +261,11 @@ A possible `factorial` implementation:
 
 ```typescript
 function factorial(n: number): number {
-  const go = function(n: number, acc: number): number {
-    if (n <= 0)
+  function go(i: number, acc: number): number {
+    if (i <= 0)
       return acc;
     else
-      return go(n - 1, n * acc);
+      return go(i - 1, i * acc);
   }
 
   return go(n, 1);
@@ -312,7 +312,8 @@ in FP are naturally expressed with recursive functions, so you'll find yourself 
 
 ```typescript
 function factorial(n: number): number {
-  let acc = 1, i = n;   // declare and initialize mutable variables:w
+  let acc = 1;          // declare and initialize mutable variables
+  let i = n;
   while (i > 0) {       // execute block until i <= 0
     acc = acc * i;
     i = i - 1;
@@ -333,9 +334,9 @@ Most TypeScript programmers would find this code a little odd. They'd probably w
 ```typescript
 function factorial(n: number): number {
   let acc = 1;
-  for (let i = n; i > 0; --i) {  // set `i` to `n` and loop until `i` <= 0
+  for (let i = n; i > 0; --i)    // set `i` to `n` and loop until `i` <= 0
     acc *= i;                    // shortcut for `acc = acc * i`
-  }
+
   return acc;
 }
 ```
@@ -363,11 +364,11 @@ function fib(n: number): number
 ??? answer
 ```typescript
 function fib(n: number): number {
-  function go(n: number, a: number, b: number): number {
-    if (n <= 1)
+  function go(i: number, a: number, b: number): number {
+    if (i <= 1)
       return a;
     else
-      return go(n - 1, b, a + b);
+      return go(i - 1, b, a + b);
   }
 
   return go(n, 0, 1);
@@ -381,10 +382,11 @@ use a loop).
 ??? answer
 ```typescript
 function fib(n: number): number {
-  let acc1 = 0, acc2 = 1;
+  let acc1 = 0;
+  let acc2 = 1;
 
   for (let i = n; i > 1; --i) {
-    let temp = acc1 + acc2;
+    const temp = acc1 + acc2;
     acc1 = acc2;
     acc2 = temp;
   }
@@ -463,13 +465,13 @@ To introduce polymorphism, let's consider the example of finding the first insta
 function findFirst(ss: string[], key: string): number {
   let index = -1;                               // if the key isn't found
                                                 // we'll return -1
-  for (let i = 0; i < ss.length; ++i) {
+  for (let i = 0; i < ss.length; ++i)
     if (ss[i] === key) {
       index = i;
       break;                                    // break the loop early if
                                                 // the key is found
     }
-  }
+
   return index;
 }
 ```
@@ -485,12 +487,12 @@ specific, we can introduce a *type parameter* `A` to define a function that work
 // `A` is a type parameter
 function findFirst<A>(as: A[], p: (a: A) => boolean): number {
   let index = -1;
-  for (let i = 0; i < as.length; ++i) {
+  for (let i = 0; i < as.length; ++i)
     if (p(as[i])) {
       index = i;
       break;
     }
-  }
+
   return index;
 }
 ```
@@ -646,17 +648,15 @@ As an example, let's consider the `partial1` function. It takes a value and a fu
 function of one argument. The name means that it applies some, but not all, of a function's arguments.
 
 ```typescript
-function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C
+const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C
 ```
 
 There is really only one way to implement this function. To start, we know we need to return another function that takes
 a single parameter of type `B`, so lets start with that:
 
 ```typescript
-function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C {
-  return function(b) {
-    ???
-  };
+const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C =
+  (a, f) => b => ???;
 }
 ```
 
@@ -665,11 +665,8 @@ only way to obtain a `C` is to call `f` with an `A`, which is provided as a para
 our returned function takes as a parameter.
 
 ```typescript
-function partial1<A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C {
-  return function(b) {
-    return f(a, b);
-  };
-}
+const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C =
+  (a, f) => b => f(a, b);
 ```
 
 And we're done! We now have a higher-order function that takes a function of two arguments and partially applies it.
@@ -680,16 +677,13 @@ Implement `curry`, which converts a function `f` of two arguments into a functio
 `f`. This is another case where there is only one implementation that compiles.
 
 ```typescript
-function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C)
+const curry: <A, B, C>(f: (a: A, b: B) => C) => (a: A) => ((b: B) => C)
 ```
 
 ??? answer
 ```typescript
-function curry<A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C) {
-  return function(a: A) {
-    return partial1(a, f);
-  };
-}
+const curry: <A, B, C>(f: (a: A, b: B) => C) => (a: A) => ((b: B) => C)
+  f => a => partial1(a, f);
 ```
 ???
 
@@ -699,16 +693,13 @@ Implement `uncurry`, which reverses the transformation of `curry`. Since `=>` in
 right, `(a: A) => ((b: B) => C)` can be written as `(a: A) => (b: B) => C`.
 
 ```typescript
-function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C
+const uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (a: A, b: B) => C
 ```
 
 ??? answer
 ```typescript
-function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C {
-  return function(a: A, b: B): C {
-    return f(a)(b);
-  };
-}
+const uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (a: A, b: B) => C =
+  f => (a, b) => f(a)(b);
 ```
 ???
 
@@ -717,16 +708,13 @@ function uncurry<A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C {
 Implement `compose`, which feeds the output of one function into the input of another.
 
 ```typescript
-function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C
+const compose: <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (a: A) => C
 ```
 
 ??? answer
 ```typescript
-function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C {
-  return function(a: A) {
-    return f(g(a));
-  }
-}
+const compose: <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (a: A) => C =
+  (f, g) => a => f(g(a));
 ```
 ???
 
