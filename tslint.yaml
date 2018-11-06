@@ -2,8 +2,6 @@
 extends:
     - "tslint:recommended"
     - "./tslint-eslint.yaml"
-      #linterOptions:
-      #    exclude: ["fpbookclub/intro/*.ts"]
 rules:
     arrow-parens:
         options: ["ban-single-arg-parens"]
