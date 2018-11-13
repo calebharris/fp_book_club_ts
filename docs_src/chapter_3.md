@@ -21,25 +21,25 @@ going to dive into some new TypeScript syntax, as well.
  * discriminated union, a.k.a. algebraic data type (ADT). Based on
  * guidance at
  * https://www.typescriptlang.org/docs/handbook/advanced-types.html
- **/
+ */
 
 /**
  * The "root" definition of our List data type, with one type parameter, `A`.
  * Note that List is defined entirely by its constituent types, using
  * TypeScript's type union syntax, `|`.
- **/
+ */
 export type List<A> = Cons<A> | Nil;
 
 /**
  * Nil represents the empty list
- **/
+ */
 export interface Nil {
   tag: "nil";
 }
 
 /**
  * Our "data constructor" for Nil, which has only one instance
- **/
+ */
 export const Nil: Nil = { tag: "nil" };
 
 /**
@@ -47,7 +47,7 @@ export const Nil: Nil = { tag: "nil" };
  * `head` and a pointer to the remainder of the list in `tail`. Every tail is
  * a complete List in its own right, with Nil signifying the "end" of the
  * list.
- **/
+ */
 export class Cons<A> {
   tag: "cons" = "cons";
 
@@ -56,18 +56,17 @@ export class Cons<A> {
 
 /**
  * Creates a List from a variable number of arguments.
- **/
+ */
 export function List<A>(...vals: A[]): List<A> {
-  if (vals.length === 0) {
+  if (vals.length === 0)
     return Nil;
-  } else {
+  else
     return new Cons(vals[0], List(...vals.slice(1)));
-  }
 }
 
 /**
  * Uses recursion and pattern matching to add up a list of numbers
- **/
+ */
 export function sum(ns: List<number>): number {
   switch (ns.tag) {
     // the sum of the empty list is 0
@@ -80,7 +79,7 @@ export function sum(ns: List<number>): number {
 
 /**
  * Multiplies a list of numbers together, using the same technique as `sum`
- **/
+ */
 export function product(ns: List<number>): number {
   switch (ns.tag) {
     case "nil": return 1.0;
@@ -267,9 +266,8 @@ What is the result of compiling the following snippets?
 
 ```typescript
 function foo<A>(l: SingleList<A>) {
-  if (l.tag === "cons") {
+  if (l.tag === "cons")
     console.log(l.head);
-  }
 }
 ```
 
@@ -281,9 +279,8 @@ lookup the `head` property inside the `if` statement.
 
 ```typescript
 function bar<A>(l: AnyList<A>) {
-  if (l.tag === "cons") {
+  if (l.tag === "cons")
     console.log(l.head);
-  }
 }
 ```
 
@@ -296,9 +293,8 @@ both possibilities support the `head` property, and it has the same type for eac
 
 ```typescript
 function baz<A>(l: AnyList<A>) {
-  if (l.tag === "cons") {
+  if (l.tag === "cons")
     console.log(l.prev);
-  }
 }
 ```
 
@@ -349,12 +345,12 @@ As we complete these exercises, we'll be creating a reusable `List` module. You 
 repo at [/fpbookclub/data_structures/list.ts][repo_list].
 :::
 
-### Exercise 3.2. `tail`
+### Exercise 3.2. `getTail`
 
-Implement the `tail` function for removing the first element of a list. Notice that this function takes constant time.
+Implement the `getTail` function for removing the first element of a list. Notice that this function takes constant time.
 
 ```typescript
-function tail<A>(l: List<A>): List<A>
+function getTail<A>(l: List<A>): List<A>
 ```
 
 ??? answer
@@ -362,10 +358,9 @@ function tail<A>(l: List<A>): List<A>
 // This version throws an exception if the caller passes an empty list, but
 // there are several equally "correct" ways to handle this scenario, such as
 // returning `Nil`. It's up to you as the library designer to choose a method!
-function tail<A>(l: List<A>): List<A> {
-  if (l.tag === "nil") {
+function getTail<A>(l: List<A>): List<A> {
+  if (l.tag === "nil")
     throw new Error("Attempt to take tail of empty list");
-  }
 
   return l.tail;
 }
@@ -385,9 +380,8 @@ function setHead<A>(l: List<A>, head: A): List<A>
 ??? answer
 ```typescript
 function setHead<A>(l: List<A>, a: A): List<A> {
-  if (l.tag === "nil") {
+  if (l.tag === "nil")
     throw new Error("Attempt to set head of empty list");
-  }
 
   return new Cons(a, l.tail);
 }
@@ -408,9 +402,8 @@ function drop<A>(l: List<A>, n: number): List<A>
 ??? answer
 ```typescript
 function drop<A>(l: List<A>, n: number): List<A> {
-  if (l.tag === "nil") {
+  if (l.tag === "nil")
       throw new Error("Attempt to drop from empty list");
-  }
 
   if (n <= 0) return l;
   else return drop(l.tail, n - 1);
@@ -429,16 +422,14 @@ function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 ??? answer
 ```typescript
 function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
-  if (l.tag === "nil") {
+  if (l.tag === "nil")
       throw new Error("Attempt to drop from empty list");
-  }
 
-  if (p(l.head)) {
+  if (p(l.head))
     switch (l.tail.tag) {
       case "nil": return l.tail;
       default: return dropWhile(l.tail, p);
     }
-  }
 
   return l;
 }
@@ -472,13 +463,11 @@ function init<A>(l: List<A>): List<A>
 ??? answer
 ```typescript
 function init<A>(l: List<A>): List<A> {
-  if (l.tag === "nil") {
+  if (l.tag === "nil")
     throw new Error("Attempt to get init of empty list");
-  }
 
-  if (l.tail === Nil) {
+  if (l.tail === Nil)
     return Nil;
-  }
 
   return new Cons(l.head, init(l.tail));
 }
@@ -649,7 +638,7 @@ Rewrite `sum`, `product`, and `length` in terms of `foldLeft`.
 ??? answer
 ```typescript
 function sum(ns: List<number>): number {
-  return foldLeft(ns, 0, (sum, n) => n + sum);
+  return foldLeft(ns, 0, (tot, n) => n + tot);
 }
 
 function product(ns: List<number>): number {
@@ -872,11 +861,10 @@ function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
     a1,
     [List() as List<number>, reverse(a2)],
     (a, [acc, other]) => {
-      if (other.tag === "cons") {
+      if (other.tag === "cons")
         return [new Cons(a + other.head, acc), other.tail];
-      } else {
+      else
         return [acc, other];
-      }
     }
   )[0];
 }
@@ -894,11 +882,10 @@ function zipWith<A, B, C>(
     la: List<A>,
     lb: List<B>,
     f: (a: A, b: B) => C): List<C> {
-  if (la.tag === "nil" || lb.tag === "nil") {
+  if (la.tag === "nil" || lb.tag === "nil")
     return Nil;
-  } else {
+  else
     return new Cons(f(la.head, lb.head), zipWith(la.tail, lb.tail, f));
-  }
 }
 
 // or, using a fold:
@@ -910,11 +897,10 @@ function zipWith<A, B, C>(
     la,
     [Nil, lb],
     ([acc, rem], a) => {
-      if (rem.tag === "cons") {
+      if (rem.tag === "cons")
         return [new Cons(f(a, rem.head), acc), rem.tail];
-      } else {
+      else
         return [acc, rem];
-      }
     }
   )[0]);
 }
@@ -952,13 +938,12 @@ function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean
 // need to accomplish elegantly this task.
 function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean {
   const folded = foldLeft(sup, sub, (rem, cur) => {
-    if (rem.tag === "nil") {
+    if (rem.tag === "nil")
       return Nil;
-    } else if (cur == rem.head) {
+    else if (cur === rem.head)
       return rem.tail;
-    } else {
+    else
       return sub;
-    }
   });
   return folded === Nil;
 }

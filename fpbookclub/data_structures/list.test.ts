@@ -1,6 +1,6 @@
 import {
-  List,
   Cons,
+  List,
   Nil,
   addCorresponding,
   addOne,
@@ -10,6 +10,7 @@ import {
   dropWhile,
   filter,
   flatMap,
+  getTail,
   hasSubsequence,
   init,
   length,
@@ -17,8 +18,7 @@ import {
   reverse,
   setHead,
   sum,
-  tail,
-  toString
+  toString,
 } from "./list";
 
 describe("List()", () => {
@@ -38,7 +38,7 @@ describe("List()", () => {
 
 describe("addCorresponding()", () => {
   test("adds corresponding elements", () => {
-    expect(addCorresponding(List(1, 2, 3), List(4, 5, 6))).toEqual(List(5, 7, 9))
+    expect(addCorresponding(List(1, 2, 3), List(4, 5, 6))).toEqual(List(5, 7, 9));
   });
 
   test("results in a list the same length as the shortest argument - left", () => {
@@ -80,7 +80,7 @@ describe("concat()", () => {
     expect(concat(List(
       List(1, 2),
       List(3, 4),
-      List(5, 6)
+      List(5, 6),
     ))).toEqual(List(1, 2, 3, 4, 5, 6));
   });
 });
@@ -106,7 +106,7 @@ describe("drop()", () => {
 
 describe("dropWhile()", () => {
   test("of Nil throws an exception", () => {
-    expect(() => dropWhile(Nil, a => a === a)).toThrow();
+    expect(() => dropWhile(Nil, a => a === false)).toThrow();
   });
 
   test("returns the whole list if p is the `false` constant function", () => {
@@ -228,17 +228,17 @@ describe("sum()", () => {
   });
 });
 
-describe("tail()", () => {
+describe("getTail()", () => {
   test("of Nil throws an exception", () => {
-    expect(() => tail(Nil)).toThrow();
+    expect(() => getTail(Nil)).toThrow();
   });
 
   test("of a one-element list is Nil", () => {
-    expect(tail(List(1))).toEqual(Nil);
+    expect(getTail(List(1))).toEqual(Nil);
   });
 
   test("of a multi-element list is everything after the head", () => {
-    expect(tail(List(1, 2))).toEqual(List(2));
+    expect(getTail(List(1, 2))).toEqual(List(2));
   });
 });
 
@@ -247,4 +247,3 @@ describe("toString()", () => {
     expect(toString(List(1, 2, 3))).toEqual(List("1", "2", "3"));
   });
 });
-
