@@ -551,7 +551,7 @@ const Try: <A>(f: () => A) => Option<A> = f => {
   }
 };
 
-const tryEncodeURI = (s: string) => Try(encodeURI(s));
+const tryEncodeURI = (s: string) => Try(() => encodeURI(s));
 ```
 
 ### Exercise 4.4. `sequence`
@@ -675,7 +675,7 @@ const Try: <A>(f: () => A) => Either<Error, A> = f => {
   }
 };
 
-const tryDecodeURI = (s: string) => Try(decodeURI(s));
+const tryDecodeURI = (s: string) => Try(() => decodeURI(s));
 ```
 
 ### Exercise 4.6. Basic functions on `Either`
