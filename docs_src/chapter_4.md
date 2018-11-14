@@ -491,7 +491,7 @@ convert `parseInt` into an `Option`-based API, which turns out to be fairly easy
 
 ```typescript
 function parseIntOpt(s: string): Option<number> {
-  const i = parseInt(s);
+  const i = parseInt(s, 10);
   if (isNaN(i))
     return none();
   else

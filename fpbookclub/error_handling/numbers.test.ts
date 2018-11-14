@@ -1,5 +1,5 @@
 import { parseIntOpt } from "./numbers";
-import { Option, some, none } from "./option";
+import { Option, none, some } from "./option";
 
 describe("parseIntOpt()", () => {
   test("returns NaN if the string contains no integer", () => {
