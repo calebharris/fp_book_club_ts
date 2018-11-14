@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 13 November 2018
+* Add tslint. Yay.
+* Fix all lint errors in code and excerpts
+
 ### 30 October 2018
 * Add `Try` in `option` module
 * Introduce `Either`
