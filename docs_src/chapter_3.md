@@ -978,7 +978,7 @@ Here's a simple binary tree data structure. You should recognize the tagged unio
 `List`.
 
 ```typescript
-type Tree<A> = Leaf<A> | Branch<A>
+type Tree<A> = Leaf<A> | Branch<A>;
 
 class Leaf<A> {
   tag: "leaf" = "leaf";
@@ -1040,11 +1040,10 @@ accidentally coupling the function to a type.
 ??? answer
 ```typescript
 function size(t: Tree<unknown>): number {
-  if (t.tag === "leaf") {
+  if (t.tag === "leaf")
     return 1;
-  } else {
+  else
     return 1 + size(t.left) + size(t.right);
-  }
 }
 ```
 ???
@@ -1061,11 +1060,10 @@ function maximum(tn: Tree<number>): number
 ??? answer
 ```typescript
 function maximum(t: Tree<number>): number {
-  if (t.tag === "leaf") {
+  if (t.tag === "leaf")
     return t.value;
-  } else {
+  else
     return Math.max(maximum(t.left), maximum(t.right));
-  }
 }
 ```
 ???
@@ -1081,9 +1079,10 @@ function depth(ta: Tree<unknown>): number
 ??? answer
 ```typescript
 function depth(t: Tree<unknown>): number {
-  if (t.tag === "leaf") return 1;
-
-  return Math.max(depth(t.left), depth(t.right)) + 1;
+  if (t.tag === "leaf")
+    return 1;
+  else
+    return Math.max(depth(t.left), depth(t.right)) + 1;
 }
 ```
 ???
@@ -1100,9 +1099,10 @@ function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
 ??? answer
 ```typescript
 function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
-  if (t.tag === "leaf") return new Leaf(f(t.value));
-
-  return new Branch(map(t.left, f), map(t.right, f));
+  if (t.tag === "leaf")
+    return new Leaf(f(t.value));
+  else
+    return new Branch(map(t.left, f), map(t.right, f));
 }
 ```
 ???
@@ -1131,11 +1131,12 @@ and right folds of `List`?
 ??? answer
 ```typescript
 function fold<A, B>(t: Tree<A>,
-                           f: (a: A) => B,
-                           g: (l: B, r: B) => B): B {
-  if (t.tag === "leaf") return f(t.value);
-
-  return g(fold(t.left, f, g), fold(t.right, f, g));
+                    f: (a: A) => B,
+                    g: (l: B, r: B) => B): B {
+  if (t.tag === "leaf")
+    return f(t.value);
+  else
+    return g(fold(t.left, f, g), fold(t.right, f, g));
 }
 
 function size(t: Tree<unknown>): number {
@@ -1151,7 +1152,11 @@ function depth(t: Tree<unknown>): number {
 }
 
 function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
-  return fold(t, a => new Leaf(f(a)) as Tree<B>, (l, r) => new Branch(l, r));
+  return fold(
+    t,
+    a => new Leaf(f(a)) as Tree<B>,
+    (l, r) => new Branch(l, r),
+  );
 }
 ```
 

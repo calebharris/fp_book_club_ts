@@ -1,15 +1,15 @@
 /**
  * tree.ts - a functional binary tree implementation
- **/
+ */
 
 /**
  * A Tree node is either a Leaf or a Branch
- **/
-export type Tree<A> = Leaf<A> | Branch<A>
+ */
+export type Tree<A> = Leaf<A> | Branch<A>;
 
 /**
  * A Leaf is a value-containing node. It does not have child nodes.
- **/
+ */
 export class Leaf<A> {
   tag: "leaf" = "leaf";
   readonly value: A;
@@ -21,7 +21,7 @@ export class Leaf<A> {
 
 /**
  * A Branch does not contain a value, but does have children.
- **/
+ */
 export class Branch<A> {
   tag: "branch" = "branch";
   readonly left: Tree<A>;
@@ -35,40 +35,45 @@ export class Branch<A> {
 
 /**
  * Returns the maximum path length from the root node to a leaf
- **/
+ */
 export function depth(t: Tree<unknown>): number {
   return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
 }
 
 /**
  * Returns the result of folding over a `Tree` with `f`
- **/
+ */
 export function fold<A, B>(t: Tree<A>,
                            f: (a: A) => B,
                            g: (l: B, r: B) => B): B {
-  if (t.tag === "leaf") return f(t.value);
-
-  return g(fold(t.left, f, g), fold(t.right, f, g));
+  if (t.tag === "leaf")
+    return f(t.value);
+  else
+    return g(fold(t.left, f, g), fold(t.right, f, g));
 }
 
 /**
  * Returns a new tree of the same shape as the input tree, with each leaf
  * containing the result of applying `f` to each leaf in the input tree
- **/
+ */
 export function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
-  return fold(t, a => new Leaf(f(a)) as Tree<B>, (l, r) => new Branch(l, r));
+  return fold(
+    t,
+    a => new Leaf(f(a)) as Tree<B>,
+    (l, r) => new Branch(l, r),
+  );
 }
 
 /**
  * Returns the maximum value from a tree of numbers
- **/
+ */
 export function maximum(t: Tree<number>): number {
   return fold(t, n => n, (l, r) => Math.max(l, r));
 }
 
 /**
  * Returns the total number of nodes in a tree
- **/
+ */
 export function size(t: Tree<unknown>): number {
   return fold(t, x => 1, (l, r) => l + r + 1);
 }

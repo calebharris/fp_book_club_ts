@@ -37,9 +37,9 @@ describe("depth",  () => {
           new Leaf("hello"),
           new Branch(
             new Leaf("there"),
-            new Leaf("people")
-          )
-        )
+            new Leaf("people"),
+          ),
+        ),
     )).toEqual(3);
   });
 });
