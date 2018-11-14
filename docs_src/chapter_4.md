@@ -492,8 +492,10 @@ convert `parseInt` into an `Option`-based API, which turns out to be fairly easy
 ```typescript
 function parseIntOpt(s: string): Option<number> {
   const i = parseInt(s);
-  if (isNaN(i)) return none();
-  return some(i);
+  if (isNaN(i))
+    return none();
+  else
+    return some(i);
 }
 ```
 
@@ -521,7 +523,7 @@ function parseAndQuoteRate(age: string,
   return map2(
       parseIntOpt(age),
       parseIntOpt(numSpeedingTickets),
-      quoteRate
+      quoteRate,
   );
 }
 ```
@@ -547,7 +549,7 @@ const Try: <A>(f: () => A) => Option<A> = f => {
   } catch (e) {
     return none();
   }
-}
+};
 
 const tryEncodeURI = (s: string) => Try(encodeURI(s));
 ```
@@ -666,10 +668,12 @@ const Try: <A>(f: () => A) => Either<Error, A> = f => {
   try {
     return right(f());
   } catch (e) {
-    if (e instanceof Error) return left(e);
-    return left(new Error(e));
+    if (e instanceof Error)
+      return left(e);
+    else
+      return left(new Error(e));
   }
-}
+};
 
 const tryDecodeURI = (s: string) => Try(decodeURI(s));
 ```

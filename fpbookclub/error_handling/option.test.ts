@@ -3,7 +3,7 @@ import {
   Try,
   lift,
   none,
-  some
+  some,
 } from "./option";
 
 describe("Try()", () => {
@@ -37,12 +37,11 @@ describe("flatMap()", () => {
   const nameless = some({ species: "bird" });
 
   const extractName = (thing: any): Option<string> => {
-    if (typeof thing === "object" && typeof thing.name === "string") {
+    if (typeof thing === "object" && typeof thing.name === "string")
       return some(thing.name);
-    } else {
+    else
       return none();
-    }
-  }
+  };
 
   test("applies the function on a Some", () => {
     expect(thingWithName.flatMap(extractName)).toEqual(some("Thomas"));

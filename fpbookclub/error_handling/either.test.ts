@@ -15,8 +15,8 @@ describe("Try()", () => {
 
   test("works for code that abuses throw", () => {
     expect(either.Try(() => {
+      // tslint:disable-next-line no-string-throw
       throw "This is not an error";
     })).toEqual(left(new Error("This is not an error")));
   });
 });
-
