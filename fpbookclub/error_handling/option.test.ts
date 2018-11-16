@@ -1,8 +1,11 @@
+import { List } from "../data_structures/list";
+
 import {
   Option,
   Try,
   lift,
   none,
+  sequence,
   some,
 } from "./option";
 
@@ -83,5 +86,19 @@ describe("lift()", () => {
   test("successfully transforms Math.abs", () => {
     const absOpt = lift(Math.abs);
     expect(absOpt(some(-3))).toEqual(some(3));
+  });
+});
+
+describe("sequence()", () => {
+  test("combines a list of options into an option of list", () => {
+    expect(sequence(List(some(1), some(2), some(3)))).toEqual(some(List(1, 2, 3)));
+  });
+
+  test("returns none if any value is none", () => {
+    expect(sequence(List(some(1), none(), some(3)))).toEqual(none());
+  });
+
+  test("returns none if the list is empty", () => {
+    expect(sequence(List())).toEqual(none());
   });
 });

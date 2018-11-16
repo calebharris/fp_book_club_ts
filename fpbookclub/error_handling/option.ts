@@ -1,3 +1,5 @@
+import { Cons, List, foldRight } from "../data_structures/list";
+
 /**
  * A type representing either the presence (`Some`) or absence (`None`) of a
  * value
@@ -117,3 +119,33 @@ export const map2: <A, B, C>(a: Option<A>,
                              b: Option<B>,
                              f: (a: A, b: B) => C) => Option<C> =
   (oa, ob, f) => oa.flatMap(a => ob.map(b => f(a, b)));
+
+/**
+ * Like map2, but with three input `Options`
+ */
+export const map3: <A, B, C, D>(a: Option<A>,
+                                b: Option<B>,
+                                c: Option<C>,
+                                f: (a: A, b: B, c: C) => D) => Option<D> =
+  (oa, ob, oc, f) => oa.flatMap(a => ob.flatMap(b => oc.map(c => f(a, b, c))));
+
+/**
+ * Given a list of `Options`, if they all are `Some`, return a single `Option`
+ * containing a list of all the values. Otherwise, return `None`.
+ */
+export const sequence: <A>(ls: List<Option<A>>) => Option<List<A>> =
+  ls => {
+    if (ls.tag === "nil")
+      return none();
+    else
+      return foldRight(
+        ls,
+        some(List()),
+        (oa, ol) => {
+          if (oa.tag === "none")
+            return none();
+          else
+            return ol.map(la => new Cons(oa.value, la));
+        },
+      );
+  };
