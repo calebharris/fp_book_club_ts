@@ -566,13 +566,20 @@ Just like normal functions, we can assign arrow functions to variables. Here's a
 annotations, just to demonstrate the syntax:
 
 ```typescript
-const equalsOne: (x: number) => number = (x: number) => {
+const equalsOne: (x: number) => number = (x: number): number => {
   return x === 1;
 );
 ```
 
-Because of some possible unexpected behavior traditional functions can cause (which we'll cover in
-the next section), we'll use the arrow function syntax whenever we can.
+Because of some possible unexpected behavior traditional functions can cause (which we'll cover in the next section),
+we'll use the arrow function syntax whenever we can, usually omitting the type annotations that immediately follow the
+constant name. So our functions will generally look like this:
+
+```typescript
+const equalsOne = (x: number): number => {
+  return x === 1;
+};
+```
 
 ### Functions as values in TypeScript
 
@@ -648,16 +655,15 @@ As an example, let's consider the `partial1` function. It takes a value and a fu
 function of one argument. The name means that it applies some, but not all, of a function's arguments.
 
 ```typescript
-const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C
+const partial1 = <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C => ...
 ```
 
 There is really only one way to implement this function. To start, we know we need to return another function that takes
 a single parameter of type `B`, so lets start with that:
 
 ```typescript
-const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C =
-  (a, f) => b => ???;
-}
+const partial1 = <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C =>
+  b => ???;
 ```
 
 Our returned function needs to itself return a value of type `C`. Examining the values available to us, we see that the
@@ -665,8 +671,8 @@ only way to obtain a `C` is to call `f` with an `A`, which is provided as a para
 our returned function takes as a parameter.
 
 ```typescript
-const partial1: <A, B, C>(a: A, f: (a: A, b: B) => C) => (b: B) => C =
-  (a, f) => b => f(a, b);
+const partial1 = <A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C =>
+  b => f(a, b);
 ```
 
 And we're done! We now have a higher-order function that takes a function of two arguments and partially applies it.
@@ -677,13 +683,13 @@ Implement `curry`, which converts a function `f` of two arguments into a functio
 `f`. This is another case where there is only one implementation that compiles.
 
 ```typescript
-const curry: <A, B, C>(f: (a: A, b: B) => C) => (a: A) => ((b: B) => C)
+const curry = <A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C) => ...
 ```
 
 ??? answer
 ```typescript
-const curry: <A, B, C>(f: (a: A, b: B) => C) => (a: A) => ((b: B) => C)
-  f => a => partial1(a, f);
+const curry = <A, B, C>(f: (a: A, b: B) => C): (a: A) => ((b: B) => C) =>
+  a => partial1(a, f);
 ```
 ???
 
@@ -693,13 +699,13 @@ Implement `uncurry`, which reverses the transformation of `curry`. Since `=>` in
 right, `(a: A) => ((b: B) => C)` can be written as `(a: A) => (b: B) => C`.
 
 ```typescript
-const uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (a: A, b: B) => C
+const uncurry = <A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C => ...
 ```
 
 ??? answer
 ```typescript
-const uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (a: A, b: B) => C =
-  f => (a, b) => f(a)(b);
+const uncurry = <A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C =>
+  (a, b) => f(a)(b);
 ```
 ???
 
@@ -708,13 +714,13 @@ const uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (a: A, b: B) => C =
 Implement `compose`, which feeds the output of one function into the input of another.
 
 ```typescript
-const compose: <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (a: A) => C
+const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C => ...
 ```
 
 ??? answer
 ```typescript
-const compose: <A, B, C>(f: (b: B) => C, g: (a: A) => B) => (a: A) => C =
-  (f, g) => a => f(g(a));
+const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C =>
+  a => f(g(a));
 ```
 ???
 
