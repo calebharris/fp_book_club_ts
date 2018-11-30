@@ -57,17 +57,17 @@ export class Cons<A> {
 /**
  * Creates a List from a variable number of arguments.
  */
-export function List<A>(...vals: A[]): List<A> {
+export const List = <A>(...vals: A[]): List<A> => {
   if (vals.length === 0)
     return Nil;
   else
     return new Cons(vals[0], List(...vals.slice(1)));
-}
+};
 
 /**
  * Uses recursion and pattern matching to add up a list of numbers
  */
-export function sum(ns: List<number>): number {
+export const sum = (ns: List<number>): number => {
   switch (ns.tag) {
     // the sum of the empty list is 0
     case "nil": return 0;
@@ -75,12 +75,12 @@ export function sum(ns: List<number>): number {
     // the sum of a list is the value in the head plus the sum of the tail
     case "cons": return ns.head + sum(ns.tail);
   }
-}
+};
 
 /**
  * Multiplies a list of numbers together, using the same technique as `sum`
  */
-export function product(ns: List<number>): number {
+export const product = (ns: List<number>): number => {
   switch (ns.tag) {
     case "nil": return 1.0;
     case "cons":
@@ -89,7 +89,7 @@ export function product(ns: List<number>): number {
       else
         return ns.head * product(ns.tail);
   }
-}
+};
 ```
 
 One bit of new syntax shows up twice in the `List` function: the `...` operator. It's actually two different operators
@@ -185,13 +185,13 @@ is a conditional that guarantees a value has a specific type. Inside the conditi
 as that type. For example:
 
 ```typescript
-function printHead<A>(ls: List<A>) {
+const printHead = <A>(ls: List<A>) => {
   if (ls.tag === "cons") {
     console.log(`The head is ${ls.head}`);
   } else {
     console.log("We're headless!");
   }
-}
+};
 ```
 
 This code compiles because `ls.tag === "cons"` is a type guard, allowing the TypeScript compiler to know that, inside
@@ -206,11 +206,11 @@ ADT, in order to avoid undefined behavior. Fortunately, once again due to TypeSc
 to do anything special. Consider this function:
 
 ```typescript
-function getHead<A>(ls: List<A>): A {
+const getHead = <A>(ls: List<A>): A => {
   if (ls.tag === "cons") {
     return ls.head;
   }
-}
+};
 ```
 
 Attempting to compile it leads to this error:
@@ -229,12 +229,12 @@ pattern matching capability offered by other FP languages. Hopefully, the `sum` 
 to you now:
 
 ```typescript
-function sum(ns: List<number>): number {
+const sum = (ns: List<number>): number => {
   switch (ns.tag) {
     case "nil": return 0;
     case "cons": return ns.head + sum(ns.tail);
   }
-}
+};
 ```
 
 ### Exercise 3.1. Type inference
@@ -265,10 +265,10 @@ type AnyList<A> = SingleList<A> | DoubleList<A>;
 What is the result of compiling the following snippets?
 
 ```typescript
-function foo<A>(l: SingleList<A>) {
+const foo = <A>(l: SingleList<A>) => {
   if (l.tag === "cons")
     console.log(l.head);
-}
+};
 ```
 
 ??? answer
@@ -278,10 +278,10 @@ lookup the `head` property inside the `if` statement.
 ???
 
 ```typescript
-function bar<A>(l: AnyList<A>) {
+const bar = <A>(l: AnyList<A>) => {
   if (l.tag === "cons")
     console.log(l.head);
-}
+};
 ```
 
 ??? answer
@@ -292,10 +292,10 @@ both possibilities support the `head` property, and it has the same type for eac
 ???
 
 ```typescript
-function baz<A>(l: AnyList<A>) {
+const baz = <A>(l: AnyList<A>) => {
   if (l.tag === "cons")
     console.log(l.prev);
-}
+};
 ```
 
 ??? answer
@@ -358,12 +358,12 @@ function getTail<A>(l: List<A>): List<A>
 // This version throws an exception if the caller passes an empty list, but
 // there are several equally "correct" ways to handle this scenario, such as
 // returning `Nil`. It's up to you as the library designer to choose a method!
-function getTail<A>(l: List<A>): List<A> {
+const getTail = <A>(l: List<A>): List<A> => {
   if (l.tag === "nil")
     throw new Error("Attempt to take tail of empty list");
 
   return l.tail;
-}
+};
 
 ```
 ???
@@ -379,12 +379,12 @@ function setHead<A>(l: List<A>, head: A): List<A>
 
 ??? answer
 ```typescript
-function setHead<A>(l: List<A>, a: A): List<A> {
+const setHead = <A>(l: List<A>, a: A): List<A> => {
   if (l.tag === "nil")
     throw new Error("Attempt to set head of empty list");
 
   return new Cons(a, l.tail);
-}
+};
 ```
 ???
 
@@ -401,13 +401,13 @@ function drop<A>(l: List<A>, n: number): List<A>
 
 ??? answer
 ```typescript
-function drop<A>(l: List<A>, n: number): List<A> {
+const drop = <A>(l: List<A>, n: number): List<A> => {
   if (l.tag === "nil")
       throw new Error("Attempt to drop from empty list");
 
   if (n <= 0) return l;
   else return drop(l.tail, n - 1);
-}
+};
 ```
 ???
 
@@ -421,7 +421,7 @@ function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
 
 ??? answer
 ```typescript
-function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+const dropWhile = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
   if (l.tag === "nil")
       throw new Error("Attempt to drop from empty list");
 
@@ -432,7 +432,7 @@ function dropWhile<A>(l: List<A>, p: (a: A) => boolean): List<A> {
     }
 
   return l;
-}
+};
 ```
 ???
 
@@ -440,14 +440,14 @@ A "more surprising" example of data sharing, this `append` implementation's runt
 entirely by the first list. The second is just tacked onto the end, so to speak.
 
 ```typescript
-function append<A>(a1: List<A>, a2: List<A>): List<A> {
+const append = <A>(a1: List<A>, a2: List<A>): List<A> => {
   switch (a1.tag) {
     case "nil":
       return a2;
     case "cons":
       return new Cons(a1.head, append(a1.tail, a2));
   }
-}
+};
 ```
 
 ### Exercise 3.6. `init`
@@ -462,7 +462,7 @@ function init<A>(l: List<A>): List<A>
 
 ??? answer
 ```typescript
-function init<A>(l: List<A>): List<A> {
+const init = <A>(l: List<A>): List<A> => {
   if (l.tag === "nil")
     throw new Error("Attempt to get init of empty list");
 
@@ -470,7 +470,7 @@ function init<A>(l: List<A>): List<A> {
     return Nil;
 
   return new Cons(l.head, init(l.tail));
-}
+};
 ```
 ???
 
@@ -491,19 +491,19 @@ According to the book:
 Take another look at `sum` and `product`. These versions are simplified a bit compared to what you saw before.
 
 ```typescript
-function sum(ns: List<number>): number {
+const sum = (ns: List<number>): number => {
   switch (ns.tag) {
     case "nil":  return 0;
     case "cons": return ns.head + sum(ns.tail);
   }
-}
+};
 
-function product(ns: List<number>): number {
+const product = (ns: List<number>): number => {
   switch (ns.tag) {
     case "nil":  return 1.0;
     case "cons": return ns.head * product(ns.tail);
   }
-}
+};
 ```
 
 Notice how similar they are? They both return a constant value in the `"nil"` case. In the `"cons"` case, they both call
@@ -520,15 +520,15 @@ function foldRight<A, B>(l: List<A>,
     case "nil": return z;
     case "cons": return f(l.head, foldRight(l.tail, z, f));
   }
-}
+};
 
-function sum(ns: List<number>): number {
+const sum = (ns: List<number>): number => {
   return foldRight(ns, 0, (a, b) => a + b);
-}
+};
 
-function product(ns: List<number>): number {
+const product = (ns: List<number>): number => {
   return foldRight(ns, 1.0, (a, b) => a * b);
-}
+};
 ```
 
 `foldRight` can operate on lists of any element type, and, it turns out, can return any type of value, not just the type
@@ -588,9 +588,9 @@ function length<A>(l: List<A>): number
 
 ??? answer
 ```typescript
-function length<A>(l: List<A>): number {
+const length = <A>(l: List<A>): number => {
   return foldRight(l, 0, (a, b) => b + 1);
-}
+};
 ```
 ???
 
@@ -610,24 +610,24 @@ function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B
 ??? answer
 ```typescript
 // tail-recursive solution
-function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => {
   const go = (la: List<A>, acc: B): B => {
     if (la.tag === "nil") return acc;
     else return go(la.tail, f(acc, la.head));
   };
 
   return go(l, z);
-}
+};
 
 // iterative solution
-function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => {
   var state = z;
   while (l.tag !== "nil") {
     state = f(state, l.head);
     l = l.tail;
   }
   return state;
-}
+};
 ```
 ???
 
@@ -637,17 +637,17 @@ Rewrite `sum`, `product`, and `length` in terms of `foldLeft`.
 
 ??? answer
 ```typescript
-function sum(ns: List<number>): number {
+const sum = (ns: List<number>): number => {
   return foldLeft(ns, 0, (tot, n) => n + tot);
-}
+};
 
-function product(ns: List<number>): number {
+const product = (ns: List<number>): number => {
   return foldLeft(ns, 1.0, (prod, n) => n * prod);
-}
+};
 
-function length<A>(l: List<A>): number {
+const length = <A>(l: List<A>): number => {
   return foldLeft(l, 0, (len, a) => len + 1);
-}
+};
 ```
 ???
 
@@ -661,9 +661,9 @@ function reverse<A>(l: List<A>): List<A>
 
 ??? answer
 ```typescript
-function reverse<A>(l: List<A>): List<A> {
+const reverse = <A>(l: List<A>): List<A> => {
   return foldLeft(l, List(), (rev, a) => new Cons(a, rev));
-}
+};
 ```
 ???
 
@@ -682,7 +682,7 @@ result, we can use `foldRight` to build up a function that, when evaluated, appl
 elements in first-to-last order, instead of `foldRight`'s usual last-to-first order.
 
 ```typescript
-function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
+const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => {
   // This is the result type for our inner call to `foldRight`, a function
   // that transforms a value of type `B` to a result also of type `B`. Such a
   // function is called an "endomorphism", hence the name of our type alias:
@@ -703,16 +703,16 @@ function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B {
   // We use `foldRight` to build up our reversing function, call it with the
   // original `z` value, and return the result.
   return foldRight<A, END_B>(l, id, deferred)(z);
-}
+};
 ```
 
 Implementing `foldRight` in terms of `foldLeft` is much more straightforward. We just reverse the list and pass it to
 `foldLeft`. Since this gives us a nice, stack-safe `foldRight` implementation, we'll keep it.
 
 ```typescript
-function foldRight<A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B {
+const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B => {
   return foldLeft(reverse(l), z, (b, a) => f(a, b));
-}
+};
 ```
 ???
 
@@ -722,9 +722,9 @@ Rewrite `append` using either fold.
 
 ??? answer
 ```typescript
-function append<A>(a1: List<A>, a2: List<A>): List<A> {
+const append = <A>(a1: List<A>, a2: List<A>): List<A> => {
   return foldRight(a1, a2, (a, b) => new Cons(a, b));
-}
+};
 ```
 ???
 
@@ -739,9 +739,9 @@ function concat<A>(ll: List<List<A>>): List<A>
 
 ??? answer
 ```typescript
-function concat<A>(ll: List<List<A>>): List<A> {
+const concat = <A>(ll: List<List<A>>): List<A> => {
   return foldRight(ll, List(), (a, b) => append(a, b));
-}
+};
 ```
 ???
 
@@ -762,9 +762,9 @@ function that returns a new List!)
 
 ??? answer
 ```typescript
-function addOne(l: List<number>): List<number> {
+const addOne = (l: List<number>): List<number> => {
   return foldRight(l, List(), (a, b) => new Cons(a + 1, b));
-}
+};
 ```
 ???
 
@@ -775,9 +775,9 @@ convert some `n: number` to a `string`.
 
 ??? answer
 ```typescript
-function toString(l: List<number>): List<string> {
+const toString = (l: List<number>): List<string> => {
   return foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
-}
+};
 ```
 ???
 
@@ -792,9 +792,9 @@ function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
 
 ??? answer
 ```typescript
-function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
+const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> => {
   return foldRight(la, List(), (a, b) => new Cons(f(a), b));
-}
+};
 ```
 ???
 
@@ -809,9 +809,9 @@ function filter<A>(l: List<A>, p: (a: A) => boolean): List<A>
 
 ??? answer
 ```typescript
-function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
   return foldRight(l, List(), (a, acc) => p(a) ? new Cons(a, acc) : acc);
-}
+};
 ```
 ???
 
@@ -827,9 +827,9 @@ function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B>
 
 ??? answer
 ```typescript
-function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B> {
+const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> => {
   return foldRight(l, List(), (a, acc) => append(f(a), acc));
-}
+};
 ```
 ???
 
@@ -839,13 +839,13 @@ Re-implement `filter` using `flatMap`. As a bonus, can you implement `map` in te
 
 ??? answer
 ```typescript
-function filter<A>(l: List<A>, p: (a: A) => boolean): List<A> {
+const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
   return flatMap(l, a => p(a) ? List(a) : List());
-}
+};
 
-function map<A, B>(la: List<A>, f: (a: A) => B): List<B> {
+const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> => {
   return flatMap(la, a => List(f(a)));
-}
+};
 ```
 ???
 
@@ -856,7 +856,7 @@ argument lists. For example, given `List(1, 2, 3)` and `List(4, 5, 6)`, it shoul
 
 ??? answer
 ```typescript
-function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+const addCorresponding = (a1: List<number>, a2: List<number>): List<number> => {
   return foldRight(
     a1,
     [List() as List<number>, reverse(a2)],
@@ -867,7 +867,7 @@ function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
         return [acc, other];
     }
   )[0];
-}
+};
 ```
 ???
 
@@ -878,21 +878,21 @@ the previous function to use `zipWith`.
 
 ??? answer
 ```typescript
-function zipWith<A, B, C>(
+const zipWith = <A, B, C>(
     la: List<A>,
     lb: List<B>,
-    f: (a: A, b: B) => C): List<C> {
+    f: (a: A, b: B) => C): List<C> => {
   if (la.tag === "nil" || lb.tag === "nil")
     return Nil;
   else
     return new Cons(f(la.head, lb.head), zipWith(la.tail, lb.tail, f));
-}
+};
 
 // or, using a fold:
-function zipWith<A, B, C>(
+const zipWith = <A, B, C>(
     la: List<A>,
     lb: List<B>,
-    f: (a: A, b: B) => C): List<C> {
+    f: (a: A, b: B) => C): List<C> => {
   return reverse(foldLeft<A, [List<C>, List<B>]>(
     la,
     [Nil, lb],
@@ -903,12 +903,12 @@ function zipWith<A, B, C>(
         return [acc, rem];
     }
   )[0]);
-}
+};
 
 // and the refactored `addCorresponding`:
-function addCorresponding(a1: List<number>, a2: List<number>): List<number> {
+const addCorresponding = (a1: List<number>, a2: List<number>): List<number> => {
   return zipWith(a1, a2, (n1, n2) => n1 + n2);
-}
+};
 ```
 ???
 
@@ -936,7 +936,7 @@ function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean
 // is terse, but must process every element of `sup`, even if the subsequence
 // has already been found. Our `List` API just doesn't give us the tools we
 // need to accomplish elegantly this task.
-function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean {
+const hasSubsequence = <A>(sup: List<A>, sub: List<A>): boolean => {
   const folded = foldLeft(sup, sub, (rem, cur) => {
     if (rem.tag === "nil")
       return Nil;
@@ -946,7 +946,7 @@ function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean {
       return sub;
   });
   return folded === Nil;
-}
+};
 ```
 ???
 ## Trees
@@ -1039,12 +1039,12 @@ accidentally coupling the function to a type.
 
 ??? answer
 ```typescript
-function size(t: Tree<unknown>): number {
+const size = (t: Tree<unknown>): number => {
   if (t.tag === "leaf")
     return 1;
   else
     return 1 + size(t.left) + size(t.right);
-}
+};
 ```
 ???
 
@@ -1059,12 +1059,12 @@ function maximum(tn: Tree<number>): number
 
 ??? answer
 ```typescript
-function maximum(t: Tree<number>): number {
+const maximum = (t: Tree<number>): number => {
   if (t.tag === "leaf")
     return t.value;
   else
     return Math.max(maximum(t.left), maximum(t.right));
-}
+};
 ```
 ???
 
@@ -1078,12 +1078,12 @@ function depth(ta: Tree<unknown>): number
 
 ??? answer
 ```typescript
-function depth(t: Tree<unknown>): number {
+const depth = (t: Tree<unknown>): number => {
   if (t.tag === "leaf")
     return 1;
   else
     return Math.max(depth(t.left), depth(t.right)) + 1;
-}
+};
 ```
 ???
 
@@ -1098,12 +1098,12 @@ function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
 
 ??? answer
 ```typescript
-function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
+const map = <A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> => {
   if (t.tag === "leaf")
     return new Leaf(f(t.value));
   else
     return new Branch(map(t.left, f), map(t.right, f));
-}
+};
 ```
 ???
 
@@ -1137,27 +1137,27 @@ function fold<A, B>(t: Tree<A>,
     return f(t.value);
   else
     return g(fold(t.left, f, g), fold(t.right, f, g));
-}
+};
 
-function size(t: Tree<unknown>): number {
+const size = (t: Tree<unknown>): number => {
   return fold(t, x => 1, (l, r) => l + r + 1);
-}
+};
 
-function maximum(t: Tree<number>): number {
+const maximum = (t: Tree<number>): number => {
   return fold(t, n => n, (l, r) => Math.max(l, r));
-}
+};
 
-function depth(t: Tree<unknown>): number {
+const depth = (t: Tree<unknown>): number => {
   return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
-}
+};
 
-function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
+const map = <A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> => {
   return fold(
     t,
     a => new Leaf(f(a)) as Tree<B>,
     (l, r) => new Branch(l, r),
   );
-}
+};
 ```
 
 Folding over a tree and folding over a list do the same thing, conceptually: collapse a data structure into a value
