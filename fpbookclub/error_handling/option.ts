@@ -86,18 +86,18 @@ export class None<A> extends OptionBase<A> {
 /**
  * Smart constructor for None, which always returns `None.NONE`
  */
-export const none: <A>() => Option<A> = () => None.NONE;
+export const none = <A>(): Option<A> => None.NONE;
 
 /**
  * Smart constructor for `Some`
  */
-export const some: <A>(a: A) => Option<A> = a => new Some(a);
+export const some = <A>(a: A): Option<A> => new Some(a);
 
 /**
  * Evaluate `f` and return the result in a `Some` if it completes
  * successfully. If it throws an exception, return `None`.
  */
-export const Try: <A>(f: () => A) => Option<A> = f => {
+export const Try = <A>(f: () => A): Option<A> => {
   try {
     return some(f());
   } catch (e) {
@@ -108,44 +108,55 @@ export const Try: <A>(f: () => A) => Option<A> = f => {
 /**
  * Lift `f` into the `Option` context
  */
-export const lift: <A, B>(f: (a: A) => B) => (o: Option<A>) => Option<B> =
-  f => o => o.map(f);
+export const lift = <A, B>(f: (a: A) => B): (o: Option<A>) => Option<B> =>
+  o => o.map(f);
 
 /**
  * If `a` and `b` are both `Some`, apply `f` to their contained values and
  * return the result in a `Some`. Otherwise, return `None`.
  */
-export const map2: <A, B, C>(a: Option<A>,
-                             b: Option<B>,
-                             f: (a: A, b: B) => C) => Option<C> =
-  (oa, ob, f) => oa.flatMap(a => ob.map(b => f(a, b)));
+export const map2 = <A, B, C>(oa: Option<A>,
+                              ob: Option<B>,
+                              f: (a: A, b: B) => C): Option<C> =>
+  oa.flatMap(a => ob.map(b => f(a, b)));
 
 /**
  * Like map2, but with three input `Options`
  */
-export const map3: <A, B, C, D>(a: Option<A>,
-                                b: Option<B>,
-                                c: Option<C>,
-                                f: (a: A, b: B, c: C) => D) => Option<D> =
-  (oa, ob, oc, f) => oa.flatMap(a => ob.flatMap(b => oc.map(c => f(a, b, c))));
+export const map3 = <A, B, C, D>(oa: Option<A>,
+                                 ob: Option<B>,
+                                 oc: Option<C>,
+                                 f: (a: A, b: B, c: C) => D): Option<D> =>
+  oa.flatMap(a => ob.flatMap(b => oc.map(c => f(a, b, c))));
 
 /**
  * Given a list of `Options`, if they all are `Some`, return a single `Option`
  * containing a list of all the values. Otherwise, return `None`.
  */
-export const sequence: <A>(ls: List<Option<A>>) => Option<List<A>> =
-  ls => {
-    if (ls.tag === "nil")
-      return none();
-    else
-      return foldRight(
-        ls,
-        some(List()),
-        (oa, ol) => {
-          if (oa.tag === "none")
-            return none();
-          else
-            return ol.map(la => new Cons(oa.value, la));
-        },
-      );
-  };
+export const sequence = <A>(ls: List<Option<A>>): Option<List<A>> => traverse(ls, oa => oa);
+
+/**
+ * Given a list and a function that optionally transforms a value of type `A`,
+ * apply the function to each value and sequence the results into an `Option`
+ * of a list of type `B`. If the function returns `None` for any value in the
+ * original list, return `None`.
+ */
+export const traverse = <A, B>(ls: List<A>, f: (a: A) => Option<B>): Option<List<B>> => {
+  if (ls.tag === "nil")
+    return none();
+  else
+    return foldRight(
+      ls,
+      some(List()),
+      (a, ol) => {
+        if (ol.tag === "none")
+          return ol;
+
+        const ob = f(a);
+        if (ob.tag === "none")
+          return none();
+        else
+          return ol.map(la => new Cons(ob.value, la));
+      },
+    );
+};

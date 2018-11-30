@@ -18,12 +18,12 @@ consolidation.
 Consider this example, which computes the mean of a list:
 
 ```typescript
-function mean(xs: List<number>): number {
+const mean = (xs: List<number>): number => {
   if (xs.tag === "nil")
     throw new Error("Attempt to take mean of empty list");
 
   return sum(xs) / length(xs);
-}
+};
 ```
 
 It's a *partial function*, which means its result is undefined for some input values. Throwing an exception is one way
@@ -41,12 +41,12 @@ drawbacks to this approach.
 We could change `mean`'s API and force the caller to provide the value to return for empty lists, like this:
 
 ```typescript
-function mean(xs: List<number>, onEmpty: number): number {
+const mean = (xs: List<number>, onEmpty: number): number => {
   if (xs.tag === "nil")
     return onEmpty;
 
   return sum(xs) / length(xs);
-}
+};
 ```
 
 But this requires immediate callers to have knowledge of how to handle the special cases, again making it difficult to
@@ -82,12 +82,12 @@ may not exist at all. In FP, both of these notions are examples of *effects* (wh
 We can use `Option` to rewrite `mean` as a *total function*:
 
 ```typescript
-function mean(xs: List<number>): Option<number> {
+const mean = (xs: List<number>): Option<number> => {
   if (xs.tag === "nil")
     return NONE;
 
   return new Some(sum(xs) / length(xs));
-}
+};
 ```
 
 It now always has a defined result, which is `None` when the input list is empty.
@@ -147,9 +147,9 @@ export class None<A> extends OptionBase<A> {
 }
 
 // 10. smart constructors for `None` and `Some`
-export const none: <A>() => Option<A> = () => None.NONE;
+export const none = <A>(): Option<A> => None.NONE;
 
-export const some: <A>(a: A) => Option<A> = a => new Some(a);
+export const some = <A>(a: A): Option<A> => new Some(a);
 ```
 
 #### 1. Abstract classes
@@ -249,7 +249,7 @@ respectively. The code below is simplified and does not include a `this` paramet
 discussion:
 
 ```typescript
-function map<string>(f: (a: Pet) => string): Option<string>
+map<string>(f: (a: Pet) => string): Option<string>
 ```
 
 It's clear that the `f` we pass to `map` can return a `string` or any subtype of `string`, since the calling code can
@@ -375,6 +375,35 @@ Implement the five functions declared on `OptionBase`: `map`, `getOrElse`, `filt
 * `getOrElse` returns the contained value of a `Some`, or the value returned by the thunk in case of a `None`.
 * `orElse` is similar to `getOrElse`, but the return type of the thunk, and of itself, is `Option`.
 
+??? answer
+``` typescript
+abstract class OptionBase<A> {
+
+  filter(this: Option<A>, p: (a: A) => boolean): Option<A> {
+    return this.flatMap(a => p(a) ? some(a) : none());
+  }
+
+  flatMap<B>(this: Option<A>, f: (a: A) => Option<B>): Option<B> {
+    return this.map(f).getOrElse(() => none());
+  }
+
+  getOrElse<T extends U, U>(this: Option<T>, onEmpty: () => U): U {
+    if (this.tag === "none") return onEmpty();
+    return this.value;
+  }
+
+  map<B>(this: Option<A>, f: (a: A) => B): Option<B> {
+    if (this.tag === "none") return none();
+    return some(f(this.value));
+  }
+
+  orElse<T extends U, U>(this: Option<T>, ou: () => Option<U>): Option<U> {
+    return this.map(a => some(a)).getOrElse(() => ou());
+  }
+}
+```
+???
+
 #### When to use the basic Option functions
 
 When working with `Option` values, we can always explicity test for `Some` vs. `None` and act accordingly. But usually,
@@ -391,7 +420,7 @@ class Employee {
   manager: Option<Employee>
 }
 
-function lookupByName(name: string): Option<Employee> { ... }
+const lookupByName = (name: string): Option<Employee> => { ... };
 ```
 
 To look up an employee named Joe, and if he exists, get his department, we could write:
@@ -432,7 +461,7 @@ of each element's distance from the set's mean. You can use the formula `Math.po
 list to calculate the distance, where `m` is the mean of the list.
 
 ```typescript
-function variance(xs: List<number>): Option<number>
+const variance = (xs: List<number>): Option<number> => ...
 ```
 
 With `flatMap`, we can build up a computation with multiple stages that will abort as soon as the first failure is
@@ -460,15 +489,14 @@ easily lift a function into `List`, or any of the data types we'll explore later
 We already have the ability to lift a function of one argument using `map`:
 
 ```typescript
-function lift<A, B>(f: (a: A) => B): (o: Option<A>) => Option<B> {
-  return o => o.map(f);
-}
+const lift = <A, B>(f: (a: A) => B): (o: Option<A>) => Option<B> =>
+  o => o.map(f);
 ```
 
 We can use `lift` on any function we happen to have lying around to make it compatible with `Option`. For example:
 
 ```typescript
-const absOpt: (o: Option<number>) => Option<number> = lift(Math.abs);
+const absOpt = lift(Math.abs);
 ```
 
 We didn't have to rewrite `Math.abs`; we were able to just lift it into the `Option` context *ex post facto*. We can do
@@ -477,7 +505,7 @@ form that users can fill out and submit for an instant rate quote. We'll need to
 function to calculate the rate:
 
 ```typescript
-function quoteRate(age: number, numSpeedingTickets: number): number
+const quoteRate = (age: number, numSpeedingTickets: number): number => ...
 ```
 
 Our function takes two numeric arguments, but we'll only have access to the form data as string values. That means we'll
@@ -490,13 +518,13 @@ that returning special values to encode failures puts some undue burden on a fun
 convert `parseInt` into an `Option`-based API, which turns out to be fairly easy:
 
 ```typescript
-function parseIntOpt(s: string): Option<number> {
+const parseIntOpt = (s: string): Option<number> => {
   const i = parseInt(s, 10);
   if (isNaN(i))
     return none();
   else
     return some(i);
-}
+};
 ```
 
 Now we have a convenient way to parse form data into `Option` values. But our `quoteRate` function takes two raw
@@ -510,22 +538,21 @@ Write a function, `map2`, that combines two `Option`-wrapped values using a prov
 inside `OptionBase`. That leaves us with a more natural-feeling `optionC = map2(optionA, optionB, f)`.
 
 ```typescript
-function map2<A, B, C>(oa: Option<A>,
+const map2 = <A, B, C>(oa: Option<A>,
                        ob: Option<B>,
-                       f: (a: A, b: B) => C): Option<C>
+                       f: (a: A, b: B) => C): Option<C> => ...
 ```
 
 Now we can use `map2` to lift `quoteRate`:
 
 ```typescript
-function parseAndQuoteRate(age: string,
-                           numSpeedingTickets: string): Option<number> {
-  return map2(
+const parseAndQuoteRate =
+    (age: string, numSpeedingTickets: string): Option<number> =>
+  map2(
       parseIntOpt(age),
       parseIntOpt(numSpeedingTickets),
       quoteRate,
   );
-}
 ```
 
 With `map2`, we never have to modify an existing function of two arguments to make them "`Option`-aware". As a bonus,
@@ -543,7 +570,7 @@ function encodeURI(uri: string): string
 We can write a general-purpose function to wrap these exception-throwing APIs inside `Option`-returning equivalents:
 
 ```typescript
-const Try: <A>(f: () => A) => Option<A> = f => {
+const Try = <A>(f: () => A): Option<A> => {
   try {
     return some(f());
   } catch (e) {
@@ -563,7 +590,7 @@ the `Option` module. You could argue that it belongs in the `List` module, but t
 type we'll introduce later that'll make a good home for `sequence`.
 
 ```typescript
-function sequence<A>(a: List<Option<A>>): Option<List<A>>
+const sequence = <A>(a: List<Option<A>>): Option<List<A>> => ...
 ```
 
 Sometimes, we'll want to first apply a function that might fail to a list of simple values, and then `sequence` over the
@@ -571,9 +598,8 @@ resulting list of `Option`s. For example, we might want to attempt to parse a li
 To accomplish this, we could first `map` over the list and then call `sequence`:
 
 ```typescript
-function parseInts(a: List<string>): Option<List<number>> {
-  return sequence(map(a, parseIntOpt));
-}
+const parseInts = (a: List<string>): Option<List<number>> =>
+  sequence(map(a, parseIntOpt));
 ```
 
 But this is inefficient, because we loop over the list twice: once to apply `parseIntOpt`, and once to `sequence` the
@@ -587,7 +613,8 @@ It's easy to write this function in terms of `map` and `sequence`, but the whole
 efficient implementaiton. To test yourself, implement `sequence` in terms of `traverse`.
 
 ```typescript
-function traverse<A, B>(a: List<A>, f: (a: A) => Option<B>): Option<List<B>>
+const traverse = <A, B>(a: List<A>,
+                        f: (a: A) => Option<B>): Option<List<B>> => ...
 ```
 
 ## The `Either` data type
@@ -627,14 +654,14 @@ class Right<A> extends EitherBase<never, A> {
   }
 }
 
-const left: <E, A>(val: E) => Either<E, A> = val => new Left(val);
+const left = <E, A>(val: E): Either<E, A> => new Left(val);
 
-const right: <E, A>(val: A) => Either<E, A> = val => new Right(val);
+const right = <E, A>(val: A): Either<E, A> => new Right(val);
 
-const map2: <EE extends E, E, A, B, C>(
+const map2 = <EE extends E, E, A, B, C>(
     a: Either<E, A>,
     b: Either<EE, B>,
-    f: (a: A, b: B) => C) => Either<EE, C> = ...
+    f: (a: A, b: B) => C): Either<EE, C> => ...
 ```
 
 Just like `Option`, `Either` has two cases. Unlike `Option`, both cases of `Either` hold a value. By tradition, when
@@ -649,12 +676,12 @@ Because we're choosing to have our `Right` data constructor represent success, w
 Here's `mean` again, this time returning a `string` representing an error:
 
 ```typescript
-function mean(xs: List<number>): Either<string, number> {
-  const len = length(xs)
+const mean = (xs: List<number>): Either<string, number> => {
+  const len = length(xs);
   if (len === 0)
     return left("mean of empty list");
   return right(sum(xs) / len);
-}
+};
 ```
 
 ### Converting exception-based APIs to `Either`
@@ -664,7 +691,7 @@ exception as a `Left`. We need to do a little extra work, because in JavaScript,
 `Error`.
 
 ```typescript
-const Try: <A>(f: () => A) => Either<Error, A> = f => {
+const Try = <A>(f: () => A): Either<Error, A> => {
   try {
     return right(f());
   } catch (e) {

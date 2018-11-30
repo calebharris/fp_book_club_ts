@@ -59,22 +59,22 @@ export class Right<A> extends EitherBase<never, A> {
 /**
  * Smart constructor for `Left`
  */
-export const left: <E, A>(val: E) => Either<E, A> = val => new Left(val);
+export const left = <E, A>(val: E): Either<E, A> => new Left(val);
 
 /**
  * Smart constructor for `Right`
  */
-export const right: <E, A>(val: A) => Either<E, A> = val => new Right(val);
+export const right = <E, A>(val: A): Either<E, A> => new Right(val);
 
 /**
  * If both `e1` and `e2` are `Right`s, apply `f` to their contained values and
  * return the result in a `Right`. Otherwise, return the first `Left`
  * encountered
  */
-export const map2: <E, A, B, C>(
-  e1: Either<E, A>,
-  e2: Either<E, B>,
-  f: (a: A, b: B) => C) => Either<E, C> = (e1, e2, f) => {
+export const map2 = <E, A, B, C>(
+    e1: Either<E, A>,
+    e2: Either<E, B>,
+    f: (a: A, b: B) => C): Either<E, C> => {
   throw new Error("Unimplemented");
 };
 
@@ -84,7 +84,7 @@ export const map2: <E, A, B, C>(
  * anything else, wrap the thrown value in an `Error` before returning it in a
  * `Left`.
  */
-export const Try: <A>(f: () => A) => Either<Error, A> = f => {
+export const Try = <A>(f: () => A): Either<Error, A> => {
   try {
     return right(f());
   } catch (e) {

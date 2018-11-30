@@ -7,6 +7,7 @@ import {
   none,
   sequence,
   some,
+  traverse,
 } from "./option";
 
 describe("Try()", () => {
@@ -100,5 +101,19 @@ describe("sequence()", () => {
 
   test("returns none if the list is empty", () => {
     expect(sequence(List())).toEqual(none());
+  });
+});
+
+describe("traverse()", () => {
+  test("applies the function and combines the results into an option of list", () => {
+    expect(traverse(List(1, 2, 3), a => some(a + 1))).toEqual(some(List(2, 3, 4)));
+  });
+
+  test("returns none if any result is none", () => {
+    expect(traverse(List(1, 2, 3), a => a % 2 === 0 ? none() : some(a))).toEqual(none());
+  });
+
+  test("returns none if the list is empty", () => {
+    expect(traverse(List(), a => some(a))).toEqual(none());
   });
 });
