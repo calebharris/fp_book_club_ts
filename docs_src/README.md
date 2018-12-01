@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 1 December 2018
+* Refactor to use arrow functions wherever applicable
+* Inline answers to all `Option` exercises
+
 ### 13 November 2018
 * Add tslint. Yay.
 * Fix all lint errors in code and excerpts

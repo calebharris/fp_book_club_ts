@@ -148,15 +148,6 @@ export const traverse = <A, B>(ls: List<A>, f: (a: A) => Option<B>): Option<List
     return foldRight(
       ls,
       some(List()),
-      (a, ol) => {
-        if (ol.tag === "none")
-          return ol;
-
-        const ob = f(a);
-        if (ob.tag === "none")
-          return none();
-        else
-          return ol.map(la => new Cons(ob.value, la));
-      },
+      (a, ol) => map2(ol, f(a), (la, b) => new Cons(b, la)),
     );
 };

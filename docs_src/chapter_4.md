@@ -464,6 +464,15 @@ list to calculate the distance, where `m` is the mean of the list.
 const variance = (xs: List<number>): Option<number> => ...
 ```
 
+??? answer
+```typescript
+const variance = (xs: List<number>): Option<number> =>
+  mean(xs).flatMap(
+    m => mean(map(xs, x => Math.pow(x - m, 2))),
+  );
+```
+???
+
 With `flatMap`, we can build up a computation with multiple stages that will abort as soon as the first failure is
 encountered. We can inject `filter` stages to convert successes to failures if any intermediate results don't meet a
 particular expectation. These kind of transformation of an `Option` using `map`, `flatMap`, and `filter`, with
@@ -543,6 +552,15 @@ const map2 = <A, B, C>(oa: Option<A>,
                        f: (a: A, b: B) => C): Option<C> => ...
 ```
 
+??? answer
+```typescript
+const map2 = <A, B, C>(oa: Option<A>,
+                              ob: Option<B>,
+                              f: (a: A, b: B) => C): Option<C> =>
+  oa.flatMap(a => ob.map(b => f(a, b)));
+```
+???
+
 Now we can use `map2` to lift `quoteRate`:
 
 ```typescript
@@ -593,6 +611,22 @@ type we'll introduce later that'll make a good home for `sequence`.
 const sequence = <A>(a: List<Option<A>>): Option<List<A>> => ...
 ```
 
+??? answer
+```typescript
+const sequence = <A>(ls: List<Option<A>>): Option<List<A>> => {
+  if (ls.tag === "nil")
+    return none();
+  else
+    return foldRight(
+      ls,
+      some(List()),
+      (oa, ol) => map2(ol, oa, (la, a) => new Cons(a, la)),
+    );
+};
+```
+???
+
+
 Sometimes, we'll want to first apply a function that might fail to a list of simple values, and then `sequence` over the
 resulting list of `Option`s. For example, we might want to attempt to parse a list of integers out of a list of strings.
 To accomplish this, we could first `map` over the list and then call `sequence`:
@@ -616,6 +650,24 @@ efficient implementaiton. To test yourself, implement `sequence` in terms of `tr
 const traverse = <A, B>(a: List<A>,
                         f: (a: A) => Option<B>): Option<List<B>> => ...
 ```
+
+??? answer
+```typescript
+const traverse = <A, B>(ls: List<A>,
+                        f: (a: A) => Option<B>): Option<List<B>> => {
+  if (ls.tag === "nil")
+    return none();
+  else
+    return foldRight(
+      ls,
+      some(List()),
+      (a, ol) => map2(ol, f(a), (la, b) => new Cons(b, la)),
+    );
+};
+
+const sequence = <A>(ls: List<Option<A>>): Option<List<A>> => traverse(ls, oa => oa);
+```
+???
 
 ## The `Either` data type
 

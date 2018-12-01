@@ -157,8 +157,7 @@ export const meanOpt = (xs: List<number>): Option<number> => Try(() => mean(xs))
 /**
  * Returns a `Some` of the variance of `xs`, or `None` if `xs` is empty
  */
-export const variance = (xs: List<number>): Option<number> => {
-  return meanOpt(xs).flatMap(
+export const variance = (xs: List<number>): Option<number> =>
+  meanOpt(xs).flatMap(
     m => meanOpt(map(xs, x => Math.pow(x - m, 2))),
   );
-};
