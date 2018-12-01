@@ -36,44 +36,40 @@ export class Branch<A> {
 /**
  * Returns the maximum path length from the root node to a leaf
  */
-export function depth(t: Tree<unknown>): number {
-  return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
-}
+export const depth = (t: Tree<unknown>): number =>
+  fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
 
 /**
  * Returns the result of folding over a `Tree` with `f`
  */
-export function fold<A, B>(t: Tree<A>,
+export const fold = <A, B>(t: Tree<A>,
                            f: (a: A) => B,
-                           g: (l: B, r: B) => B): B {
+                           g: (l: B, r: B) => B): B => {
   if (t.tag === "leaf")
     return f(t.value);
   else
     return g(fold(t.left, f, g), fold(t.right, f, g));
-}
+};
 
 /**
  * Returns a new tree of the same shape as the input tree, with each leaf
  * containing the result of applying `f` to each leaf in the input tree
  */
-export function map<A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> {
-  return fold(
+export const map = <A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> =>
+  fold(
     t,
     a => new Leaf(f(a)) as Tree<B>,
     (l, r) => new Branch(l, r),
   );
-}
 
 /**
  * Returns the maximum value from a tree of numbers
  */
-export function maximum(t: Tree<number>): number {
-  return fold(t, n => n, (l, r) => Math.max(l, r));
-}
+export const maximum = (t: Tree<number>): number =>
+  fold(t, n => n, (l, r) => Math.max(l, r));
 
 /**
  * Returns the total number of nodes in a tree
  */
-export function size(t: Tree<unknown>): number {
-  return fold(t, x => 1, (l, r) => l + r + 1);
-}
+export const size = (t: Tree<unknown>): number =>
+  fold(t, x => 1, (l, r) => l + r + 1);
