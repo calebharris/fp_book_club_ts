@@ -93,7 +93,7 @@ export const product = (ns: List<number>): number => {
 ```
 
 One bit of new syntax shows up twice in the `List` function: the `...` operator. It's actually two different operators
-that happen to look the same and do related things. In `function List<A>(...vals: A[])`, the `...` is the
+that happen to look the same and do related things. In `const List = <A>(...vals: A[])`, the `...` is the
 *rest-parameter* operator. Other languages call this *variadic function* syntax. Either way, the result is a function
 that accepts a variable number of arguments of type `A`, which are represented inside the function as an array.
 
@@ -169,7 +169,7 @@ add types to `List` after it has been declared, but we can write functions that 
 below, `ns` will be either a `Cons<number>` or `Nil`.
 
 ```typescript
-function sum(ns: List<number>): number
+const sum = (ns: List<number>): number => ...
 ```
 
 The union type is the first TypeScript feature that we're using to implement an ADT. The second is the *literal type*.
@@ -350,7 +350,7 @@ repo at [/fpbookclub/data_structures/list.ts][repo_list].
 Implement the `getTail` function for removing the first element of a list. Notice that this function takes constant time.
 
 ```typescript
-function getTail<A>(l: List<A>): List<A>
+const getTail = <A>(l: List<A>): List<A> => ...
 ```
 
 ??? answer
@@ -374,7 +374,7 @@ Now implement `setHead`, which *replaces* the first element of a list with a dif
 `setHead(List(1, 2, 3), 4)` should return `List(4, 2, 3)`.
 
 ```typescript
-function setHead<A>(l: List<A>, head: A): List<A>
+const setHead = <A>(l: List<A>, head: A): List<A> => ...
 ```
 
 ??? answer
@@ -396,7 +396,7 @@ Generalize `tail` to `drop`, which removes the first `n` elements from a list. N
 proportional to `n`, and we do not have to make any copies.
 
 ```typescript
-function drop<A>(l: List<A>, n: number): List<A>
+const drop = <A>(l: List<A>, n: number): List<A> => ...
 ```
 
 ??? answer
@@ -416,7 +416,7 @@ const drop = <A>(l: List<A>, n: number): List<A> => {
 Implement `dropWhile`, which removes elements from the front of a list as long as they match a predicate.
 
 ```typescript
-function dropWhile<A>(l: List<A>, f: (a: A) => boolean): List<A>
+const dropWhile = <A>(l: List<A>, f: (a: A) => boolean): List<A> => ...
 ```
 
 ??? answer
@@ -457,7 +457,7 @@ Implement a function, `init`, that returns a `List` consisting of all but the la
 like `tail`?
 
 ```typescript
-function init<A>(l: List<A>): List<A>
+const init = <A>(l: List<A>): List<A> => ...
 ```
 
 ??? answer
@@ -513,22 +513,20 @@ for the differing bits of logic. In this example, our general function needs a n
 `"nil"` case and a function parameter for the operation to apply in the `"cons"` case.
 
 ```typescript
-function foldRight<A, B>(l: List<A>,
+const foldRight = <A, B>(l: List<A>,
                          z: B,
-                         f: (a: A, b: B) => B): B {
+                         f: (a: A, b: B) => B): B => {
   switch (l.tag) {
     case "nil": return z;
     case "cons": return f(l.head, foldRight(l.tail, z, f));
   }
 };
 
-const sum = (ns: List<number>): number => {
-  return foldRight(ns, 0, (a, b) => a + b);
-};
+const sum = (ns: List<number>): number =>
+  foldRight(ns, 0, (a, b) => a + b);
 
-const product = (ns: List<number>): number => {
-  return foldRight(ns, 1.0, (a, b) => a * b);
-};
+const product = (ns: List<number>): number =>
+  foldRight(ns, 1.0, (a, b) => a * b);
 ```
 
 `foldRight` can operate on lists of any element type, and, it turns out, can return any type of value, not just the type
@@ -583,14 +581,13 @@ and the `Cons` constructor with the result of applying the function `f`.
 Compute the length of a list using `foldRight`.
 
 ```typescript
-function length<A>(l: List<A>): number
+const length = <A>(l: List<A>): number => ...
 ```
 
 ??? answer
 ```typescript
-const length = <A>(l: List<A>): number => {
-  return foldRight(l, 0, (a, b) => b + 1);
-};
+const length = <A>(l: List<A>): number =>
+  foldRight(l, 0, (a, b) => b + 1);
 ```
 ???
 
@@ -604,7 +601,7 @@ an iterative loop and local state mutations, rather than recursion, to achieve s
 by writing a tail-recursive version of `foldLeft` and then transform it into an iterative version.
 
 ```typescript
-function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B
+const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => ...
 ```
 
 ??? answer
@@ -612,8 +609,10 @@ function foldLeft<A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B
 // tail-recursive solution
 const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => {
   const go = (la: List<A>, acc: B): B => {
-    if (la.tag === "nil") return acc;
-    else return go(la.tail, f(acc, la.head));
+    if (la.tag === "nil")
+      return acc;
+    else
+      return go(la.tail, f(acc, la.head));
   };
 
   return go(l, z);
@@ -637,17 +636,14 @@ Rewrite `sum`, `product`, and `length` in terms of `foldLeft`.
 
 ??? answer
 ```typescript
-const sum = (ns: List<number>): number => {
-  return foldLeft(ns, 0, (tot, n) => n + tot);
-};
+const sum = (ns: List<number>): number =>
+  foldLeft(ns, 0, (tot, n) => n + tot);
 
-const product = (ns: List<number>): number => {
-  return foldLeft(ns, 1.0, (prod, n) => n * prod);
-};
+const product = (ns: List<number>): number =>
+  foldLeft(ns, 1.0, (prod, n) => n * prod);
 
-const length = <A>(l: List<A>): number => {
-  return foldLeft(l, 0, (len, a) => len + 1);
-};
+const length = <A>(l: List<A>): number =>
+  foldLeft(l, 0, (len, a) => len + 1);
 ```
 ???
 
@@ -656,14 +652,13 @@ const length = <A>(l: List<A>): number => {
 Write a function that returns the reverse of a list. See if you can do it using a fold.
 
 ```typescript
-function reverse<A>(l: List<A>): List<A>
+const reverse = <A>(l: List<A>): List<A> => ...
 ```
 
 ??? answer
 ```typescript
-const reverse = <A>(l: List<A>): List<A> => {
-  return foldLeft(l, List(), (rev, a) => new Cons(a, rev));
-};
+const reverse = <A>(l: List<A>): List<A> =>
+  foldLeft(l, List(), (rev, a) => new Cons(a, rev));
 ```
 ???
 
@@ -710,9 +705,8 @@ Implementing `foldRight` in terms of `foldLeft` is much more straightforward. We
 `foldLeft`. Since this gives us a nice, stack-safe `foldRight` implementation, we'll keep it.
 
 ```typescript
-const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B => {
-  return foldLeft(reverse(l), z, (b, a) => f(a, b));
-};
+const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B =>
+  foldLeft(reverse(l), z, (b, a) => f(a, b));
 ```
 ???
 
@@ -722,9 +716,8 @@ Rewrite `append` using either fold.
 
 ??? answer
 ```typescript
-const append = <A>(a1: List<A>, a2: List<A>): List<A> => {
-  return foldRight(a1, a2, (a, b) => new Cons(a, b));
-};
+const append = <A>(a1: List<A>, a2: List<A>): List<A> =>
+  foldRight(a1, a2, (a, b) => new Cons(a, b));
 ```
 ???
 
@@ -734,14 +727,13 @@ Write a function that concatenates a list of lists into a single list, using fun
 runtime of `concat` should be proportional to the total length of all lists.
 
 ```typescript
-function concat<A>(ll: List<List<A>>): List<A>
+const concat = <A>(ll: List<List<A>>): List<A> => ...
 ```
 
 ??? answer
 ```typescript
-const concat = <A>(ll: List<List<A>>): List<A> => {
-  return foldRight(ll, List(), (a, b) => append(a, b));
-};
+const concat = <A>(ll: List<List<A>>): List<A> =>
+  foldRight(ll, List(), (a, b) => append(a, b));
 ```
 ???
 
@@ -762,9 +754,8 @@ function that returns a new List!)
 
 ??? answer
 ```typescript
-const addOne = (l: List<number>): List<number> => {
-  return foldRight(l, List(), (a, b) => new Cons(a + 1, b));
-};
+const addOne = (l: List<number>): List<number> =>
+  foldRight(l, List(), (a, b) => new Cons(a + 1, b));
 ```
 ???
 
@@ -775,9 +766,8 @@ convert some `n: number` to a `string`.
 
 ??? answer
 ```typescript
-const toString = (l: List<number>): List<string> => {
-  return foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
-};
+const toString = (l: List<number>): List<string> =>
+  foldRight(l, List(), (a, b) => new Cons(a.toString(), b));
 ```
 ???
 
@@ -787,14 +777,13 @@ Write a function `map` that generalizes modifying each element in a list while m
 Then, refactor your answers to the previous two exercises using `map`. Here is its signature:
 
 ```typescript
-function map<A, B>(l: List<A>, f: (a: A) => B): List<B>
+const map = <A, B>(l: List<A>, f: (a: A) => B): List<B> => ...
 ```
 
 ??? answer
 ```typescript
-const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> => {
-  return foldRight(la, List(), (a, b) => new Cons(f(a), b));
-};
+const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> =>
+  foldRight(la, List(), (a, b) => new Cons(f(a), b));
 ```
 ???
 
@@ -804,14 +793,13 @@ Write `filter`, a function that removes elements from a list unless they satisfy
 removing all odd numbers from a `List<number>`. Is it possible to implement `filter` in terms of `map`? Why, or why not?
 
 ```typescript
-function filter<A>(l: List<A>, p: (a: A) => boolean): List<A>
+const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => ...
 ```
 
 ??? answer
 ```typescript
-const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
-  return foldRight(l, List(), (a, acc) => p(a) ? new Cons(a, acc) : acc);
-};
+const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> =>
+  foldRight(l, List(), (a, acc) => p(a) ? new Cons(a, acc) : acc);
 ```
 ???
 
@@ -822,14 +810,13 @@ a raw value. That `List` should be inserted into the resulting `List`. For examp
 i))` should return `List(1, 1, 2, 2, 3, 3)`.
 
 ```typescript
-function flatMap<A, B>(l: List<A>, f: (a: A) => List<B>): List<B>
+const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> => ...
 ```
 
 ??? answer
 ```typescript
-const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> => {
-  return foldRight(l, List(), (a, acc) => append(f(a), acc));
-};
+const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> =>
+  foldRight(l, List(), (a, acc) => append(f(a), acc));
 ```
 ???
 
@@ -839,13 +826,11 @@ Re-implement `filter` using `flatMap`. As a bonus, can you implement `map` in te
 
 ??? answer
 ```typescript
-const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
-  return flatMap(l, a => p(a) ? List(a) : List());
-};
+const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> =>
+  flatMap(l, a => p(a) ? List(a) : List());
 
-const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> => {
-  return flatMap(la, a => List(f(a)));
-};
+const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> =>
+  flatMap(la, a => List(f(a)));
 ```
 ???
 
@@ -926,7 +911,7 @@ illustrate the previous point about efficiency, so you will probably have some d
 functional, efficient manner. We'll return to this problem, and hopefully find a better answer, in Chapter 5.
 
 ```typescript
-function hasSubsequence<A>(sup: List<A>, sub: List<A>): boolean
+const hasSubsequence = <A>(sup: List<A>, sub: List<A>): boolean => ...
 ```
 
 ??? answer
@@ -1026,7 +1011,7 @@ class Branch<A> {
 Write a function named `size` that counts the number of leaves and branches (collectively called "nodes") in a tree.
 
 ```typescript
-function size(ta: Tree<unknown>): number
+const size = (ta: Tree<unknown>): number => ...
 ```
 
 ::: tip The unknown type
@@ -1054,7 +1039,7 @@ Write a function `maximum` that returns the maximum value contained in a tree of
 built-in `Math.max(x, y)` function to calculate the maximum of two numbers `x` and `y`.
 
 ```typescript
-function maximum(tn: Tree<number>): number
+const maximum = (tn: Tree<number>): number => ...
 ```
 
 ??? answer
@@ -1073,7 +1058,7 @@ const maximum = (t: Tree<number>): number => {
 Write a function `depth` that returns the maximum path length from the "root", or top, of a tree to any leaf.
 
 ```typescript
-function depth(ta: Tree<unknown>): number
+const depth = (ta: Tree<unknown>): number => ...
 ```
 
 ??? answer
@@ -1093,7 +1078,7 @@ Write the `Tree` version of `map`. As with the `List` version, it should return 
 input `Tree`, but with elements transformed by a provided function.
 
 ```typescript
-function map<A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B>
+const map = <A, B>(ta: Tree<A>, f: (a: A) => B): Tree<B> => ...
 ```
 
 ??? answer
@@ -1130,26 +1115,23 @@ and right folds of `List`?
 
 ??? answer
 ```typescript
-function fold<A, B>(t: Tree<A>,
+const fold = <A, B>(t: Tree<A>,
                     f: (a: A) => B,
-                    g: (l: B, r: B) => B): B {
+                    g: (l: B, r: B) => B): B => {
   if (t.tag === "leaf")
     return f(t.value);
   else
     return g(fold(t.left, f, g), fold(t.right, f, g));
 };
 
-const size = (t: Tree<unknown>): number => {
-  return fold(t, x => 1, (l, r) => l + r + 1);
-};
+const size = (t: Tree<unknown>): number =>
+  fold(t, x => 1, (l, r) => l + r + 1);
 
-const maximum = (t: Tree<number>): number => {
-  return fold(t, n => n, (l, r) => Math.max(l, r));
-};
+const maximum = (t: Tree<number>): number =>
+  fold(t, n => n, (l, r) => Math.max(l, r));
 
-const depth = (t: Tree<unknown>): number => {
-  return fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
-};
+const depth = (t: Tree<unknown>): number =>
+  fold(t, a => 1, (l, r) => Math.max(l, r) + 1);
 
 const map = <A, B>(t: Tree<A>, f: (a: A) => B): Tree<B> => {
   return fold(
@@ -1166,7 +1148,7 @@ an intermediate value in an "accumulator". Our `fold` implementation for trees i
 that the caller needs to specify how to deal with each data constructor. Recall `foldRight`:
 
 ```typescript
-function foldRight<A, B>(l: List<A>, z: B, f: (a: A) => B): B
+const foldRight = <A, B>(l: List<A>, z: B, f: (a: A) => B): B => ...
 ```
 
 The function `f` handles the `Cons` data constructor, while `Nil` is simply replaced with the "zero" value, `z`. For

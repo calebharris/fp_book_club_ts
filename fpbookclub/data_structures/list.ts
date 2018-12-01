@@ -50,31 +50,27 @@ export const List = <A>(...vals: A[]): List<A> => {
  * corresponding elements. If one list is longer than the other, the longer
  * list's excess elements will be ignored.
  */
-export const addCorresponding = (a1: List<number>, a2: List<number>): List<number> => {
-  return zipWith(a1, a2, (n1, n2) => n1 + n2);
-};
+export const addCorresponding = (a1: List<number>, a2: List<number>): List<number> =>
+  zipWith(a1, a2, (n1, n2) => n1 + n2);
 
 /**
  * Given a list of numbers, return a list containing the result of adding one
  * to each element.
  */
-export const addOne = (l: List<number>): List<number> => {
-  return map(l, a => a + 1);
-};
+export const addOne = (l: List<number>): List<number> =>
+  map(l, a => a + 1);
 
 /**
  * Creates a new list by appending a2 to a1
  */
-export const append = <A>(a1: List<A>, a2: List<A>): List<A> => {
-  return foldRight(a1, a2, (a, b) => new Cons(a, b));
-};
+export const append = <A>(a1: List<A>, a2: List<A>): List<A> =>
+  foldRight(a1, a2, (a, b) => new Cons(a, b));
 
 /**
  * Returns a flattened List containing all elements of the given sublists in order
  */
-export const concat = <A>(ll: List<List<A>>): List<A> => {
-  return foldRight(ll, List(), (a, b) => append(a, b));
-};
+export const concat = <A>(ll: List<List<A>>): List<A> =>
+  foldRight(ll, List(), (a, b) => append(a, b));
 
 /**
  * Returns a new list missing the first `n` elements of `l`
@@ -137,17 +133,15 @@ export const init = <A>(l: List<A>): List<A> => {
  * Returns a list containing only the elemtns of `l` for which the predicate `p`
  * is `true`.
  */
-export const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
-  return flatMap(l, a => p(a) ? List(a) : List());
-};
+export const filter = <A>(l: List<A>, p: (a: A) => boolean): List<A> =>
+  flatMap(l, a => p(a) ? List(a) : List());
 
 /**
  * Returns a list where each element `a` of the input list, `l`, has been replaced
  * by the elements of the list resulting from applying `f` to `a`.
  */
-export const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> => {
-  return foldRight(l, List(), (a, acc) => append(f(a), acc));
-};
+export const flatMap = <A, B>(l: List<A>, f: (a: A) => List<B>): List<B> =>
+  foldRight(l, List(), (a, acc) => append(f(a), acc));
 
 /**
  * Folds every element of the list into a single value by recursively applying
@@ -166,38 +160,33 @@ export const foldLeft = <A, B>(l: List<A>, z: B, f: (b: B, a: A) => B): B => {
  * Folds every element of the list into a single value by recursively applying
  * the provided function, starting at the right-hand side of the list.
  */
-export const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B => {
-  return foldLeft(reverse(l), z, (b, a) => f(a, b));
-};
+export const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B =>
+  foldLeft(reverse(l), z, (b, a) => f(a, b));
 
 /**
  * Returns the length of l
  */
-export const length = <A>(l: List<A>): number => {
-  return foldLeft(l, 0, (len, a) => len + 1);
-};
+export const length = <A>(l: List<A>): number =>
+  foldLeft(l, 0, (len, a) => len + 1);
 
 /**
  * Returns a new list where each element is the result of applying `f`
  * to the corresponding element in `la`
  */
-export const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> => {
-  return flatMap(la, a => List(f(a)));
-};
+export const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> =>
+  flatMap(la, a => List(f(a)));
 
 /**
  * Multiplies a list of numbers together
  */
-export const product = (ns: List<number>): number => {
-  return foldLeft(ns, 1.0, (prod, n) => n * prod);
-};
+export const product = (ns: List<number>): number =>
+  foldLeft(ns, 1.0, (prod, n) => n * prod);
 
 /**
  * Returns the reverse of a list
  */
-export const reverse = <A>(l: List<A>): List<A> => {
-  return foldLeft(l, List(), (rev, a) => new Cons(a, rev));
-};
+export const reverse = <A>(l: List<A>): List<A> =>
+  foldLeft(l, List(), (rev, a) => new Cons(a, rev));
 
 /**
  * Replaces the head of a list with a different value
@@ -212,9 +201,8 @@ export const setHead = <A>(l: List<A>, a: A): List<A> => {
 /**
  * Adds up a list of numbers
  */
-export const sum = (ns: List<number>): number => {
-  return foldLeft(ns, 0, (tot, n) => n + tot);
-};
+export const sum = (ns: List<number>): number =>
+  foldLeft(ns, 0, (tot, n) => n + tot);
 
 /**
  * Returns the tail of a list
@@ -230,9 +218,8 @@ export const getTail = <A>(l: List<A>): List<A> => {
  * Retuns a list containing the string representations of the elements of the
  * input list.
  */
-export const toString = (l: List<number>): List<string> => {
-  return map(l, a => a.toString());
-};
+export const toString = (l: List<number>): List<string> =>
+  map(l, a => a.toString());
 
 /**
  * Returns a list comprising the results of applying `f` to corresponding
@@ -241,8 +228,8 @@ export const toString = (l: List<number>): List<string> => {
 export const zipWith = <A, B, C>(
     la: List<A>,
     lb: List<B>,
-    f: (a: A, b: B) => C): List<C> => {
-  return reverse(foldLeft<A, [List<C>, List<B>]>(
+    f: (a: A, b: B) => C): List<C> =>
+  reverse(foldLeft<A, [List<C>, List<B>]>(
     la,
     [Nil, lb],
     ([acc, rem], a) => {
@@ -252,4 +239,3 @@ export const zipWith = <A, B, C>(
         return [acc, rem];
     },
   )[0]);
-};
