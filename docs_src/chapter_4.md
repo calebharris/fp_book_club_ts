@@ -676,7 +676,7 @@ the error. We get either a success in the form of a `Some(value)` — or nothing
 `Option`: the `Either` type, which will let us track the reason for an error.
 
 ```typescript
-type Either<E, A> = Left<E> | Right<A>;
+type Either<E, A> = Left<E, A> | Right<E, A>;
 
 abstract class EitherBase<E, A> {
   flatMap<F extends G, G, B>(
@@ -690,7 +690,7 @@ abstract class EitherBase<E, A> {
       b: () => Either<G, U>): Either<G, U> { ... }
 }
 
-class Left<E> extends EitherBase<E, never> {
+class Left<E, A> extends EitherBase<E, A> {
   readonly tag: "left" = "left";
 
   constructor(readonly value: E) {
@@ -698,7 +698,7 @@ class Left<E> extends EitherBase<E, never> {
   }
 }
 
-class Right<A> extends EitherBase<never, A> {
+class Right<E, A> extends EitherBase<E, A> {
   readonly tag: "right" = "right";
 
   constructor(readonly value: A) {
@@ -725,7 +725,8 @@ can return one of two type.
 Because we're choosing to have our `Right` data constructor represent success, we'll want functions like `map` and
 `flatMap` to operate only on `Right`, and ignore `Left`. This leaves us with a *right-biased* `Either`.
 
-Here's `mean` again, this time returning a `string` representing an error:
+Here's `mean` again, this time returning a `Left` containing a string represention of the error when the provided list
+is empty:
 
 ```typescript
 const mean = (xs: List<number>): Either<string, number> => {
