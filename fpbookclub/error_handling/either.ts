@@ -94,3 +94,5 @@ export const Try = <A>(f: () => A): Either<Error, A> => {
       return left(new Error(e));
   }
 };
+
+export default { Left, Right, Try, left, map2, right };
