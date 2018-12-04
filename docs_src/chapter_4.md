@@ -763,6 +763,61 @@ const tryDecodeURI = (s: string) => Try(() => decodeURI(s));
 Implement versions of `map`, `flatMap`, and `orElse` on `Either` that operate on the right side only. Also implement
 `map2` as a top-level function in the `either` module.
 
+### Exercise 4.7. `sequence` and `traverse` for `Either`
+
+Implement `sequence` and `traverse` for `Either`. Both functions should return with the first `Left` they encounter
+while processing the input list, or a `Right` containing a list of values if they do not encounter a `Left`.
+
+Here's an example of using `map2` to conditionally construct a compound object, `Person`. The `mkPerson` function
+validates each of its inputs before creating and returning a `Person`.
+
+```typescript
+import { Either, left, map2, right } from "../error_handling/either";
+
+class Person {
+  constructor(readonly name: Name, readonly age: Age) { }
+}
+
+class Name {
+  constructor(readonly name: string) { }
+}
+
+class Age {
+  constructor(readonly age: number)  { }
+}
+
+const mkName = (name: string): Either<string, Name> => {
+  if (name === "")
+    return left("Name is empty.");
+  else
+    return right(new Name(name));
+};
+
+const mkAge = (age: number): Either<string, Age> => {
+  if (age < 0)
+    return left("Age is out of range.");
+  else
+    return right(new Age(age));
+};
+
+const mkPerson = (name: string, age: number): Either<string, Person> =>
+  map2(mkName(name), mkAge(age), (n, a) => new Person(n, a));
+```
+
+### Exercise 4.8. Error handling tactics
+
+In the previous example, `mkPerson` is only able to return one error, even if both the name and the age arguments are
+invalid. What would we need to change in order to report both errors? Do we need to change the implementation of `map2`,
+`mkPerson`, both? Could we create a new data type that's better suited for this requirement than `Either`? How would
+`orElse`, `sequence`, and `traverse` need to change to work for this new data type?
+
+## Summary
+
+You should now be more familiar with the pitfalls associated with using exceptions for error handling, and with two of
+the purely functional patterns for error handling: `Option` and `Either`. These data types are common in FP, but the
+bigger takeaway is to think about how to represent errors as ordinary values and use higher-order functions to
+consolidate error-handling logic.
+
 [js_this]: https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/ "Yehuda Katz - Understanding JavaScript Function Invocation and 'this'"
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"
