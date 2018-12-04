@@ -7,6 +7,11 @@ lang: en-US
 ---
 
 ## Updates
+### 4 December 2018
+* Refactor `Either` to overcome some type-checking challenges
+* Exercises 4.7 and 4.8
+* All remaining notes for Chapter 4
+
 ### 1 December 2018
 * Refactor to use arrow functions wherever applicable
 * Inline answers to all `Option` exercises
