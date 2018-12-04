@@ -1,7 +1,7 @@
 /**
  * A type representing a value that can be one of two types
  */
-export type Either<E, A> = Left<E> | Right<A>;
+export type Either<E, A> = Left<E, A> | Right<E, A>;
 
 /**
  * Base trait for `Either` data constructors. Most methods should have an
@@ -10,7 +10,7 @@ export type Either<E, A> = Left<E> | Right<A>;
 abstract class EitherBase<E, A> {
   /**
    * If `this` is a `Right`, returns the result of evaluating `f`. Otherwise,
-   * returns `this`.
+   * returns the contained value in a new `Left`
    */
   flatMap<F extends G, G, B>(this: Either<F, A>, f: (a: A) => Either<G, B>): Either<G, B> {
     throw new Error("Unimplemented");
@@ -36,7 +36,7 @@ abstract class EitherBase<E, A> {
  * Data constructor representing the "left" type, often used to indicate an
  * error
  */
-export class Left<E> extends EitherBase<E, never> {
+export class Left<E, A> extends EitherBase<E, A> {
   readonly tag: "left" = "left";
 
   constructor(readonly value: E) {
@@ -48,7 +48,7 @@ export class Left<E> extends EitherBase<E, never> {
  * Data constructor representing the "right" type, often used to indicate a
  * successful result
  */
-export class Right<A> extends EitherBase<never, A> {
+export class Right<E, A> extends EitherBase<E, A> {
   readonly tag: "right" = "right";
 
   constructor(readonly value: A) {
