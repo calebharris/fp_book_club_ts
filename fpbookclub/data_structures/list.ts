@@ -1,3 +1,7 @@
+import * as util from "util";
+
+import { InspectOptions } from "../shims";
+
 /**
  * list.ts - a functional singly linked list implementation using a
  * discriminated union, a.k.a. algebraic data type (ADT). Based on
@@ -10,29 +14,150 @@
  * Note that List is defined entirely by its constituent types, using
  * TypeScript's type union syntax, `|`.
  */
-export type List<A> = Cons<A> | Nil;
+export type List<A> = Cons<A> | Nil<A>;
+
+/**
+ * Base class to enable calling some `List` functions with dot syntax
+ * (e.g. `myList.map(i => i * 2)`). This style of library construction is not
+ * covered in Chapter 3, so if you're confused, check out Chapter 4!
+ */
+abstract class ListBase<A> {
+
+  /**
+   * Custom inspection function so that we see `List(1, 2, 3)` in the console
+   * instead of `Cons { head: 1, tail: Cons { ...`
+   */
+  [util.inspect.custom](this: List<A>, depth: number, options: InspectOptions): string {
+    if (depth < 0)
+      return options.stylize("[List]", "special");
+
+    const nextOpts = Object.assign({}, options);
+    if (typeof options.depth === "number")
+      nextOpts.depth = options.depth - 1;
+
+    const inner = this.foldLeft("", (b, a) => `${b}, ${util.inspect(a, nextOpts)}`).substr(2);
+    return options.stylize("List(", "special") + inner + options.stylize(")", "special");
+  }
+
+  addCorresponding(this: List<number>, that: List<number>): List<number> {
+    return addCorresponding(this, that);
+  }
+
+  addOne(this: List<number>): List<number> {
+    return addOne(this);
+  }
+
+  append(this: List<A>, that: List<A>): List<A> {
+    return append(this, that);
+  }
+
+  // We need a new type variable here because `A` is `List<something>`, so if
+  // we just returned `List<A>`, we would in fact be returning
+  // `List<List<something>>`, which is not our intent.
+  concat<B>(this: List<List<B>>): List<B> {
+    return concat(this);
+  }
+
+  drop(this: List<A>, n: number): List<A> {
+    return drop(this, n);
+  }
+
+  dropWhile(this: List<A>, p: (a: A) => boolean): List<A> {
+    return dropWhile(this, p);
+  }
+
+  filter(this: List<A>, p: (a: A) => boolean): List<A> {
+    return filter(this, p);
+  }
+
+  foldLeft<B>(this: List<A>, z: B, f: (b: B, a: A) => B): B {
+    return foldLeft(this, z, f);
+  }
+
+  foldRight<B>(this: List<A>, z: B, f: (a: A, b: B) => B): B {
+    return foldRight(this, z, f);
+  }
+
+  flatMap<B>(this: List<A>, f: (a: A) => List<B>): List<B> {
+    return flatMap(this, f);
+  }
+
+  getTail(this: List<A>): List<A> {
+    return getTail(this);
+  }
+
+  hasSubsequence(this: List<A>, that: List<A>): boolean {
+    return hasSubsequence(this, that);
+  }
+
+  init(this: List<A>): List<A> {
+    return init(this);
+  }
+
+  isEmpty(this: List<A>): this is Nil<A> {
+    return this.tag === "nil";
+  }
+
+  length(this: List<A>): number {
+    return length(this);
+  }
+
+  map<B>(this: List<A>, f: (a: A) => B): List<B> {
+    return map(this, f);
+  }
+
+  product(this: List<number>): number {
+    return product(this);
+  }
+
+  reverse(this: List<A>): List<A> {
+    return reverse(this);
+  }
+
+  setHead(this: List<A>, a: A): List<A> {
+    return setHead(this, a);
+  }
+
+  sum(this: List<number>): number {
+    return sum(this);
+  }
+
+  toString(this: List<A>): List<string> {
+    return toString(this);
+  }
+
+  zipWith<B, C>(this: List<A>, that: List<B>, f: (a: A, b: B) => C): List<C> {
+    return zipWith(this, that, f);
+  }
+}
 
 /**
  * Nil represents the empty list
  */
-export interface Nil {
-  tag: "nil";
-}
+export class Nil<A> extends ListBase<A> {
+  /**
+   * There is only one instance of Nil
+   */
+  static readonly NIL: List<never> = new Nil();
 
-/**
- * There is only one instance of Nil
- */
-export const Nil: Nil = { tag: "nil" };
+  readonly tag: "nil" = "nil";
+
+  private constructor() {
+    super();
+  }
+}
 
 /**
  * A link in the list, containing a value in `head` and a pointer to
  * the remainder of the list in `tail`. Every tail is a complete List
  * in its own right, with Nil signifying the "end" of the list.
  */
-export class Cons<A> {
-  tag: "cons" = "cons";
+export class Cons<A> extends ListBase<A> {
+  readonly tag: "cons" = "cons";
 
-  constructor(readonly head: A, readonly tail: List<A>) { }
+  constructor(readonly head: A, readonly tail: List<A>) {
+    super();
+  }
 }
 
 /**
@@ -40,9 +165,9 @@ export class Cons<A> {
  */
 export const List = <A>(...vals: A[]): List<A> => {
   if (vals.length === 0)
-    return Nil;
+    return nil();
   else
-    return new Cons(vals[0], List(...vals.slice(1)));
+    return cons(vals[0], List(...vals.slice(1)));
 };
 
 /**
@@ -73,6 +198,11 @@ export const concat = <A>(ll: List<List<A>>): List<A> =>
   foldRight(ll, List(), (a, b) => append(a, b));
 
 /**
+ * Smart constructor for creating a new list from a value and an existing list
+ */
+export const cons = <A>(h: A, t: List<A>): List<A> => new Cons(h, t);
+
+/**
  * Returns a new list missing the first `n` elements of `l`
  */
 export const drop = <A>(l: List<A>, n: number): List<A> => {
@@ -98,35 +228,6 @@ export const dropWhile = <A>(l: List<A>, p: (a: A) => boolean): List<A> => {
     }
 
   return l;
-};
-
-/**
- * Returns `true` if `sup` contains the entirety of `sub`, in order and without
- * interruption, starting in any position. Returns `false` otherwise.
- */
-export const hasSubsequence = <A>(sup: List<A>, sub: List<A>): boolean => {
-  const folded = foldLeft(sup, sub, (rem, cur) => {
-    if (rem.tag === "nil")
-      return Nil;
-    else if (cur === rem.head)
-      return rem.tail;
-    else
-      return sub;
-  });
-  return folded === Nil;
-};
-
-/**
- * Returns all but the last element of `l`
- */
-export const init = <A>(l: List<A>): List<A> => {
-  if (l.tag === "nil")
-    throw new Error("Attempt to get init of empty list");
-
-  if (l.tail === Nil)
-    return Nil;
-
-  return new Cons(l.head, init(l.tail));
 };
 
 /**
@@ -164,6 +265,45 @@ export const foldRight = <A, B>(l: List<A>, z: B, f: (a: A, b: B) => B): B =>
   foldLeft(reverse(l), z, (b, a) => f(a, b));
 
 /**
+ * Returns the tail of a list
+ */
+export const getTail = <A>(l: List<A>): List<A> => {
+  if (l.tag === "nil")
+    throw new Error("Attempt to take tail of empty list");
+
+  return l.tail;
+};
+
+/**
+ * Returns `true` if `sup` contains the entirety of `sub`, in order and without
+ * interruption, starting in any position. Returns `false` otherwise.
+ */
+export const hasSubsequence = <A>(sup: List<A>, sub: List<A>): boolean => {
+  const folded = foldLeft(sup, sub, (rem, cur) => {
+    if (rem.tag === "nil")
+      return nil();
+    else if (cur === rem.head)
+      return rem.tail;
+    else
+      return sub;
+  });
+  return folded === nil();
+};
+
+/**
+ * Returns all but the last element of `l`
+ */
+export const init = <A>(l: List<A>): List<A> => {
+  if (l.tag === "nil")
+    throw new Error("Attempt to get init of empty list");
+
+  if (l.tail === nil())
+    return nil();
+
+  return new Cons(l.head, init(l.tail));
+};
+
+/**
  * Returns the length of l
  */
 export const length = <A>(l: List<A>): number =>
@@ -175,6 +315,11 @@ export const length = <A>(l: List<A>): number =>
  */
 export const map = <A, B>(la: List<A>, f: (a: A) => B): List<B> =>
   flatMap(la, a => List(f(a)));
+
+/**
+ * Smart constructor for an empty list
+ */
+export const nil = <A>(): List<A> => Nil.NIL;
 
 /**
  * Multiplies a list of numbers together
@@ -205,20 +350,10 @@ export const sum = (ns: List<number>): number =>
   foldLeft(ns, 0, (tot, n) => n + tot);
 
 /**
- * Returns the tail of a list
- */
-export const getTail = <A>(l: List<A>): List<A> => {
-  if (l.tag === "nil")
-    throw new Error("Attempt to take tail of empty list");
-
-  return l.tail;
-};
-
-/**
  * Retuns a list containing the string representations of the elements of the
  * input list.
  */
-export const toString = (l: List<number>): List<string> =>
+export const toString = <A>(l: List<A>): List<string> =>
   map(l, a => a.toString());
 
 /**
@@ -231,7 +366,7 @@ export const zipWith = <A, B, C>(
     f: (a: A, b: B) => C): List<C> =>
   reverse(foldLeft<A, [List<C>, List<B>]>(
     la,
-    [Nil, lb],
+    [nil(), lb],
     ([acc, rem], a) => {
       if (rem.tag === "cons")
         return [new Cons(f(a, rem.head), acc), rem.tail];
@@ -239,3 +374,28 @@ export const zipWith = <A, B, C>(
         return [acc, rem];
     },
   )[0]);
+
+export default {
+  Cons,
+  List,
+  Nil,
+  addCorresponding,
+  addOne,
+  append,
+  concat,
+  cons,
+  drop,
+  dropWhile,
+  filter,
+  flatMap,
+  getTail,
+  hasSubsequence,
+  init,
+  length,
+  nil,
+  product,
+  reverse,
+  setHead,
+  sum,
+  toString,
+};
