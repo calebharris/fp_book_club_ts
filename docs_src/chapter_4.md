@@ -683,7 +683,7 @@ abstract class EitherBase<E, A> {
       this: Either<F, A>,
       f: (a: A) => Either<G, B>): Either<G, B> { ... }
 
-  map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, A> { ... }
+  map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, B> { ... }
 
   orElse<F extends G, G, T extends U, U>(
       this: Either<F, T>,
