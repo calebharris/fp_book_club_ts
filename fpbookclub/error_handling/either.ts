@@ -1,3 +1,5 @@
+import { List, cons, foldRight } from "../data_structures/list";
+
 /**
  * A type representing a value that can be one of two types
  */
@@ -13,7 +15,10 @@ abstract class EitherBase<E, A> {
    * returns the contained value in a new `Left`
    */
   flatMap<F extends G, G, B>(this: Either<F, A>, f: (a: A) => Either<G, B>): Either<G, B> {
-    throw new Error("Unimplemented");
+    if (this.tag === "left")
+      return left(this.value);
+
+    return f(this.value);
   }
 
   /**
@@ -21,14 +26,16 @@ abstract class EitherBase<E, A> {
    * transformed by `f`. Otherwise, returns `this`.
    */
   map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, B> {
-    throw new Error("Unimplemented");
+    return this.flatMap(a => right(f(a)));
   }
 
   /**
    * Returns `this` if it's `Right`. Otherwise, returns the result of `b()`
    */
   orElse<F extends G, G, T extends U, U>(this: Either<F, T>, b: () => Either<G, U>): Either<G, U> {
-    throw new Error("Unimplemented");
+    if (this.tag === "left")
+      return b();
+    return this;
   }
 }
 
@@ -62,11 +69,6 @@ export class Right<E, A> extends EitherBase<E, A> {
 export const left = <E, A>(val: E): Either<E, A> => new Left(val);
 
 /**
- * Smart constructor for `Right`
- */
-export const right = <E, A>(val: A): Either<E, A> => new Right(val);
-
-/**
  * If both `e1` and `e2` are `Right`s, apply `f` to their contained values and
  * return the result in a `Right`. Otherwise, return the first `Left`
  * encountered
@@ -74,9 +76,28 @@ export const right = <E, A>(val: A): Either<E, A> => new Right(val);
 export const map2 = <E, A, B, C>(
     e1: Either<E, A>,
     e2: Either<E, B>,
-    f: (a: A, b: B) => C): Either<E, C> => {
-  throw new Error("Unimplemented");
-};
+    f: (a: A, b: B) => C): Either<E, C> =>
+  e1.flatMap(a => e2.map(b => f(a, b)));
+
+/**
+ * Smart constructor for `Right`
+ */
+export const right = <E, A>(val: A): Either<E, A> => new Right(val);
+
+/**
+ * Returns `Right` containing a list of unwrapped values if every element of
+ * input list is `Right` and `Left` otherwise.
+ */
+export const sequence = <E, A>(le: List<Either<E, A>>): Either<E, List<A>> =>
+  traverse(le, ea => ea);
+
+/**
+ * Sequentially applies `f` to the values in `aa`. If any input results in a
+ * `Left`, the whole function returns `Left`. Otherwise, returns a `Right`
+ * containing a list of all the transformed values.
+ */
+export const traverse = <E, A, B>(aa: List<A>, f: (a: A) => Either<E, B>): Either<E, List<B>> =>
+  aa.foldRight(right(List()), (a, elb) => map2(f(a), elb, (b, lb) => cons(b, lb)));
 
 /**
  * Evaluate `f` and return the result in a `Right` if it completes
@@ -95,4 +116,4 @@ export const Try = <A>(f: () => A): Either<Error, A> => {
   }
 };
 
-export default { Left, Right, Try, left, map2, right };
+export default { Left, Right, Try, left, map2, right, sequence, traverse };
