@@ -7,6 +7,11 @@ lang: en-US
 ---
 
 ## Updates
+### 23 December 2018
+* Start Chapter 5 notes
+* Initial `Stream` implementation
+* All `Either` functions implemented in source code (no inline answers yet)
+
 ### 4 December 2018
 * Refactor `Either` to overcome some type-checking challenges
 * Exercises 4.7 and 4.8
