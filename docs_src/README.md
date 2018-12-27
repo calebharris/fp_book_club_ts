@@ -7,6 +7,9 @@ lang: en-US
 ---
 
 ## Updates
+### 27 December 2018
+* Add remaining inline answers for `Either` exercises
+
 ### 23 December 2018
 * Start Chapter 5 notes
 * Initial `Stream` implementation
