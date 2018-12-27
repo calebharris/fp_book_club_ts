@@ -679,12 +679,15 @@ the error. We get either a success in the form of a `Some(value)` — or nothing
 type Either<E, A> = Left<E, A> | Right<E, A>;
 
 abstract class EitherBase<E, A> {
+  // When mapping over the right side, the left type parameter must be
+  // promoted to a supertype to satisfy the covariance imposed by TypeScript
   flatMap<F extends G, G, B>(
       this: Either<F, A>,
       f: (a: A) => Either<G, B>): Either<G, B> { ... }
 
   map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, B> { ... }
 
+  // Similarly for orElse
   orElse<F extends G, G, T extends U, U>(
       this: Either<F, T>,
       b: () => Either<G, U>): Either<G, U> { ... }
@@ -763,10 +766,54 @@ const tryDecodeURI = (s: string) => Try(() => decodeURI(s));
 Implement versions of `map`, `flatMap`, and `orElse` on `Either` that operate on the right side only. Also implement
 `map2` as a top-level function in the `either` module.
 
+??? answer
+``` typescript
+abstract class EitherBase<E, A> {
+  flatMap<F extends G, G, B>(
+      this: Either<F, A>,
+      f: (a: A) => Either<G, B>): Either<G, B> {
+    if (this.tag === "left")
+      return left(this.value);
+    return f(this.value);
+  }
+
+  map<B>(this: Either<E, A>, f: (a: A) => B): Either<E, B> {
+    return this.flatMap(a => right(f(a)));
+  }
+
+  orElse<F extends G, G, T extends U, U>(
+      this: Either<F, T>,
+      b: () => Either<G, U>): Either<G, U> {
+    if (this.tag === "left")
+      return b();
+    return this;
+  }
+}
+
+const map2 = <E, A, B, C>(
+    e1: Either<E, A>,
+    e2: Either<E, B>,
+    f: (a: A, b: B) => C): Either<E, C> =>
+  e1.flatMap(a => e2.map(b => f(a, b)));
+```
+???
+
 ### Exercise 4.7. `sequence` and `traverse` for `Either`
 
 Implement `sequence` and `traverse` for `Either`. Both functions should return with the first `Left` they encounter
 while processing the input list, or a `Right` containing a list of values if they do not encounter a `Left`.
+
+??? answer
+``` typescript
+const sequence = <E, A>(le: List<Either<E, A>>): Either<E, List<A>> =>
+  traverse(le, ea => ea);
+
+const traverse = <E, A, B>(aa: List<A>,
+                           f: (a: A) => Either<E, B>): Either<E, List<B>> =>
+  aa.foldRight(right(List()),
+               (a, elb) => map2(f(a), elb, (b, lb) => cons(b, lb)));
+```
+???
 
 Here's an example of using `map2` to conditionally construct a compound object, `Person`. The `mkPerson` function
 validates each of its inputs before creating and returning a `Person`.
@@ -811,6 +858,34 @@ invalid. What would we need to change in order to report both errors? Do we need
 `mkPerson`, both? Could we create a new data type that's better suited for this requirement than `Either`? How would
 `orElse`, `sequence`, and `traverse` need to change to work for this new data type?
 
+??? answer
+There are a number of variations on `Option` and `Either`. If we want to accumulate multiple errors, a simple approach
+is a new data type that lets us keep a list of errors in the data constructor that represents failures:
+
+``` typescript
+type Partial<E, A> = Errors<E, A> | Success<E, A>;
+
+class Errors<E, A> {
+  readonly tag: "errors" = "errors";
+
+  constructor(readonly errors: List<E>) { }
+}
+
+class Success<E, A> {
+  readonly tag: "success" = "success";
+
+  constructor(readonly value: A) { }
+}
+```
+
+There is a type very similar to this called [`Validation`][fpts_valid] in the fp-ts library. You can implement `map`,
+`map2`, `sequence`, and so on for this type in such a way that errors are accumulated when possible (`flatMap` is unable
+to accumulate errors &mdash; can you see why?). This idea can even be generalized further &mdash; we don't need to
+accumulate failing values into a list; we can accumulate values using any user-supplied binary function.  It's also
+possible to use `Either<List<E>, A>` directly to accumulate errors, using different implementations of helper functions
+like `map2` and `sequence`.
+???
+
 ## Summary
 
 You should now be more familiar with the pitfalls associated with using exceptions for error handling, and with two of
@@ -822,4 +897,5 @@ consolidate error-handling logic.
 [ts_fns]: https://www.typescriptlang.org/docs/handbook/functions.html "Functions - TypeScript Handbook"
 [ch_3_adt]: chapter_3.html#representing-algebraic-data-types-in-typescript "Chapter 3 - Functional Programming in TypeScript"
 [fpis_var]: https://github.com/fpinscala/fpinscala/wiki/Chapter-4:-Handling-errors-without-exceptions#variance-in-optiona "fpinscala Wiki"
+[fpts_valid]: https://github.com/gcanti/fp-ts/blob/master/docs/Validation.md "Validation - fp-ts API Documentation"
 [wp_single]: https://en.wikipedia.org/wiki/Singleton_pattern "Singleton pattern - Wikipedia"
