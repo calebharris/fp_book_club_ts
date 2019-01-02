@@ -27,8 +27,34 @@ better if we could have this done automatically while retaining the same high-le
 developing.
 
 We can achieve this automatic loop fusion through the use of *non-strictness*, also called *laziness*. In this chapter,
-we'll work through the construction of a lazy list type that fuses transformations, and see how non-sttrictness is a
+we'll work through the construction of a lazy list type that fuses transformations, and see how non-strictness is a
 fundamental technique for writing more efficient and modular functional programs in general.
+
+## Strict and non-strict functions
+
+Non-strictness is a property of a function that means the function may choose not to evaluate some or all of its
+arguments. Strict functions, as you may guess, always evaluate their arguments. Although you may not have heard about
+function strictness, you are probably already familiar with the behavior. In certain cases, we call it
+*short-circuiting*. Many languages, including TypeScript, have the short-circuiting boolean operators `&&` and `||`. The
+operator `&&` only evaluates its second argument if its first is `true`, while `||` only evaluates its second argument
+if its first is `false`.
+
+``` typescript
+> false && console.log("Hey!"); // doesn't print anything
+false
+
+> true || console.log("Hey!"); // doesn't print anything, either
+true
+```
+
+The `if-else` construct in TypeScript is also non-strict. The `else` block is only evaluated when the condition in the
+`if` block is false, and the `if` block only when the condition is true.
+
+``` typescript
+> if (true) console.log("Hello") else console.log("Goodbye");
+Hello
+undefined
+```
 
 [node_inspect]: https://nodejs.org/dist/latest-v10.x/docs/api/util.html#util_custom_inspection_functions_on_objects
 "Util | Node.js Documentaiton"
