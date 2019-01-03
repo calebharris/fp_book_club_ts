@@ -7,7 +7,7 @@
     <meta name="description" content="">
     
     
-    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.fa19ed37.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.6ae94638.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/7.405d51bc.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.30eef2e3.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.e009d214.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.9c6222f2.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.07927b69.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/6.1e8e7f40.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/8.a9c5cee6.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/9.88fcb229.js">
+    <link rel="preload" href="/fp_book_club_ts/assets/css/0.styles.fa19ed37.css" as="style"><link rel="preload" href="/fp_book_club_ts/assets/js/app.a3f90907.js" as="script"><link rel="preload" href="/fp_book_club_ts/assets/js/7.1e49933b.js" as="script"><link rel="prefetch" href="/fp_book_club_ts/assets/js/2.30eef2e3.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/3.3e93d4b0.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/4.9c6222f2.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/5.07927b69.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/6.1e8e7f40.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/8.2672dfbb.js"><link rel="prefetch" href="/fp_book_club_ts/assets/js/9.88fcb229.js">
     <link rel="stylesheet" href="/fp_book_club_ts/assets/css/0.styles.fa19ed37.css">
   </head>
   <body>
@@ -194,9 +194,9 @@ restored type safety!</p> <p>Whew! That took a while. Don't worry if this stuff 
 follow the types in the given function signatures, you'll still be able to understand this chapter and complete the
 exercises. Also, check out the <a href="https://github.com/fpinscala/fpinscala/wiki/Chapter-4:-Handling-errors-without-exceptions#variance-in-optiona" title="fpinscala Wiki" target="_blank" rel="noopener noreferrer">online notes about variance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> for <em>Functional Programming in Scala</em>.</p> <h4 id="_4-thunks"><a href="#_4-thunks" aria-hidden="true" class="header-anchor">#</a> 4. Thunks</h4> <p>It would be advantageous if the default values provided to <code>getOrElse</code> and <code>orElse</code> were not evaluated unless they had
 to be. In other words, we'd like them to be <em>lazily evaluated</em>. TypeScript does not provide an explicit mechanism for
-lazy evaluation. But, a common technique in FP to achieve the effect of lazy evaluation is to accept, instead of a
-value, a function that returns a value of the needed type. Such a function is called a <em>thunk</em>, and you'll see them
-often throughout these notes.</p> <h4 id="_5-inheritance"><a href="#_5-inheritance" aria-hidden="true" class="header-anchor">#</a> 5. Inheritance</h4> <p>Finally, we come to the use of <code>extends</code> in the definition of the <code>Some</code> and <code>None</code> classes, which both extend
+lazy evaluation (we'll talk more about this in <a href="/fp_book_club_ts/chapter_5.html">Chapter 5</a>). But, a common technique in FP to achieve the
+effect of lazy evaluation is to accept, instead of a value, a function that returns a value of the needed type. Such a
+function is called a <em>thunk</em>, and you'll see them often throughout these notes.</p> <h4 id="_5-inheritance"><a href="#_5-inheritance" aria-hidden="true" class="header-anchor">#</a> 5. Inheritance</h4> <p>Finally, we come to the use of <code>extends</code> in the definition of the <code>Some</code> and <code>None</code> classes, which both extend
 <code>OptionBase</code>. This sets up an inheritance relationship, meaning that <code>Some</code> and <code>None</code> <em>inherit</em> methods and properties
 defined on <code>OptionBase</code>.</p> <h4 id="_6-super"><a href="#_6-super" aria-hidden="true" class="header-anchor">#</a> 6. super()</h4> <p>We'll try to use class hierarchies sparingly throughout these notes. This is in no small part because defining
 inheritance relationships between classes creates a rigid, inflexible linkage and requires some boilerplate code. For
@@ -216,10 +216,12 @@ expose just one value of type <code>None</code> to clients of our <code>Option</
 to help us enforce this constraint, we mark the constructor of <code>None</code> as <code>private</code>, making it difficult for clients to
 create new <code>None</code> values.</p> <h4 id="_10-smart-constructors"><a href="#_10-smart-constructors" aria-hidden="true" class="header-anchor">#</a> 10. Smart constructors</h4> <p><em>Smart constructors</em> encapsulate the logic of creating new values using our data constructors. As we said, we only want
 clients to use our predefined singleton <code>None</code> value, rather than creating their own. To make it easier, we offer this
-<code>none()</code> smart constructor, which simply returns the singleton. It's easier to tell clients to just use the function to
-get <code>None</code> values, rather than having them always use the <code>None.NONE</code> reference. For the sake of symmetry, and allowing
-clients to omit a number of <code>new</code> invocations, we also provide a <code>some()</code> smart constructor. Using these functions,
-which are annotated with a return type of <code>Option&lt;A&gt;</code>, also helps the compiler make better type inferences.</p> <h3 id="exercise-4-1-implement-option-functions"><a href="#exercise-4-1-implement-option-functions" aria-hidden="true" class="header-anchor">#</a> Exercise 4.1. Implement <code>Option</code> functions</h3> <p>Implement the five functions declared on <code>OptionBase</code>: <code>map</code>, <code>getOrElse</code>, <code>filter</code>, <code>flatMap</code>, and <code>orElse</code>.</p> <ul><li>It's fine to use our pattern-matching approximation and directly examine whether <code>this</code> is <code>Some</code> or <code>None</code>, but you
+<code>none()</code> smart constructor, which simply returns the singleton. By convention, the names of smart constructors typically
+mirror those of their corresponding data constructors, but with lowercase initial letters. It's easier to tell clients
+to just use the function to get <code>None</code> values, rather than having them always use the <code>None.NONE</code> reference. For the
+sake of symmetry, and allowing clients to omit a number of <code>new</code> invocations, we also provide a <code>some()</code> smart
+constructor. Using these functions, which are annotated with a return type of <code>Option&lt;A&gt;</code>, also helps the compiler make
+better type inferences.</p> <h3 id="exercise-4-1-implement-option-functions"><a href="#exercise-4-1-implement-option-functions" aria-hidden="true" class="header-anchor">#</a> Exercise 4.1. Implement <code>Option</code> functions</h3> <p>Implement the five functions declared on <code>OptionBase</code>: <code>map</code>, <code>getOrElse</code>, <code>filter</code>, <code>flatMap</code>, and <code>orElse</code>.</p> <ul><li>It's fine to use our pattern-matching approximation and directly examine whether <code>this</code> is <code>Some</code> or <code>None</code>, but you
 should really only need to do that in <code>map</code> and <code>getOrElse</code>. All the other functions should be expressible in terms of
 <code>map</code>, <code>getOrElse</code>, and each other.</li> <li>The type signatures of <code>map</code> and <code>flatMap</code> should be enough to guide their implementation.</li> <li><code>getOrElse</code> returns the contained value of a <code>Some</code>, or the value returned by the thunk in case of a <code>None</code>.</li> <li><code>orElse</code> is similar to <code>getOrElse</code>, but the return type of the thunk, and of itself, is <code>Option</code>.</li></ul> <details><summary>Answer</summary> <div class="language-typescript line-numbers-mode"><pre class="language-typescript"><code><span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">OptionBase</span><span class="token operator">&lt;</span><span class="token constant">A</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
 
@@ -537,7 +539,7 @@ possible to use <code>Either&lt;List&lt;E&gt;, A&gt;</code> directly to accumula
 like <code>map2</code> and <code>sequence</code>.</p></details> <h2 id="summary"><a href="#summary" aria-hidden="true" class="header-anchor">#</a> Summary</h2> <p>You should now be more familiar with the pitfalls associated with using exceptions for error handling, and with two of
 the purely functional patterns for error handling: <code>Option</code> and <code>Either</code>. These data types are common in FP, but the
 bigger takeaway is to think about how to represent errors as ordinary values and use higher-order functions to
-consolidate error-handling logic.</p></div> <div class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated: </span> <span class="time">12/27/2018, 1:40:51 PM</span></div></div> <div class="page-nav"><p class="inner"><span class="prev">
+consolidate error-handling logic.</p></div> <div class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated: </span> <span class="time">1/3/2019, 10:52:08 AM</span></div></div> <div class="page-nav"><p class="inner"><span class="prev">
         ←
         <a href="/fp_book_club_ts/chapter_3.html" class="prev">
           Chapter 3. Functional data structures
@@ -546,6 +548,6 @@ consolidate error-handling logic.</p></div> <div class="page-edit"><!----> <div 
         </a>
         →
       </span></p></div> </div> <!----></div></div>
-    <script src="/fp_book_club_ts/assets/js/7.405d51bc.js" defer></script><script src="/fp_book_club_ts/assets/js/app.6ae94638.js" defer></script>
+    <script src="/fp_book_club_ts/assets/js/7.1e49933b.js" defer></script><script src="/fp_book_club_ts/assets/js/app.a3f90907.js" defer></script>
   </body>
 </html>
