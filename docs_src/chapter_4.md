@@ -313,9 +313,9 @@ exercises. Also, check out the [online notes about variance][fpis_var] for *Func
 
 It would be advantageous if the default values provided to `getOrElse` and `orElse` were not evaluated unless they had
 to be. In other words, we'd like them to be *lazily evaluated*. TypeScript does not provide an explicit mechanism for
-lazy evaluation. But, a common technique in FP to achieve the effect of lazy evaluation is to accept, instead of a
-value, a function that returns a value of the needed type. Such a function is called a *thunk*, and you'll see them
-often throughout these notes.
+lazy evaluation (we'll talk more about this in [Chapter 5](chapter_5.html)). But, a common technique in FP to achieve the
+effect of lazy evaluation is to accept, instead of a value, a function that returns a value of the needed type. Such a
+function is called a *thunk*, and you'll see them often throughout these notes.
 
 #### 5. Inheritance
 
@@ -359,10 +359,12 @@ create new `None` values.
 
 *Smart constructors* encapsulate the logic of creating new values using our data constructors. As we said, we only want
 clients to use our predefined singleton `None` value, rather than creating their own. To make it easier, we offer this
-`none()` smart constructor, which simply returns the singleton. It's easier to tell clients to just use the function to
-get `None` values, rather than having them always use the `None.NONE` reference. For the sake of symmetry, and allowing
-clients to omit a number of `new` invocations, we also provide a `some()` smart constructor. Using these functions,
-which are annotated with a return type of `Option<A>`, also helps the compiler make better type inferences.
+`none()` smart constructor, which simply returns the singleton. By convention, the names of smart constructors typically
+mirror those of their corresponding data constructors, but with lowercase initial letters. It's easier to tell clients
+to just use the function to get `None` values, rather than having them always use the `None.NONE` reference. For the
+sake of symmetry, and allowing clients to omit a number of `new` invocations, we also provide a `some()` smart
+constructor. Using these functions, which are annotated with a return type of `Option<A>`, also helps the compiler make
+better type inferences.
 
 ### Exercise 4.1. Implement `Option` functions
 
