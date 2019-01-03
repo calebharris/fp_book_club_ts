@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 3 January 2019
+* Notes through exercise 5.3
+* Happy New Year! 🎉🎊🥳
+
 ### 27 December 2018
 * Add remaining inline answers for `Either` exercises
 
