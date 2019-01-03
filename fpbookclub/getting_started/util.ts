@@ -3,6 +3,17 @@
  */
 
 /**
+ * Given two functions, where the second's return type is compatible with the
+ * first's argument type, return a single function that combines both
+ * computations.
+ *
+ * For example, if `b = g(a)`, `c = f(b)`, `h = compose(f, g)`, and `d = h(a)`,
+ * then `c === d`.
+ */
+export const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C =>
+  a => f(g(a));
+
+/**
  * Given a function of two arguments, return a function of one argument which
  * returns another function of one argument which returns the same result as
  * the provided function.
@@ -12,6 +23,19 @@
  */
 export const curry = <A, B, C>(f: (a: A, b: B) => C): (a: A) => (b: B) => C =>
   a => partial1(a, f);
+
+/**
+ * Given a thunk, return a new thunk that caches the result of the original
+ * on the first execution, and returns the cached value thereafter.
+ */
+export const memoize = <A>(f: () => A): () => A => {
+  let memo: A | null = null;
+  return () => {
+    if (memo === null)
+      memo = f();
+    return memo;
+  };
+};
 
 /**
  * Given a function of two arguments, and a value compatible with the leftmost
@@ -33,13 +57,4 @@ export const partial1 = <A, B, C>(a: A, f: (a: A, b: B) => C): (b: B) => C =>
 export const uncurry = <A, B, C>(f: (a: A) => (b: B) => C): (a: A, b: B) => C =>
   (a, b) => f(a)(b);
 
-/**
- * Given two functions, where the second's return type is compatible with the
- * first's argument type, return a single function that combines both
- * computations.
- *
- * For example, if `b = g(a)`, `c = f(b)`, `h = compose(f, g)`, and `d = h(a)`,
- * then `c === d`.
- */
-export const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C =>
-  a => f(g(a));
+export default { compose, curry, memoize, partial1, uncurry };

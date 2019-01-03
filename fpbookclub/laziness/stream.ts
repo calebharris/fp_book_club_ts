@@ -1,5 +1,10 @@
 import { Option, none, some } from "../error_handling/option";
+import util from "../getting_started/util";
 
+/**
+ * A `Stream` element is either an `Empty` or a `Cons`, analagous to the `Nil`
+ * and `Cons` data constructors of `List`.
+ */
 export type Stream<A> = Empty<A> | Cons<A>;
 
 /**
@@ -14,6 +19,10 @@ abstract class StreamBase<A> {
   }
 }
 
+/**
+ * `Empty` data constructor, which creates the singleton `Empty` value that
+ * we'll always use.
+ */
 export class Empty<A> extends StreamBase<A> {
   static readonly EMPTY: Stream<never> = new Empty();
 
@@ -24,6 +33,10 @@ export class Empty<A> extends StreamBase<A> {
   }
 }
 
+/**
+ * A nonempty stream consists of a head and a tail, both of which are
+ * non-strict
+ */
 export class Cons<A> extends StreamBase<A> {
   readonly tag: "cons" = "cons";
 
@@ -32,21 +45,20 @@ export class Cons<A> extends StreamBase<A> {
   }
 }
 
-const memoize = <A>(f: () => A): () => A => {
-  let memo: A | null = null;
-  return () => {
-    if (memo === null)
-      memo = f();
-    return memo;
-  };
-};
+/**
+ * Smart constructor for creating a nonempty Stream
+ */
+export const cons = <A >(hd: () => A, tl: () => Stream<A>): Stream<A> =>
+  new Cons(util.memoize(hd), util.memoize(tl));
 
-export const cons = <A >(hd: () => A, tl: () => Stream<A>): Stream<A> => {
-  return new Cons(memoize(hd), tl);
-};
-
+/**
+ * Smart constructor for creating an empty Stream of a particular type
+ */
 export const empty = <A>(): Stream<A> => Empty.EMPTY;
 
+/**
+ * Convenience method for constructing a Stream from multiple elements
+ */
 export const Stream = <A>(...aa: A[]): Stream<A> => {
   if (aa.length === 0)
     return empty();
