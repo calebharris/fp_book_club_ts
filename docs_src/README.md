@@ -7,6 +7,9 @@ lang: en-US
 ---
 
 ## Updates
+### 9 January 2019
+* Notes through exercise 5.7
+
 ### 3 January 2019
 * Notes through exercise 5.3
 * Happy New Year! 🎉🎊🥳

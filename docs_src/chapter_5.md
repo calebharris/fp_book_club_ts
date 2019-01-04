@@ -285,5 +285,82 @@ You can use these functions together to inspect streams in the REPL. For example
 > Stream(1, 2, 3).take(2).toList()
 ```
 
+## Separating program description from execution
+
+*Separation of concerns* is a phrase you've probably heard &mdash; it's a major theme in just about every subdiscipline
+of software engineering. Functional programming is particularly concerned with separating the description of
+computations from the act of running them. `Option` and `Either`, at there cores, are ways of describing that a
+computation can result in an error, or more than one type of value. `Stream` lets us describe a computation that emits a
+sequence of results, but doesn't compute any individual result until it's needed.
+
+This is the power of laziness in general: we can describe a much larger computation than we need and then choose to
+evaluate only parts of it. An example is the `exists` function for `Stream`:
+
+``` typescript
+exists(this: Stream<A>, p: (a: A) => boolean): boolean {
+  if (this.isEmpty())
+    return false;
+
+  // necessary to work around a quirk of Typescript's type inferencing
+  const self = this;
+  return p(self.h()) || self.t().exists(p);
+}
+```
+
+Recall from earlier that `||` is a short-circuiting operator. In other words, it's non-strict in its second argument. So
+if `p(self.h())` is true, then `self.t()` is never evaluated. Not only does the traversal terminate early, but the
+remainder of the `Stream` is never actually computed!
+
+The version of `exists` above uses explicit recursion. But, just like with we did in
+[Chapter 3](/chapter_3.html#recursion-over-lists-and-generalizing-to-higher-order-functions) with `List`, we can define
+general-purpose recursion utilities for `Stream` and implement other functions on top of those utilities.
+
+``` typescript
+foldRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B) => B): B {
+  if (this.isEmpty())
+    return z();
+  
+  const self = this;
+  return f(self.h(), () => self.t().foldRight(z, f));
+}
+```
+
+Above is a lazy version of `foldRight`, which is non-strict in its first (a.k.a. "zero") argument, and takes a combiner
+function that is non-strict in its second argument. This means that `f` can choose not to execute the thunk for its
+second argument. If it does so, then the recursion terminates early. Implementing `exists` in terms of `foldRight`
+illustrates this:
+
+``` typescript
+exists(this: Stream<A>, p: (a: A) => boolean): boolean {
+  return this.foldRight(() => false, (a, b) => p(a) || b());
+}
+```
+
+Here `b` is a thunk that, when evaluated, generates the tail of the `Stream`. If `p(a)` returns true, the thunk is never
+called and the computation terminates without building the rest of the `Stream`. Remember that with the strict version
+of `foldRight` in `List`, we couldn't do that.
+
+### Exercise 5.4. `forAll`
+
+Implement `forAll`, which checks that all elements in the `Stream` match a given predicate. It should terminate the
+traversal as soon as it finds a nonmatching element.
+
+``` typescript
+forAll(this: Stream<A>, p: (a: A) => boolean): boolean { ... }
+```
+
+### Exercise 5.5. `takeWhile` using `foldRight`
+
+Refactor `takeWhile` to use `foldRight`.
+
+### Exercise 5.6. `headOption` using `foldRight`
+
+Refactor `headOption` to use `foldRight`.
+
+### Exercise 5.7. Additional `Stream` functions
+
+Implement `map`, `filter`, `append`, and `flatMap` using `foldRight`. The `append` method should be non-strict in its
+argument.
+
 [node_inspect]: https://nodejs.org/dist/latest-v10.x/docs/api/util.html#util_custom_inspection_functions_on_objects
 "Util | Node.js Documentaiton"

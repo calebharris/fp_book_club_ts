@@ -1,3 +1,4 @@
+import list, { List } from "../data_structures/list";
 import { Option, none, some } from "../error_handling/option";
 import util from "../getting_started/util";
 
@@ -16,6 +17,40 @@ abstract class StreamBase<A> {
       return none();
     else
       return some(this.h());
+  }
+
+  exists(this: Stream<A>, p: (a: A) => boolean): boolean {
+    return this.foldRight(() => false, (a, b) => p(a) || b());
+  }
+
+  foldRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B) => B): B {
+    if (this.isEmpty())
+      return z();
+
+    const self = this;
+    return f(self.h(), () => self.t().foldRight(z, f));
+  }
+
+  isEmpty(this: Stream<A>): this is Empty<A> {
+    return this.tag === "empty";
+  }
+
+  take(this: Stream<A>, n: number): Stream<A> {
+    if (this.isEmpty() || n <= 0)
+      return empty();
+
+    // Needed to work around an issue in Typescript's type inferencing, where
+    // the narrowing of `this` to `Cons` is lost in the tail closure passed to
+    // `cons`. See https://github.com/Microsoft/TypeScript/issues/29260
+    const self = this;
+    return cons(this.h, () => self.t().take(n - 1));
+  }
+
+  toList(this: Stream<A>): List<A> {
+    if (this.isEmpty())
+      return list.nil();
+
+    return list.cons(this.h(), this.t().toList());
   }
 }
 
