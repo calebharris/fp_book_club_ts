@@ -1,3 +1,4 @@
+import { List } from "../data_structures/list";
 import { Option } from "../error_handling/option";
 
 import stream, { Cons, Empty, Stream } from "./stream";
@@ -32,5 +33,11 @@ describe("cons()", () => {
     const stm = stream.cons(val, () => stream.empty());
     expect(stm.headOption().getOrElse(() => -1)).toEqual(1);
     expect(stm.headOption().getOrElse(() => -1)).toEqual(1);
+  });
+});
+
+describe("toList()", () => {
+  test("transforms the Stream into a List", () => {
+    expect(Stream(1, 2, 3).toList()).toEqual(List(1, 2, 3));
   });
 });

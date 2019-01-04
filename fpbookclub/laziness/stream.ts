@@ -1,3 +1,4 @@
+import list, { List } from "../data_structures/list";
 import { Option, none, some } from "../error_handling/option";
 import util from "../getting_started/util";
 
@@ -16,6 +17,24 @@ abstract class StreamBase<A> {
       return none();
     else
       return some(this.h());
+  }
+
+  isEmpty(this: Stream<A>): this is Empty<A> {
+    return this.tag === "empty";
+  }
+
+  take(this: Stream<A>, n: number): Stream<A> {
+    if (this.isEmpty() || n <= 0)
+      return empty();
+
+    return cons(this.h, () => this.t().take(n - 1));
+  }
+
+  toList(this: Stream<A>): List<A> {
+    if (this.isEmpty())
+      return list.nil();
+
+    return list.cons(this.h(), this.t().toList());
   }
 }
 
