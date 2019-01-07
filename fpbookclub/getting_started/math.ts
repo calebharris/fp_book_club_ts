@@ -4,21 +4,8 @@
 
 import * as assert from "assert";
 
-import {
-  Cons,
-  List,
-  Nil,
-  length,
-  map,
-  sum,
-} from "../data_structures/list";
-
-import {
-  Option,
-  Try,
-  none,
-  some,
-} from "../error_handling/option";
+import { List } from "../data_structures/list";
+import { Option, Try } from "../error_handling/option";
 
 /**
  * Our venerable abs function. You know what it does.
@@ -146,7 +133,7 @@ export const mean = (xs: List<number>): number => {
   if (xs.tag === "nil")
     throw new Error("Attempt to take mean of empty list");
 
-  return sum(xs) / length(xs);
+  return xs.sum() / xs.length();
 };
 
 /**
@@ -159,5 +146,5 @@ export const meanOpt = (xs: List<number>): Option<number> => Try(() => mean(xs))
  */
 export const variance = (xs: List<number>): Option<number> =>
   meanOpt(xs).flatMap(
-    m => meanOpt(map(xs, x => Math.pow(x - m, 2))),
+    m => meanOpt(xs.map(x => Math.pow(x - m, 2))),
   );
