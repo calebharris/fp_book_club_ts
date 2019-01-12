@@ -319,7 +319,7 @@ general-purpose recursion utilities for `Stream` and implement other functions o
 foldRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B) => B): B {
   if (this.isEmpty())
     return z();
-  
+
   const self = this;
   return f(self.h(), () => self.t().foldRight(z, f));
 }
@@ -361,6 +361,172 @@ Refactor `headOption` to use `foldRight`.
 
 Implement `map`, `filter`, `append`, and `flatMap` using `foldRight`. The `append` method should be non-strict in its
 argument.
+
+Because they use the lazy `foldRight`, these implementations are *incremental*. They do just enough work to provide only
+the elements requested by larger computations composed of these functions. That means we can chain them together without
+fully instantiating the intermediate results, as is the case with `List`.
+
+Let's rewrite part of the motivating example for this chapter using `Stream`, instead of `List`.
+
+``` typescript
+> Stream(1, 2, 3, 4).map(x => x + 10).filter(x => x % 2 === 0).toList()
+List(12, 14)
+```
+
+What would a trace for this program look like, using the substitution model? An attempt to represent such a trace is
+made below, but due to the many thunks involved, it may be hard to read. It's worth trying to do this on your own, with
+pen and paper, unbound by the confines of Web typography. Although `map` and `filter` are defined in terms of
+`foldRight`, we've chosen to treat them as if they used explicit recursion in this trace, to make it easier to follow.
+
+``` typescript
+Stream(1, 2, 3, 4).map(x => x + 10).filter(x => x % 2 === 0).toList()
+
+// substitute result of `Stream` function
+cons(() => 1, () => Stream(2, 3, 4))
+    .map(x => x + 10)
+    .filter(x => x % 2 === 0)
+    .toList()
+
+// `map` forces the first element, transforms it, and wraps the tail
+// in a recursive call
+cons(() => 11, () => Stream(2, 3, 4).map(x => x + 10))
+    .filter(x => x % 2 === 0)
+    .toList()
+
+// `filter` forces the new, mapped first element, and then discards it,
+// because it doesn't pass the predicate. In this case, `filter`
+// evaluates and immediately calls itself on the tail. Notice at this
+// point, we've decided we don't need the first element, and we've
+// thrown it away, without executing `toList` yet!
+Stream(2, 3, 4).map(x => x + 10).filter(x => x % 2 === 0).toList()
+
+// Now we start over. Substituting `cons` for `Stream` isn't particularly
+// interesting, so we'll stop showing it as a separate step from now on.
+// Apply `map` to the new head.
+cons(() => 12, () => Stream(3, 4).map(x => x + 10))
+    .filter(x => x % 2 === 0)
+    .toList()
+
+// Now when `filter` obtains the head, it passes the predicate, so it
+// returns a structure with a recursive call, rather than just the
+// tail.
+cons(() => 12, () => Stream(3, 4).map(x => x + 10).filter(x => x % 2 === 0))
+    .toList()
+
+// This is a slightly stylized substitution of the `toList()` call
+List(12, Stream(3, 4).map(x => x + 10).filter(x => x % 2 === 0).toList())
+
+// Now we're starting over again, but this as part of a recursive call
+// inside `toList`. Apply `map` to the third element.
+List(
+    12,
+    cons(() => 13, Stream(4).map(x => x + 10))
+        .filter(x => x % 2 === 0).toList()
+)
+
+// Filter discards this element, too.
+List(12, Stream(4).map(x => x + 10).filter(x => x % 2 === 0).toList())
+
+// Apply `map` to the last element
+List(
+    12,
+    cons(() => 14, () => Stream().map(x => x + 10))
+        .filter(x => x % 2 === 0).toList()
+)
+
+// Apply `filter` to the last element
+List(
+    12,
+    cons(() => 14, () => Stream().map(x => x + 10).filter(x => x % 2 === 0))
+      .toList()
+)
+
+// Apply `toList` to the last element
+List(12, 14, Stream().map(x => x + 10).filter(x => x % 2 === 0))
+
+// `map` and `filter` have no more work to do. The empty stream
+// becomes the empty `list`, as per `toList`.
+List(12, 14)
+```
+
+Notice how the executions of `map` and `filter` alternate, and how no intermediate stream is ever fully instantiated.
+The effect is the same as if we'd written a custom loop. We managed to compose an efficient computation from a few
+simple combinators. We can do so in many more interesting ways, without having to worry about doing more processing than
+necessary. As a simple example, we can write `find`, which returns the first matching element from a stream, in way that
+terminates early while re-using `filter`:
+
+``` typescript
+find(this: Stream<A>, p: (a: A) => boolean): Option<A> {
+  return this.filter(p).headOption();
+}
+```
+
+## Infinite streams and corecursion
+
+As we said earlier, these functions are incremental, so they can work for *infinite streams*, like this one:
+
+``` typescript
+const ones: Stream<number> = cons(() => 1, () => ones);
+```
+
+The functions we've written so far only inspect the portion of the stream necessary to perform the requested
+computation, so we can use them to operate on infinite streams like `ones` without fear of initiating an execution that
+never ends. For example:
+
+``` typescript
+> ones.take(5).toList()
+List(1, 1, 1, 1, 1)
+
+> ones.exists(x => x % 2 !== 0)
+true
+```
+
+Try playing around with these examples:
+
+* `ones.map(x => x + 1).exists(x => x % 2 === 0)`
+* `ones.takeWhile(x => x === 1)`
+* `ones.forAll(x => x !=== 1)`
+
+In each of these cases, we get back an answer immediately. Did any of them surprise you? We need to be careful with our
+newfound power, however. It's easy to write an expression that never terminates or isn't stack-safe. For example,
+`ones.forAll(x => x === 1)` will eventually cause a stack overflow, since it will never find an element that failes the
+predicate (i.e. isn't equal to 1) and terminates the recursion.
+
+Let's get more familiar with `Stream` by writing some more functions for it.
+
+### Exercise 5.8. `constant`
+
+Generalize `ones` into an infinite stream of any value.
+
+``` typescript
+constant<A>(a: A): Stream<A>
+```
+
+### Exercise 5.9. `from`
+
+Write a function that generates an infinite stream of integers, starting from the given value `n`, then `n + 1`, `n +
+2`, and so on.
+
+``` typescript
+from(n: number): Stream<number>
+```
+
+### Exercise 5.10. `fibs`
+
+Write the function `fibs`, which generates an infinite stream of Fibonacci numbers: 0, 1, 1, 2, 3, 5, 8, and so on.
+
+``` typescript
+fibs(): Stream<number>
+```
+
+### Exercise 5.11. `unfold`
+
+Write a more general stream-building function, `unfold`, which takes an initial state and a function for producing both
+the next state and the next value in the generated stream.
+
+``` typescript
+unfold<A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A>
+```
 
 [node_inspect]: https://nodejs.org/dist/latest-v10.x/docs/api/util.html#util_custom_inspection_functions_on_objects
 "Util | Node.js Documentaiton"

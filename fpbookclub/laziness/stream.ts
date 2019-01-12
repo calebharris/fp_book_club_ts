@@ -46,6 +46,14 @@ abstract class StreamBase<A> {
     return cons(this.h, () => self.t().take(n - 1));
   }
 
+  takeWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+    if (this.isEmpty() || !p(this.h()))
+      return empty();
+
+    const self = this;
+    return cons(this.h, () => self.t().takeWhile(p));
+  }
+
   toList(this: Stream<A>): List<A> {
     if (this.isEmpty())
       return list.nil();
@@ -92,6 +100,11 @@ export const cons = <A >(hd: () => A, tl: () => Stream<A>): Stream<A> =>
 export const empty = <A>(): Stream<A> => Empty.EMPTY;
 
 /**
+ * An infinite stream of ones
+ */
+export const ones: Stream<number> = cons(() => 1, () => ones);
+
+/**
  * Convenience method for constructing a Stream from multiple elements
  */
 export const Stream = <A>(...aa: A[]): Stream<A> => {
@@ -101,4 +114,4 @@ export const Stream = <A>(...aa: A[]): Stream<A> => {
     return cons(() => aa[0], () => Stream(...aa.slice(1)));
 };
 
-export default { Cons, Empty, Stream, cons, empty };
+export default { Cons, Empty, Stream, cons, empty, ones };

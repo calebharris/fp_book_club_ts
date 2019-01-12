@@ -52,6 +52,12 @@ describe("foldRight()", () => {
   });
 });
 
+describe("ones()", () => {
+  test("produces all 1s", () => {
+    expect(stream.ones.take(3).toList()).toEqual(List(1, 1, 1));
+  });
+});
+
 describe("toList()", () => {
   test("transforms the Stream into a List", () => {
     expect(Stream(1, 2, 3).toList()).toEqual(List(1, 2, 3));
