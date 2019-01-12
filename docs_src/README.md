@@ -7,6 +7,9 @@ lang: en-US
 ---
 
 ## Updates
+### 11 January 2019
+* Notes through exercise 5.11
+
 ### 9 January 2019
 * Notes through exercise 5.7
 
