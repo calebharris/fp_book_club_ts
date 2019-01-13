@@ -260,6 +260,17 @@ REPL. Place this and other functions inside the `StreamBase` class.
 toList(): List<A>
 ```
 
+??? answer
+``` typescript
+toList(this: Stream<A>): List<A> {
+  if (this.tag === "empty")
+    return list.nil();
+
+  return list.cons(this.h(), this.t().toList());
+}
+```
+???
+
 ### Exercise 5.2. `take` and `drop`
 
 Write the function `take(n)`, which returns the first `n` elements of a `Stream`; and `drop(n)`, which skips the first

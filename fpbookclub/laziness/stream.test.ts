@@ -8,8 +8,16 @@ describe("Stream()", () => {
     expect(Stream().tag).toBe("empty");
   });
 
-  test("with arguments returns a cons", () => {
+  test("with one argument returns a cons", () => {
     expect(Stream(1).tag).toBe("cons");
+  });
+
+  test("with multiple arguments returns multiple conses", () => {
+    expect(Stream(1, 2, 3)).toEqual(
+      stream.cons(() => 1,
+        () => stream.cons(() => 2,
+          () => stream.cons(() => 3,
+            () => stream.empty()))));
   });
 });
 
