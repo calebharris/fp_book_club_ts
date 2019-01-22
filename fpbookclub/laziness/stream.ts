@@ -12,8 +12,24 @@ export type Stream<A> = Empty<A> | Cons<A>;
  * Base trait for `Stream` data constructors
  */
 abstract class StreamBase<A> {
+  drop(this: Stream<A>, n: number): Stream<A> {
+    if (n <= 0 || this.isEmpty())
+      return this;
+    return this.t().drop(n - 1);
+  }
+
+  dropWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+    if (this.isEmpty())
+      return empty();
+
+    if (!p(this.h()))
+      return this;
+
+    return this.t().dropWhile(p);
+  }
+
   headOption(this: Stream<A>): Option<A> {
-    if (this.tag === "empty")
+    if (this.isEmpty())
       return none();
     else
       return some(this.h());

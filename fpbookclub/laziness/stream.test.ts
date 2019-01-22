@@ -13,11 +13,21 @@ describe("Stream()", () => {
   });
 
   test("with multiple arguments returns multiple conses", () => {
-    expect(Stream(1, 2, 3)).toEqual(
-      stream.cons(() => 1,
-        () => stream.cons(() => 2,
-          () => stream.cons(() => 3,
-            () => stream.empty()))));
+    expect(Stream(1, 2, 3).toList()).toEqual(List(1, 2, 3));
+  });
+});
+
+describe("drop()", () => {
+  test("with 0 returns the same stream", () => {
+    expect(Stream(1, 2).drop(0).toList()).toEqual(List(1, 2));
+  });
+
+  test("on an empty stream returns the empty stream", () => {
+    expect(Stream().drop(3)).toEqual(stream.empty());
+  });
+
+  test("with 1 returns everything after the first element", () => {
+    expect(Stream(1, 2).drop(1).toList()).toEqual(List(2));
   });
 });
 
@@ -44,6 +54,26 @@ describe("cons()", () => {
   });
 });
 
+describe("dropWhile()", () => {
+  test("of an empty stream returns an empty stream", () => {
+    expect(Stream().dropWhile(a => true)).toEqual(stream.empty());
+  });
+
+  test("when every item passes the predicate returns empty", () => {
+    expect(Stream(2, 4).dropWhile(n => n % 2 === 0)).toEqual(stream.empty());
+  });
+
+  test("drops the prefix of passing elements", () => {
+    expect(Stream(2, 4, 1).dropWhile(n => n % 2 === 0).toList())
+      .toEqual(List(1));
+  });
+
+  test("returns the whole stream if the first element fails", () => {
+    expect(Stream(2, 4).dropWhile(n => n % 2 === 1).toList())
+      .toEqual(List(2, 4));
+  });
+});
+
 describe("exists()", () => {
   test("returns true if a matching element exists", () => {
     expect(Stream(1, 2, 3).exists(a => a === 2)).toEqual(true);
@@ -63,6 +93,26 @@ describe("foldRight()", () => {
 describe("ones()", () => {
   test("produces all 1s", () => {
     expect(stream.ones.take(3).toList()).toEqual(List(1, 1, 1));
+  });
+});
+
+describe("takeWhile()", () => {
+  test("of an empty stream returns an empty stream", () => {
+    expect(Stream().takeWhile(a => true)).toEqual(stream.empty());
+  });
+
+  test("when the first item fails the predicate returns empty", () => {
+    expect(Stream(2, 4).takeWhile(n => n % 2 === 1)).toEqual(stream.empty());
+  });
+
+  test("returns the prefix of passing elements", () => {
+    expect(Stream(2, 4, 1).takeWhile(n => n % 2 === 0).toList())
+      .toEqual(List(2, 4));
+  });
+
+  test("returns the whole stream if every element passes", () => {
+    expect(Stream(2, 4).takeWhile(n => n % 2 === 0).toList())
+      .toEqual(List(2, 4));
   });
 });
 
