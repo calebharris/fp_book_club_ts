@@ -47,6 +47,12 @@ abstract class StreamBase<A> {
     return f(self.h(), () => self.t().foldRight(z, f));
   }
 
+  forAll(this: Stream<A>, p: (a: A) => boolean): boolean {
+    if (this.isEmpty())
+      return false;
+    return this.foldRight(() => true, (a, b) => p(a) && b());
+  }
+
   isEmpty(this: Stream<A>): this is Empty<A> {
     return this.tag === "empty";
   }
@@ -63,11 +69,9 @@ abstract class StreamBase<A> {
   }
 
   takeWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
-    if (this.isEmpty() || !p(this.h()))
-      return empty();
-
-    const self = this;
-    return cons(this.h, () => self.t().takeWhile(p));
+    return this.foldRight(() => empty(),
+      (a, b) => p(a) ? cons(() => a, b) : b(),
+    );
   }
 
   toList(this: Stream<A>): List<A> {

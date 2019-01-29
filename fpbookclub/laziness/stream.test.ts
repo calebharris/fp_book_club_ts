@@ -90,6 +90,29 @@ describe("foldRight()", () => {
   });
 });
 
+describe("forAll()", () => {
+  test("returns false for an empty stream", () => {
+    expect(Stream<number>().forAll((a: number) => a === 2)).toBeFalsy();
+  });
+
+  test("returns true if every element passes the predicate", () => {
+    expect(Stream(2, 4, 6).forAll(a => a % 2 === 0)).toBeTruthy();
+  });
+
+  test("returns false if any element fails the predicate", () => {
+    expect(Stream(2, 5, 6).forAll(a => a % 2 === 0)).toBeFalsy();
+  });
+
+  test("does not evaluate the tail after returning false", () => {
+    let counter = 0;
+    Stream(1, 2, 3).forAll(a => {
+      counter++;
+      return a > 1;
+    });
+    expect(counter).toEqual(1);
+  });
+});
+
 describe("ones()", () => {
   test("produces all 1s", () => {
     expect(stream.ones.take(3).toList()).toEqual(List(1, 1, 1));
