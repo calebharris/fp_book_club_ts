@@ -12,6 +12,10 @@ export type Stream<A> = Empty<A> | Cons<A>;
  * Base trait for `Stream` data constructors
  */
 abstract class StreamBase<A> {
+  append(this: Stream<A>, that: () => Stream<A>): Stream<A> {
+    return this.foldRight(that, (a, b) => cons(() => a, b));
+  }
+
   drop(this: Stream<A>, n: number): Stream<A> {
     if (n <= 0 || this.isEmpty())
       return this;
@@ -29,14 +33,15 @@ abstract class StreamBase<A> {
   }
 
   headOption(this: Stream<A>): Option<A> {
-    if (this.isEmpty())
-      return none();
-    else
-      return some(this.h());
+    return this.foldRight(() => none(), (a, b) => some(a));
   }
 
   exists(this: Stream<A>, p: (a: A) => boolean): boolean {
     return this.foldRight(() => false, (a, b) => p(a) || b());
+  }
+
+  flatMap<B>(this: Stream<A>, f: (a: A) => Stream<B>): Stream<B> {
+    return this.foldRight(() => empty(), (a, b) => f(a).append(b));
   }
 
   foldRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B) => B): B {
@@ -55,6 +60,10 @@ abstract class StreamBase<A> {
 
   isEmpty(this: Stream<A>): this is Empty<A> {
     return this.tag === "empty";
+  }
+
+  map<B>(this: Stream<A>, f: (a: A) => B): Stream<B> {
+    return this.foldRight(() => empty(), (a, b) => Stream(f(a)).append(b));
   }
 
   take(this: Stream<A>, n: number): Stream<A> {

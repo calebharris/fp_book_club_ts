@@ -17,6 +17,12 @@ describe("Stream()", () => {
   });
 });
 
+describe("append()", () => {
+  test("appends two streams", () => {
+    expect(Stream(1).append(() => Stream(2)).toList()).toEqual(List(1, 2));
+  });
+});
+
 describe("drop()", () => {
   test("with 0 returns the same stream", () => {
     expect(Stream(1, 2).drop(0).toList()).toEqual(List(1, 2));
@@ -84,6 +90,20 @@ describe("exists()", () => {
   });
 });
 
+describe("flatMap()", () => {
+  test("does nothing on an empty stream", () => {
+    expect(Stream().flatMap(a => Stream(a))).toEqual(stream.empty());
+  });
+
+  test("returns equal stream with unit function", () => {
+    expect(Stream(1).flatMap(a => Stream(a)).toList()).toEqual(List(1));
+  });
+
+  test("applies function to stream", () => {
+    expect(Stream(1).flatMap(a => Stream(a + 1)).toList()).toEqual(List(2));
+  });
+});
+
 describe("foldRight()", () => {
   test("folds the stream", () => {
     expect(Stream(1, 2, 3).foldRight(() => 0, (a, b) => a + b())).toEqual(6);
@@ -110,6 +130,12 @@ describe("forAll()", () => {
       return a > 1;
     });
     expect(counter).toEqual(1);
+  });
+});
+
+describe("map()", () => {
+  test("transforms the stream", () => {
+    expect(Stream(1, 2, 3).map(a => a + 1).toList()).toEqual(List(2, 3, 4));
   });
 });
 
