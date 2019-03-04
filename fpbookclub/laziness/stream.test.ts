@@ -90,6 +90,19 @@ describe("exists()", () => {
   });
 });
 
+describe("fibs()", () => {
+  test("returns the Fibonacci sequence", () => {
+    expect(stream.fibs().take(5).toList()).toEqual(List(0, 1, 1, 2, 3));
+  });
+});
+
+describe("filter()", () => {
+  test("returns a stream of only matching elements", () => {
+    expect(Stream(1, 2, 3).filter(a => a % 2 === 1).toList())
+      .toEqual(List(1, 3));
+  });
+});
+
 describe("flatMap()", () => {
   test("does nothing on an empty stream", () => {
     expect(Stream().flatMap(a => Stream(a))).toEqual(stream.empty());

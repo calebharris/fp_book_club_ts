@@ -40,6 +40,17 @@ abstract class StreamBase<A> {
     return this.foldRight(() => false, (a, b) => p(a) || b());
   }
 
+  filter(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+    return this.foldRight(
+      () => empty(),
+      (a, b) => p(a) ? cons(() => a, b) : b(),
+    );
+  }
+
+  find(this: Stream<A>, p: (a: A) => boolean): Option<A> {
+    return this.filter(p).headOption();
+  }
+
   flatMap<B>(this: Stream<A>, f: (a: A) => Stream<B>): Stream<B> {
     return this.foldRight(() => empty(), (a, b) => f(a).append(b));
   }
@@ -120,8 +131,19 @@ export class Cons<A> extends StreamBase<A> {
 /**
  * Smart constructor for creating a nonempty Stream
  */
-export const cons = <A >(hd: () => A, tl: () => Stream<A>): Stream<A> =>
+export const cons = <A>(hd: () => A, tl: () => Stream<A>): Stream<A> =>
   new Cons(util.memoize(hd), util.memoize(tl));
+
+export const constant = <A>(a: A): Stream<A> =>
+  cons(() => a, () => constant(a));
+
+export const fibs = (): Stream<number> =>
+  unfold(
+    [0, 1],
+    ([n1, n2]) => some<[number, [number, number]]>([n1, [n2, n2 + n1]]),
+  );
+
+export const fromN = (n: number): Stream<number> => cons(() => n, () => fromN(n + 1));
 
 /**
  * Smart constructor for creating an empty Stream of a particular type
@@ -131,7 +153,10 @@ export const empty = <A>(): Stream<A> => Empty.EMPTY;
 /**
  * An infinite stream of ones
  */
-export const ones: Stream<number> = cons(() => 1, () => ones);
+export const ones: Stream<number> = constant(1);
+
+export const unfold = <A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A> =>
+  f(z).map(([a, s1]) => cons(() => a, () => unfold(s1, f))).getOrElse(() => empty());
 
 /**
  * Convenience method for constructing a Stream from multiple elements
@@ -143,4 +168,4 @@ export const Stream = <A>(...aa: A[]): Stream<A> => {
     return cons(() => aa[0], () => Stream(...aa.slice(1)));
 };
 
-export default { Cons, Empty, Stream, cons, empty, ones };
+export default { Cons, Empty, Stream, cons, constant, empty, fibs, ones, unfold };
