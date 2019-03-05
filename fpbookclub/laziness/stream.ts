@@ -156,7 +156,9 @@ export const empty = <A>(): Stream<A> => Empty.EMPTY;
 export const ones: Stream<number> = constant(1);
 
 export const unfold = <A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A> =>
-  f(z).map(([a, s1]) => cons(() => a, () => unfold(s1, f))).getOrElse(() => empty());
+  f(z)
+    .map(([a, s1]) => cons(() => a, () => unfold(s1, f)))
+    .getOrElse(() => empty());
 
 /**
  * Convenience method for constructing a Stream from multiple elements
