@@ -7,6 +7,9 @@ lang: en-US
 ---
 
 ## Updates
+### 5 March 2019
+* Notes through the end of Chapter 5
+
 ### 4 March 2019
 * No updates in a while, oops!
 * Inline answers through exercise 5.11

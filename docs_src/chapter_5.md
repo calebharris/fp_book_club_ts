@@ -654,5 +654,102 @@ export const unfold = <A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A> =>
 ```
 ???
 
+The `unfold` function &mdash; along with `ones`, `constant`, `fromN`, and `fibs` &mdash; is an example of *corecursion*,
+which is the dual to the concept of *recursion*. Where recursive functions consume data, corecursive functions produce
+data.  Recursive functions, such as `foldRight`, use an existing data structure and work their way down to a base case
+in order to terminate. In contrast, corecursive functions produce new data structures and do not need to terminate as
+long as they remain *productive*, meaning that we can evaluate more of the result in a finite time period.
+
+### Exercise 5.12. `fibs`, `from`, and `constant` in terms of `unfold`
+
+Write `fibs`, `from`, and `constant` in terms of `unfold`.
+
+::: tip Sharing in streams
+When we rewrite `constant` in terms of `unfold`, we lose sharing. Using explicit recursion, `constant` consumes a
+constant amount of memory, but the implementation using `unfold` does not. We don't typically rely on sharing when
+programming with streams, because it's fragile and not tracked by the types. For example, we destroy sharing with a
+simple call to `map`, even in the case of `ones.map(x => x)`.
+:::
+
+### Exercise 5.13. `map`, `take`, `takeWhile`, `zipWith`, and `zipAll` in terms of `unfold`
+
+Write `map`, `take`, `takeWhile`, `zipWith` (as in [chapter 3](chapter_3.html#exercise-3-23-zipwith)), and `zipAll` in
+terms of `unfold`. `zipAll` should continue its traversal so long as either stream has more elements. It produces a
+stream of `Option` tuples to indicate whether each stream has been exhausted.
+
+``` typescript
+zipAll<B>(this: Stream<A>,
+          that: Stream<B>): Stream<(Option<A>, Option<B>)> { ... }
+```
+
+Recall the `hasSubsequence` exercise at the end of [chapter 3](chapter_3.html#exercise-3-24-hassubsequence). Our
+solution had no way to terminate early. So even if we had `List(1, 2, ..., 1000).hasSubsequence(List(1))`,
+`hasSubsequence` had to traverse all 1000 elements, even after immediately locating the subsequence `1`. Now that we
+have a more versatile tool in `Stream`, let's try to assemble `hasSubsequence` out of existing `Stream` functions. Is it
+possible? Are we missing any combinators that would make this easier?
+
+### Exercise 5.14. `startsWith`
+
+Implement `startsWith`, which checks to see if one `Stream` is the prefix of another, using functions we've already
+written. For example, `Stream(1, 2, 3).startsWith(Stream(1, 2)) === true`.
+
+``` typescript
+startsWith(this: Stream<A>, that: Stream<A>): boolean { ... }
+```
+
+### Exercise 5.15. `tails`
+
+Implement `tails` using `unfold`. For a given `Stream`, `tails` returns the `Stream` of suffixes of the input sequence,
+starting with the original `Stream`. For example:
+
+``` typescript
+tails(this: Stream<A>): Stream<Stream<A>> { ... }
+
+> Stream(1, 2, 3).tails()
+Stream(Stream(1, 2, 3),
+       Stream(2, 3),
+       Stream(3),
+       Stream())
+```
+
+Now, we have all the tools we need to implement `hasSubsequence`:
+
+``` typescript
+hasSubsequence(this: Stream<A>, that: Stream<A>): boolean {
+  return this.tails().exists(s => s.startsWith(that));
+}
+```
+
+This implementation performs the same number of steps as would a monolithic, procedural version that used nested loops
+with specialized logic for breaking out when the subsequence was found. By using laziness, we've preserved this
+efficiency while still being able to compose the function from smaller, simpler components.
+
+### Exercise 5.16. `scanRight`
+
+Generalize `tails` to the function `scanRight`, which is like a `foldRight` that returns a `Stream` of the intermediate
+results. For example:
+
+``` typescript
+scanRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B)): Stream<B>
+
+> Stream(1, 2, 3).scanRight(() => 0, (a, b) => a + b()).toList()
+List(6, 5, 3, 0)
+```
+
+The result is the equivalent to the expression `List(1 + 2 + 3 + 0, 2 + 3 + 0, 3 + 0, 0)`. In other words, the function
+behaves as if it "scans" the input stream from left to right and returns the result of folding right starting from each
+position. Your function should reuse the intermediate results so that traversing a `Stream` of `n` elements always takes
+time linear in `n`. Can you implement `scanRight` in terms of `unfold`? How, or why not? What about a different function
+we've written?
+
+## Summary
+
+In this chapter, we introduced non-strictness as a fundamental technique for building functional programs that are
+efficient while maintaining the modularity we enjoyed when composing strict functions. We can think of non-strictness as
+an optimization on functional programming, but it can do much more. Non-strictness lets us separate the description of a
+computation from how and when it gets executed. If we can successfully separate these concerns, then we can reuse
+descriptions in different contexts and evaluate different bits of our program to obtain partial results. We couldn't do
+that when writing only strict code.
+
 [node_inspect]: https://nodejs.org/dist/latest-v10.x/docs/api/util.html#util_custom_inspection_functions_on_objects
-"Util | Node.js Documentaiton"
+"Util | Node.js Documentation"
