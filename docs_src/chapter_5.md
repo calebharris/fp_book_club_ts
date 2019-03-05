@@ -5,7 +5,7 @@ Each one passes over the whole input list and outputs a freshly-created list. Fo
 following code produces a new list, and each of these lists (except the last one) is discarded almost immediately after
 being created.
 
-```typescript
+``` typescript
 > List(1,2,3,4).map(x => x + 10).filter(x => x % 2 === 0).map(x => x * 3)
 List(36, 42)
 ```
@@ -276,11 +276,30 @@ toList(this: Stream<A>): List<A> {
 Write the function `take(n)`, which returns the first `n` elements of a `Stream`; and `drop(n)`, which skips the first
 `n` elements of a `Stream`.
 
-```typescript
+``` typescript
 take(n: number): Stream<A>
 
 drop(n: number): Stream<A>
 ```
+
+??? answer
+``` typescript
+take(this: Stream<A>, n: number): Stream<A> {
+  if (this.isEmpty() || n <= 0)
+    return empty();
+
+  // Needed to work around an issue in Typescript's type inferencing
+  const self = this;
+  return cons(this.h, () => self.t().take(n - 1));
+}
+
+drop(this: Stream<A>, n: number): Stream<A> {
+  if (n <= 0 || this.isEmpty())
+    return this;
+  return this.t().drop(n - 1);
+}
+```
+???
 
 ### Exercise 5.3. `takeWhile`
 
@@ -289,6 +308,18 @@ Write a function `takeWhile` for returning the longest prefix of a `Stream` whos
 ``` typescript
 takeWhile(p: (a: A) => boolean): Stream<A>
 ```
+
+??? answer
+``` typescript
+takeWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+  if (this.isEmpty() || !p(this.h()))
+    return empty();
+
+  const self = this;
+  return cons(this.h, () => self.t().takeWhile(p));
+}
+```
+???
 
 You can use these functions together to inspect streams in the REPL. For example, try
 
@@ -300,7 +331,7 @@ You can use these functions together to inspect streams in the REPL. For example
 
 *Separation of concerns* is a phrase you've probably heard &mdash; it's a major theme in just about every subdiscipline
 of software engineering. Functional programming is particularly concerned with separating the description of
-computations from the act of running them. `Option` and `Either`, at there cores, are ways of describing that a
+computations from the act of running them. `Option` and `Either`, at their cores, are ways of describing that a
 computation can result in an error, or more than one type of value. `Stream` lets us describe a computation that emits a
 sequence of results, but doesn't compute any individual result until it's needed.
 
@@ -360,18 +391,70 @@ traversal as soon as it finds a nonmatching element.
 forAll(this: Stream<A>, p: (a: A) => boolean): boolean { ... }
 ```
 
+??? answer
+``` typescript
+forAll(this: Stream<A>, p: (a: A) => boolean): boolean {
+  if (this.isEmpty())
+    return false;
+  return this.foldRight(() => true, (a, b) => p(a) && b());
+}
+```
+???
+
 ### Exercise 5.5. `takeWhile` using `foldRight`
 
 Refactor `takeWhile` to use `foldRight`.
+
+??? answer
+``` typescript
+takeWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+  return this.foldRight(() => empty(),
+    (a, b) => p(a) ? cons(() => a, b) : b(),
+  );
+}
+```
+???
 
 ### Exercise 5.6. `headOption` using `foldRight`
 
 Refactor `headOption` to use `foldRight`.
 
+??? answer
+``` typescript
+headOption(this: Stream<A>): Option<A> {
+  return this.foldRight(() => none(), (a, b) => some(a));
+}
+```
+???
+
 ### Exercise 5.7. Additional `Stream` functions
 
 Implement `map`, `filter`, `append`, and `flatMap` using `foldRight`. The `append` method should be non-strict in its
 argument.
+
+??? answer
+``` typescript
+// first, here's `append`, upon which we'll build several other solutions
+append(this: Stream<A>, that: () => Stream<A>): Stream<A> {
+  return this.foldRight(that, (a, b) => cons(() => a, b));
+}
+
+flatMap<B>(this: Stream<A>, f: (a: A) => Stream<B>): Stream<B> {
+  return this.foldRight(() => empty(), (a, b) => f(a).append(b));
+}
+
+map<B>(this: Stream<A>, f: (a: A) => B): Stream<B> {
+  return this.foldRight(() => empty(), (a, b) => Stream(f(a)).append(b));
+}
+
+filter(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+  return this.foldRight(
+    () => empty(),
+    (a, b) => p(a) ? cons(() => a, b) : b(),
+  );
+}
+```
+???
 
 Because they use the lazy `foldRight`, these implementations are *incremental*. They do just enough work to provide only
 the elements requested by larger computations composed of these functions. That means we can chain them together without
@@ -500,7 +583,7 @@ Try playing around with these examples:
 
 In each of these cases, we get back an answer immediately. Did any of them surprise you? We need to be careful with our
 newfound power, however. It's easy to write an expression that never terminates or isn't stack-safe. For example,
-`ones.forAll(x => x === 1)` will eventually cause a stack overflow, since it will never find an element that failes the
+`ones.forAll(x => x === 1)` will eventually cause a stack overflow, since it will never find an element that fails the
 predicate (i.e. isn't equal to 1) and terminates the recursion.
 
 Let's get more familiar with `Stream` by writing some more functions for it.
@@ -513,14 +596,27 @@ Generalize `ones` into an infinite stream of any value.
 constant<A>(a: A): Stream<A>
 ```
 
-### Exercise 5.9. `from`
+??? answer
+``` typescript
+export const constant = <A>(a: A): Stream<A> =>
+  cons(() => a, () => constant(a));
+```
+???
+
+### Exercise 5.9. `fromN`
 
 Write a function that generates an infinite stream of integers, starting from the given value `n`, then `n + 1`, `n +
-2`, and so on.
+2`, and so on. We would call this `from`, but that is a reserved word in TypeScript.
 
 ``` typescript
-from(n: number): Stream<number>
+fromN(n: number): Stream<number>
 ```
+
+??? answer
+``` typescript
+export const fromN = (n: number): Stream<number> => cons(() => n, () => fromN(n + 1));
+```
+???
 
 ### Exercise 5.10. `fibs`
 
@@ -530,6 +626,16 @@ Write the function `fibs`, which generates an infinite stream of Fibonacci numbe
 fibs(): Stream<number>
 ```
 
+??? answer
+``` typescript
+export const fibs = (): Stream<number> => {
+  const go = (n: number, m: number): Stream<number> =>
+      cons(() => n, () => go(m, n + m));
+  return go(0, 1);
+};
+```
+???
+
 ### Exercise 5.11. `unfold`
 
 Write a more general stream-building function, `unfold`, which takes an initial state and a function for producing both
@@ -538,6 +644,15 @@ the next state and the next value in the generated stream.
 ``` typescript
 unfold<A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A>
 ```
+
+??? answer
+``` typescript
+export const unfold = <A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A> =>
+  f(z)
+    .map(([a, s1]) => cons(() => a, () => unfold(s1, f)))
+    .getOrElse(() => empty());
+```
+???
 
 [node_inspect]: https://nodejs.org/dist/latest-v10.x/docs/api/util.html#util_custom_inspection_functions_on_objects
 "Util | Node.js Documentaiton"

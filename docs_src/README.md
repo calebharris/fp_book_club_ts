@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 4 March 2019
+* No updates in a while, oops!
+* Inline answers through exercise 5.11
+
 ### 11 January 2019
 * Notes through exercise 5.11
 
