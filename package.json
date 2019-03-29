@@ -4,7 +4,7 @@
   "description": "Notes and exercises from Functional Programming in Scala translated to TypeScript",
   "main": "index.js",
   "dependencies": {
-    "typescript": "^3.2.1"
+    "typescript": "^3.3"
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",
