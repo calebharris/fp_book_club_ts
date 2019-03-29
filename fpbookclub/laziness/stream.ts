@@ -78,7 +78,7 @@ abstract class StreamBase<A> {
       if (s.isEmpty())
         return none();
       else
-        return some<[B, Stream<A>]>([f(s.h()), s.t()]);
+        return some([f(s.h()), s.t()]);
     });
   }
 
@@ -87,7 +87,7 @@ abstract class StreamBase<A> {
       if (s.isEmpty() || m <= 0)
         return none();
       else
-        return some<[A, [Stream<A>, number]]>([s.h(), [s.t(), m - 1]]);
+        return some([s.h(), [s.t(), m - 1]]);
     });
   }
 
@@ -96,7 +96,7 @@ abstract class StreamBase<A> {
       if (s.isEmpty() || !p(s.h()))
         return none();
       else
-        return some<[A, Stream<A>]>([s.h(), s.t()]);
+        return some([s.h(), s.t()]);
     });
   }
 
@@ -119,9 +119,7 @@ abstract class StreamBase<A> {
         else {
           const leftS: Stream<A> = sa1.isEmpty() ? empty() : sa1.t();
           const rightS: Stream<B> = sb1.isEmpty() ? empty() : sb1.t();
-          return some<[[Option<A>, Option<B>], [Stream<A>, Stream<B>]]>(
-            [[left, right], [leftS, rightS]],
-          );
+          return some([[left, right], [leftS, rightS]]);
         }
       },
     );
@@ -132,7 +130,7 @@ abstract class StreamBase<A> {
       if (sa1.isEmpty() || sb1.isEmpty())
         return none();
       else
-        return some<[C, [Stream<A>, Stream<B>]]>([f(sa1.h(), sb1.h()), [sa1.t(), sb1.t()]]);
+        return some([f(sa1.h(), sb1.h()), [sa1.t(), sb1.t()]]);
     });
   }
 }
@@ -175,16 +173,16 @@ export const unfold = <A, S>(z: S, f: (s: S) => Option<[A, S]>): Stream<A> =>
     .getOrElse(() => empty());
 
 export const constant = <A>(a: A): Stream<A> =>
-  unfold(a, s => some<[A, A]>([a, a]));
+  unfold(a, s => some([a, a]));
 
 export const fibs = (): Stream<number> =>
   unfold(
     [0, 1],
-    ([n1, n2]) => some<[number, [number, number]]>([n1, [n2, n2 + n1]]),
+    ([n1, n2]) => some([n1, [n2, n2 + n1]]),
   );
 
 export const fromN = (n: number): Stream<number> =>
-  unfold(n, s => some<[number, number]>([s, s + 1]));
+  unfold(n, s => some([s, s + 1]));
 
 /**
  * Smart constructor for creating an empty Stream of a particular type
