@@ -1,5 +1,5 @@
 import { List } from "../data_structures/list";
-import { Option } from "../error_handling/option";
+import { Option, none, some } from "../error_handling/option";
 
 import stream, { Cons, Empty, Stream } from "./stream";
 
@@ -57,6 +57,12 @@ describe("cons()", () => {
     const stm = stream.cons(val, () => stream.empty());
     expect(stm.headOption().getOrElse(() => -1)).toEqual(1);
     expect(stm.headOption().getOrElse(() => -1)).toEqual(1);
+  });
+});
+
+describe("constant()", () => {
+  test("creates a stream of constant values", () => {
+    expect(stream.constant(7).take(3).toList()).toEqual(List(7, 7, 7));
   });
 });
 
@@ -181,5 +187,51 @@ describe("takeWhile()", () => {
 describe("toList()", () => {
   test("transforms the Stream into a List", () => {
     expect(Stream(1, 2, 3).toList()).toEqual(List(1, 2, 3));
+  });
+});
+
+describe("zipWith()", () => {
+  test("returns empty stream for two empty inputs", () => {
+    expect(stream.empty().zipWith(stream.empty(), (a, b) => [a, b])).toEqual(stream.empty());
+  });
+
+  test("combines the streams with the given function", () => {
+    expect(Stream(1, 2, 3).zipWith(
+      Stream("a", "b", "c"),
+      (a, b) => b.repeat(a)).toList(),
+    ).toEqual(List("a", "bb", "ccc"));
+  });
+
+  test("stops when either input runs out of elements", () => {
+    const x = Stream("a", "b", "c");
+    const y = Stream("d", "e");
+    const f = (a: string, b: string) => a + b;
+    expect(x.zipWith(y, f).toList()).toEqual(List("ad", "be"));
+    expect(y.zipWith(x, f).toList()).toEqual(List("da", "eb"));
+  });
+});
+
+describe("zipAll()", () => {
+  test("returns empty stream for two empty inputs", () => {
+    expect(stream.empty().zipAll(stream.empty())).toEqual(stream.empty());
+  });
+
+  test("combines the streams into tuples, exhausting both", () => {
+    const x = Stream("a", "b", "c");
+    const y = Stream(1, 2);
+    expect(x.zipAll(y).toList()).toEqual(
+      List(
+        [some("a"), some(1)],
+        [some("b"), some(2)],
+        [some("c"), none()],
+      ),
+    );
+    expect(y.zipAll(x).toList()).toEqual(
+      List(
+        [some(1), some("a")],
+        [some(2), some("b")],
+        [none(), some("c")],
+      ),
+    );
   });
 });
