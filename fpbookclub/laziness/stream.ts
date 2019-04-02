@@ -82,6 +82,10 @@ abstract class StreamBase<A> {
     });
   }
 
+  shift(this: Stream<A>): [Option<A>, Stream<A>] {
+    return [this.headOption(), this.drop(1)];
+  }
+
   take(this: Stream<A>, n: number): Stream<A> {
     return unfold<A, [Stream<A>, number]>([this, n], ([s, m]) => {
       if (s.isEmpty() || m <= 0)
@@ -112,17 +116,14 @@ abstract class StreamBase<A> {
     return unfold<[Option<A>, Option<B>], [Stream<A>, Stream<B>]>(
       [sa, sb],
       ([sa1, sb1]) => {
-        const left = sa1.headOption();
-        const right = sb1.headOption();
-        if (left.tag === "none" && right.tag === "none")
+        const [maybeLH, leftT] = sa1.shift();
+        const [maybeRH, rightT] = sb1.shift();
+        if (maybeLH.tag === "none" && maybeRH.tag === "none")
           return none();
-        else {
-          const leftS: Stream<A> = sa1.isEmpty() ? empty() : sa1.t();
-          const rightS: Stream<B> = sb1.isEmpty() ? empty() : sb1.t();
+        else
           return some<[[Option<A>, Option<B>], [Stream<A>, Stream<B>]]>(
-            [[left, right], [leftS, rightS]],
+            [[maybeLH, maybeRH], [leftT, rightT]],
           );
-        }
       },
     );
   }

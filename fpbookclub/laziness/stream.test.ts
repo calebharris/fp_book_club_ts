@@ -164,6 +164,21 @@ describe("ones()", () => {
   });
 });
 
+describe("shift()", () => {
+  test("returns the head and tail of a stream", () => {
+    const s = Stream(1, 2, 3);
+    const [h, t] = s.shift();
+    expect(h).toEqual(some(1));
+    expect(t.toList()).toEqual(List(2, 3));
+  });
+
+  test("returns None and Empty for an empty stream", () => {
+    const [h, t] = Stream().shift();
+    expect(h).toEqual(none());
+    expect(t).toEqual(stream.empty());
+  });
+});
+
 describe("takeWhile()", () => {
   test("of an empty stream returns an empty stream", () => {
     expect(Stream().takeWhile(a => true)).toEqual(stream.empty());

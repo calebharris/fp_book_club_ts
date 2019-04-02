@@ -660,9 +660,28 @@ data.  Recursive functions, such as `foldRight`, use an existing data structure 
 in order to terminate. In contrast, corecursive functions produce new data structures and do not need to terminate as
 long as they remain *productive*, meaning that we can evaluate more of the result in a finite time period.
 
-### Exercise 5.12. `fibs`, `from`, and `constant` in terms of `unfold`
+### Exercise 5.12. `fibs`, `fromN`, and `constant` in terms of `unfold`
 
-Write `fibs`, `from`, and `constant` in terms of `unfold`.
+Write `fibs`, `fromN`, and `constant` in terms of `unfold`.
+
+??? answer
+``` typescript
+export const fibs = (): Stream<number> =>
+  unfold(
+    [0, 1],
+    // Here we need to pass explicit types to `some()`, because TypeScript's
+    // type inferencing can't tell from just an array value if we mean
+    // "array" or "tuple".
+    ([n1, n2]) => some<[number, [number, number]]>([n1, [n2, n2 + n1]]),
+  );
+
+export const fromN = (n: number): Stream<number> =>
+  unfold(n, s => some<[number, number]>([s, s + 1]));
+
+export const constant = <A>(a: A): Stream<A> =>
+  unfold(a, s => some<[A, A]>([a, a]));
+```
+???
 
 ::: tip Sharing in streams
 When we rewrite `constant` in terms of `unfold`, we lose sharing. Using explicit recursion, `constant` consumes a
@@ -681,6 +700,74 @@ stream of `Option` tuples to indicate whether each stream has been exhausted.
 zipAll<B>(this: Stream<A>,
           that: Stream<B>): Stream<(Option<A>, Option<B>)> { ... }
 ```
+
+??? answer
+``` typescript
+  map<B>(this: Stream<A>, f: (a: A) => B): Stream<B> {
+    return unfold(this, s => {
+      if (s.isEmpty())
+        return none();
+      else
+        return some<[B, Stream<A>]>([f(s.h()), s.t()]);
+    });
+  }
+
+  take(this: Stream<A>, n: number): Stream<A> {
+    return unfold<A, [Stream<A>, number]>([this, n], ([s, m]) => {
+      if (s.isEmpty() || m <= 0)
+        return none();
+      else
+        return some<[A, [Stream<A>, number]]>([s.h(), [s.t(), m - 1]]);
+    });
+  }
+
+  takeWhile(this: Stream<A>, p: (a: A) => boolean): Stream<A> {
+    return unfold(this, s => {
+      if (s.isEmpty() || !p(s.h()))
+        return none();
+      else
+        return some<[A, Stream<A>]>([s.h(), s.t()]);
+    });
+  }
+
+  zipWith<B, C>(this: Stream<A>,
+                sb: Stream<B>,
+                f: (a: A, b: B) => C): Stream<C> {
+    return unfold<C, [Stream<A>, Stream<B>]>([this, sb], ([sa1, sb1]) => {
+      if (sa1.isEmpty() || sb1.isEmpty())
+        return none();
+      else
+        return some<[C, [Stream<A>, Stream<B>]]>(
+          [f(sa1.h(), sb1.h()), [sa1.t(), sb1.t()]],
+        );
+    });
+  }
+
+  // For zipAll, it's helpful to write an additional combinator that returns
+  // the head and tail of a stream simultaneously. The head might not exist,
+  // so we need to wrap it in an `Option`, just like `headOption`.
+  shift(this: Stream<A>): [Option<A>, Stream<A>] {
+    return [this.headOption(), this.drop(1)];
+  }
+
+  zipAll<B>(this: Stream<A>, sb: Stream<B>): Stream<[Option<A>, Option<B>]> {
+    const sa = this;
+    return unfold<[Option<A>, Option<B>], [Stream<A>, Stream<B>]>(
+      [sa, sb],
+      ([sa1, sb1]) => {
+        const [maybeLH, leftT] = sa1.shift();
+        const [maybeRH, rightT] = sb1.shift();
+        if (maybeLH.tag === "none" && maybeRH.tag === "none")
+          return none();
+        else
+          return some<[[Option<A>, Option<B>], [Stream<A>, Stream<B>]]>(
+            [[maybeLH, maybeRH], [leftT, rightT]],
+          );
+      },
+    );
+  }
+```
+???
 
 Recall the `hasSubsequence` exercise at the end of [chapter 3](chapter_3.html#exercise-3-24-hassubsequence). Our
 solution had no way to terminate early. So even if we had `List(1, 2, ..., 1000).hasSubsequence(List(1))`,
