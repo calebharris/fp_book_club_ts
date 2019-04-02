@@ -7,6 +7,10 @@ lang: en-US
 ---
 
 ## Updates
+### 2 April 2019
+* Inline exercise answers for 5.12 and 5.13
+* Begin Chapter 6
+
 ### 5 March 2019
 * Notes through the end of Chapter 5
 
