@@ -152,6 +152,20 @@ describe("forAll()", () => {
   });
 });
 
+describe("hasSubsequence()", () => {
+  test("returns true if the subsequence exists", () => {
+    expect(Stream(1, 2, 3).hasSubsequence(Stream(2, 3))).toBeTruthy();
+  });
+
+  test("return true if a different subsequence exists", () => {
+    expect(Stream(1, 2, 3, 4).hasSubsequence(Stream(2, 3))).toBeTruthy();
+  });
+
+  test("returns false if the subsequence does not exist", () => {
+    expect(Stream(1, 2, 3).hasSubsequence(Stream(5, 6))).toBeFalsy();
+  });
+});
+
 describe("map()", () => {
   test("transforms the stream", () => {
     expect(Stream(1, 2, 3).map(a => a + 1).toList()).toEqual(List(2, 3, 4));
@@ -161,6 +175,16 @@ describe("map()", () => {
 describe("ones()", () => {
   test("produces all 1s", () => {
     expect(stream.ones.take(3).toList()).toEqual(List(1, 1, 1));
+  });
+});
+
+describe("scanRight()", () => {
+  test("produces all intermediate results of fold", () => {
+    expect(Stream(1, 2, 3).scanRight(() => 0, (a, b) => a + b()).toList()).toEqual(List(6, 5, 3, 0));
+  });
+
+  test("produces zero value for empty input", () => {
+    expect(Stream<number>().scanRight(() => 0, (a, b) => a + b()).toList()).toEqual(List(0));
   });
 });
 
@@ -176,6 +200,44 @@ describe("shift()", () => {
     const [h, t] = Stream().shift();
     expect(h).toEqual(none());
     expect(t).toEqual(stream.empty());
+  });
+});
+
+describe("startsWith()", () => {
+  test("returns false for an empty stream", () => {
+    expect(stream.empty().startsWith(Stream(1))).toBeFalsy();
+  });
+
+  test("returns true if the argument is a prefix of the stream", () => {
+    expect(Stream(1, 2, 3).startsWith(Stream(1, 2))).toBeTruthy();
+  });
+
+  test("returns false if the argument is not a prefix of the stream", () => {
+    expect(Stream(1, 2, 3).startsWith(Stream(4))).toBeFalsy();
+  });
+
+  test("returns false if the argument is longer than the stream", () => {
+    expect(Stream(1, 2).startsWith(Stream(1, 2, 3))).toBeFalsy();
+  });
+
+  test("works with an infinite stream", () => {
+    expect(stream.ones.startsWith(Stream(1, 1))).toBeTruthy();
+  });
+
+  test("returns true if the argument is empty", () => {
+    expect(Stream(1).startsWith(stream.empty())).toBeTruthy();
+  });
+});
+
+describe("tails()", () => {
+  test("returns all possible suffixes of input stream", () => {
+    expect(Stream(1, 2).tails().map(s => s.toList()).toList()).toEqual(
+      List(
+        List(1, 2),
+        List(2),
+        List(),
+      ),
+    );
   });
 });
 

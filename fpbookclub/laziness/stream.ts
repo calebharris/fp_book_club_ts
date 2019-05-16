@@ -1,5 +1,5 @@
 import list, { List } from "../data_structures/list";
-import { Option, none, some } from "../error_handling/option";
+import { Option, map2, none, some } from "../error_handling/option";
 import util from "../getting_started/util";
 
 /**
@@ -69,6 +69,10 @@ abstract class StreamBase<A> {
     return this.foldRight(() => true, (a, b) => p(a) && b());
   }
 
+  hasSubsequence(this: Stream<A>, that: Stream<A>): boolean {
+    return this.tails().exists(s => s.startsWith(that));
+  }
+
   isEmpty(this: Stream<A>): this is Empty<A> {
     return this.tag === "empty";
   }
@@ -84,6 +88,46 @@ abstract class StreamBase<A> {
 
   shift(this: Stream<A>): [Option<A>, Stream<A>] {
     return [this.headOption(), this.drop(1)];
+  }
+
+  startsWith(this: Stream<A>, that: Stream<A>): boolean {
+    return (this.
+      zipAll(that).
+      dropWhile(([lo, ro]) =>
+        lo.flatMap(l =>
+          ro.map(r => r === l),
+        ).getOrElse(() => false),
+      ).
+      headOption().
+      flatMap(([lo, ro]) => ro).
+      tag === "none"
+    );
+  }
+
+  tails(this: Stream<A>): Stream<Stream<A>> {
+     return unfold(
+       some(this),
+       s => {
+         if (s.tag === "none")
+           return none();
+         else {
+           const strm = s.value;
+           if (strm.isEmpty())
+             return some<[Stream<A>, Option<Stream<A>>]>([strm, none()]);
+           else
+             return some<[Stream<A>, Option<Stream<A>>]>([strm, some(strm.t())]);
+         }
+       });
+  }
+
+  scanRight<B>(this: Stream<A>, z: () => B, f: (a: A, b: () => B) => B): Stream<B> {
+    return this.foldRight(
+      () => Stream(z()),
+      (a, b) => {
+        return cons(
+          () => f(a, () => b().headOption().getOrElse(() => z())),
+          b);
+      });
   }
 
   take(this: Stream<A>, n: number): Stream<A> {
