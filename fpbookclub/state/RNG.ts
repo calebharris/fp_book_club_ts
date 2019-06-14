@@ -2,6 +2,9 @@ export interface RNG {
   nextInt(): [number, RNG];
 }
 
+const MAX_INT_32 = 2147483647;
+const MIN_INT_32 = -2147483648;
+
 export class SimpleRNG implements RNG {
   readonly seed: bigint;
 
@@ -18,3 +21,5 @@ export class SimpleRNG implements RNG {
   }
   /* tslint:enable:no-bitwise */
 }
+
+export default { SimpleRNG };
