@@ -22,4 +22,32 @@ export class SimpleRNG implements RNG {
   /* tslint:enable:no-bitwise */
 }
 
-export default { SimpleRNG };
+export const nonNegativeInt = (rng: RNG): [number, RNG] => {
+  const [x, rng2] = rng.nextInt();
+  if (x === MIN_INT_32)
+    return [0, rng2];
+  if (x < 0)
+    return [-x, rng2];
+  else
+    return [x, rng2];
+};
+
+export const double = (rng: RNG): [number, RNG] => {
+  const [x, rng2] = nonNegativeInt(rng);
+  return [x / (MAX_INT_32 + 1.0), rng2];
+};
+
+export const double3 = (rng: RNG): [[number, number, number], RNG] => {
+  const [d1, rng2] = double(rng);
+  const [d2, rng3] = double(rng2);
+  const [d3, rng4] = double(rng3);
+  return [[d1, d2, d3], rng4];
+};
+
+export const intDouble = (rng: RNG): [[number, number], RNG] => {
+  const [n, rng2] = rng.nextInt();
+  const [d, rng3] = double(rng2);
+  return [[n, d], rng3];
+};
+
+export default { double, double3, intDouble, nonNegativeInt, SimpleRNG };
