@@ -1,0 +1,53 @@
+{
+  "name": "fp_book_club_ts_code",
+  "version": "0.0.1",
+  "description": "Code for exercise answers from Functional Programming in Scala translated to TypeScript",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.3.4000"
+  },
+  "scripts": {
+    "console": "ts-node",
+    "lint": "tslint -p tsconfig.json -c tslint.yaml 'libfpts/**/*.ts'",
+    "lint:just": "tslint -p tsconfig.json -c tslint.yaml",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:watchAll": "jest --watchAll"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebharris/fp_book_club_ts.git"
+  },
+  "keywords": [
+    "typescript",
+    "functional programming"
+  ],
+  "author": "Caleb Harris",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/calebharris/fp_book_club_ts/issues"
+  },
+  "homepage": "https://github.com/calebharris/fp_book_club_ts#readme"
+}

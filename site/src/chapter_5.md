@@ -784,6 +784,31 @@ written. For example, `Stream(1, 2, 3).startsWith(Stream(1, 2)) === true`.
 startsWith(this: Stream<A>, that: Stream<A>): boolean { ... }
 ```
 
+??? answer
+``` typescript
+  startsWith(this: Stream<A>, that: Stream<A>): boolean {
+    return (
+      this.
+      // combine `this` and `that` into a stream of Option pairs
+      zipAll(that).
+      // drop all pairs for which the contents are equal
+      dropWhile(([lo, ro]) =>
+        lo.flatMap(l =>
+          ro.map(r => r === l),
+        ).getOrElse(() => false),
+      ).
+      // fetch the first of the remaining pairs, if any
+      headOption().
+      // if there are no remaining pairs, or if `that` has been consumed (i.e.
+      // the right side of the pair is `None`), then `that` was a prefix of
+      // `this` and we should return `true`
+      flatMap(([lo, ro]) => ro).
+      tag === "none"
+    );
+  }
+```
+???
+
 ### Exercise 5.15. `tails`
 
 Implement `tails` using `unfold`. For a given `Stream`, `tails` returns the `Stream` of suffixes of the input sequence,

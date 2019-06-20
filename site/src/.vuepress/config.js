@@ -2,9 +2,9 @@ const mdContainer = require("markdown-it-container");
 
 module.exports = {
   base: "/fp_book_club_ts/",
-  dest: "docs",
+  dest: "out",
   markdown: {
-    config: md => {
+    extendMarkdown: md => {
       // Creates hidden-by-default, expandable blocks, meant for exercise answers
       md.use(mdContainer, "answer", {
         marker: "?",

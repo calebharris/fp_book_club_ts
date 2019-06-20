@@ -1,15 +1,25 @@
 # fp_book_club_ts
 Exercises and notes from [Functional Programming in Scala][fpinscala] translated to [TypeScript][ts].
 
+This repository is essentially split into two halves. One half generates the website containing the notes, and one half
+contains TypeScript code illustrating the notes. So there are two directories at the top level:
+
+* `site/` - source files for the VuePress-powered notes website
+* `code/` - runnable examples and rudimentary FP library in TypeScript
+
+There is a third top-level directory, `docs/`, which contains the output of running VuePress on the sources in `site/`.
+The `docs/` directory is required by GitHub pages, on which the site is hosted.
+
 ## Running the code
 
-1. Install the version of node specified in .node-version (10.6.0 as of this writing). On a Mac, using nodenv, do:
+1. Install the version of node specified in `/code/.node-version` (10.6.0 as of this writing). On a Mac, using nodenv,
+   do:
    ```
    $ brew update
    $ brew upgrade node-build
    $ nodenv install 10.6.0
    ```
-2. Install dependencies:
+2. `cd code/` and install dependencies:
    ```
    $ npm install
    ```
@@ -58,15 +68,17 @@ do for you, run `npm test -- --help`.
 
 ## Working with the documentation
 
-The notes, under docs_src, are meant to be deployed using [GitHub Pages][ghpages]. We use [VuePress][vuepress] to write
-the notes in Markdown and render them to plain old HTML.
+The notes, under `site/src`, are meant to be deployed using [GitHub Pages][ghpages]. We use [VuePress][vuepress] to
+write the notes in Markdown and render them to plain old HTML.
 
 To update the notes:
-1. run `npm run docs:dev`, and point your browser to the address displayed by VuePress, which is likely
+1. `cd site/` and run `npm run docs:dev`, and point your browser to the address displayed by VuePress, which is likely
    http://localhost:8080.
-2. Edit the source files in `docs_src/`, proofreading as you go in the browser.
-3. When you're done, run `npm run docs:build`, which will result in changes to the HTML under `docs/`. Commit all the
-   changes under both `docs_src/` and `docs/`, merge to master if necessary, and push.
+2. Edit the source files in `site/src/`, proofreading as you go in the browser.
+3. When you're done, run `npm run docs:build`, which will output the static site contents into `site/out/`.
+4. `cd ../` to return to the project root director, and run `npm pages:cp` to copy the static site content into `docs/`,
+   as required by GitHub Pages. Commit all the changes under both `site/src/` and `docs/`, merge to master if necessary,
+   and push.
 4. GitHub looks for changes to the static site assets under `docs/`. If it finds changes, it redeployes the site at
    http://calebharris.github.io/fp_book_club_ts.
 

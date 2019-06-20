@@ -1,3 +1,6 @@
+# Intermediate generated website files
+/site/out/
+
 # Logs
 logs
 *.log
