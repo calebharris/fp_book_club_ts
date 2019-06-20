@@ -7,6 +7,11 @@ lang: en-US
 ---
 
 ## Updates
+### 19 June 2019
+* Split into two modules, one under `site/` and one under `code/`
+    * This was necessary due to an upgrade of VuePress, which caused all sorts of wonkiness when installed alongside Jest.
+      I think it has something to do with Webpack...?
+
 ### 2 April 2019
 * Inline exercise answers for 5.12 and 5.13
 * Begin Chapter 6
