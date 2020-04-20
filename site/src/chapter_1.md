@@ -13,7 +13,7 @@ A function has a side effect if it does anything other than return a value. Exam
 We'll walk through refactoring a simple program to remove side effects and demonstrate some TypeScript syntax. We'll
 also touch on two import concepts in functional programming: *referential transparency* and the *substitution model*.
 
-See [the code repository](https://github.com/calebharris/fp_book_club_ts/tree/master/fpbookclub/intro) for expanded,
+See [the code repository](https://github.com/calebharris/fp_book_club_ts/tree/master/code/libfpts/intro) for expanded,
 runnable versions of these examples.
 
 ### A program with side effects
