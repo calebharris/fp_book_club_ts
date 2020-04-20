@@ -27,7 +27,7 @@ The `docs/` directory is required by GitHub pages, on which the site is hosted.
    ```
    $ npm run console
 
-   > fp_book_club_ts@0.0.1 console ~/src/fp_book_club_ts
+   > fp_book_club_ts@0.0.1 console ~/code/fp_book_club_ts
    > ts-node
 
    > console.log("Hi there!");
@@ -39,13 +39,13 @@ The `docs/` directory is required by GitHub pages, on which the site is hosted.
    ```
    $ npm test
 
-   > fp_book_club_ts@0.0.1 test ~/src/fp_book_club_ts
+   > fp_book_club_ts@0.0.1 test ~/code/fp_book_club_ts
    > jest
 
-    PASS  fpbookclub/intro/cafe.test.ts
+    PASS  libfpts/intro/cafe.test.ts
      ✓ returns a Coffee (51ms)
 
-     console.log fpbookclub/intro/impure_example.ts:13
+     console.log libfpts/intro/impure_example.ts:13
        Side effect! Charging the credit card...
 
    Test Suites: 1 passed, 1 total

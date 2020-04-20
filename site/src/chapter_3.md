@@ -342,7 +342,7 @@ And now... some exercises for manipulating lists.
 
 ::: tip Note
 As we complete these exercises, we'll be creating a reusable `List` module. You can find the code for `List` in the code
-repo at [/fpbookclub/data_structures/list.ts][repo_list].
+repo at [/code/libfpts/data_structures/list.ts][repo_list].
 :::
 
 ### Exercise 3.2. `getTail`
@@ -1166,6 +1166,6 @@ while adhering to functional principals. In other words, without exceptions.
 [ch_1_chg]: chapter_1.html#adding-a-payments-object "Chapter 1 - Functional Programming in TypeScript"
 [fpscala_notes_3]: https://github.com/fpinscala/fpinscala/wiki/Chapter-3:-Functional-data-structures "Chapter 3 -
 fpinscala/fpinscala Wiki"
-[repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/fpbookclub/data_structures/list.ts "List - Functional Programming in TypeScript"
+[repo_list]: https://github.com/calebharris/fp_book_club_ts/blob/master/code/libfpts/data_structures/list.ts "List - Functional Programming in TypeScript"
 [scala_vector]: https://www.scala-lang.org/api/current/scala/collection/immutable/Vector.html "Vector - Scala Standard Library"
 [wikip_cat]: https://en.wikipedia.org/wiki/Category_theory "Category theory - Wikipedia"

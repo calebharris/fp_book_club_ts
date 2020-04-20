@@ -109,7 +109,7 @@ const memoize = <A>(f: () => A): () => A => {
 Now if we refactor `maybeTwice` to use `memoize`, we can see that it only executes the thunk once.
 
 ``` typescript
-> import util from "./fpbookclub/getting_started/util";
+> import util from "./code/libfpts/getting_started/util";
 {}
 > const maybeTwice = (b: boolean, i: () => number) => {
 ... const i2 = util.memoize(i);
