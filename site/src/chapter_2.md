@@ -419,7 +419,7 @@ and which function to call to obtain the result. We can factor these differences
 function, `formatResult`, that's more general:
 
 ```typescript
-function formatResult(name: string, x: number, f: number => number) {
+function formatResult(name: string, x: number, f: (n: number) => number) {
   return `The ${name} of ${x} is ${f(x)}`;
 }
 ```
