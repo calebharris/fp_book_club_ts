@@ -566,7 +566,7 @@ Just like normal functions, we can assign arrow functions to variables. Here's a
 annotations, just to demonstrate the syntax:
 
 ```typescript
-const equalsOne: (x: number) => number = (x: number): number => {
+const equalsOne: (x: number) => boolean = (x: number): boolean => {
   return x === 1;
 );
 ```
@@ -576,7 +576,7 @@ we'll use the arrow function syntax whenever we can, usually omitting the type a
 constant name. So our functions will generally look like this:
 
 ```typescript
-const equalsOne = (x: number): number => {
+const equalsOne = (x: number): boolean => {
   return x === 1;
 };
 ```
