@@ -7,7 +7,7 @@ using higher-order functions (HOFs), and writing polymorphic HOFs.
 
 ## Introducing TypeScript: an example
 
-<<< @/fpbookclub/getting_started/abs.ts
+<<< @/../code/libfpts/getting_started/abs.ts
 
 The building blocks of TypeScript programs are modules. For now, it's fine to think of each TypeScript file as though
 it automatically defines a module. The `export` keyword does not come into play in this example, but makes the `abs`
@@ -87,17 +87,17 @@ occur. In that case, it works kind of like an implicit `main` method. But if we 
 
 ## Running our program
 
-The easist way to run this and other programs in these notes is to clone the [Git repository][fpbookclub_repo] and
+The easiest way to run this and other programs in these notes is to clone the [Git repository][fpbookclub_repo] and
 follow the instructions in the README. You'll use npm, a standard package-management tool in the Node.js ecosystem, to
 download this project's dependencies, build it, and run it.
 
 Once you've completed those steps, you can run the program we've been discussing using the console script:
 
 ```
-$ npm run console -- fpbookclub/getting_started/abs.ts
+$ npm run console -- libfpts/getting_started/abs.ts
 
 > fp_book_club_ts@0.0.1 console /Users/caleb/fp_book_club_ts
-> ts-node "fpbookclub/getting_started/abs.ts"
+> ts-node "libfpts/getting_started/abs.ts"
 
 The absolute value of -42 is 42
 ```
@@ -112,7 +112,7 @@ $ npm run console
 > fp_book_club_ts@0.0.1 console /Users/caleb/src/fp_book_club_ts
 > ts-node
 
-> import { abs } from "./fpbookclub/getting_started/abs";
+> import { abs } from "./code/libfpts/getting_started/abs";
 {}
 > abs(-13);
 The absolute value of -42 is 42
@@ -137,18 +137,18 @@ $ npm test
 > fp_book_club_ts@0.0.1 test /Users/caleb/src/fp_book_club_ts
 > jest
 
- PASS  fpbookclub/getting_started/abs.test.ts
+ PASS  libfpts/getting_started/abs.test.ts
   ● Console
 
-    console.log fpbookclub/getting_started/abs.ts:32
+    console.log libfpts/getting_started/abs.ts:32
       The absolute value of -42 is 42
 
- PASS  fpbookclub/intro/cafe.test.ts
+ PASS  libfpts/intro/cafe.test.ts
   ● Console
 
-    console.log fpbookclub/intro/impure_example.ts:13
+    console.log libfpts/intro/impure_example.ts:13
       Side effect! Charging the credit card...
-    console.log fpbookclub/intro/cafe.test.ts:35
+    console.log libfpts/intro/cafe.test.ts:35
       Another side effect
 
 
@@ -166,10 +166,10 @@ watch session.
 ```
 $ npm run test:watch
 
- PASS  fpbookclub/getting_started/abs.test.ts
+ PASS  libfpts/getting_started/abs.test.ts
   ✓ abs computes the absolute value of a number (4ms)
 
-  console.log fpbookclub/getting_started/abs.ts:32
+  console.log libfpts/getting_started/abs.ts:32
     The absolute value of -42 is 42
 
 Test Suites: 1 passed, 1 total
@@ -274,7 +274,7 @@ function factorial(n: number): number {
 
 ::: tip Note
 You can find expanded code for this and the following examples in the code repo at
-[/fpbookclub/getting_started/math.ts][repo_gs].
+[/code/libfpts/getting_started/math.ts][repo_gs].
 :::
 
 We write loops functionally, without mutating a loop variable, with *recursive* functions. The variable `go` holds a
@@ -637,7 +637,7 @@ In the above example, `charge.combine(charge)` is using the method syntax. We *c
 
 ```
 > charge.combine.call({}, charge);
-/Users/caleb/src/fp_book_club_ts/fpbookclub/intro/pure_example.ts:32
+/Users/caleb/src/fp_book_club_ts/code/libfpts/intro/pure_example.ts:32
             throw new Error("Can't combine charges to different cards");
             ...
 ```
@@ -746,7 +746,7 @@ Next up... functional data structures, starting with lists.
 [fpbookclub_repo]: https://github.com/calebharris/fp_book_club_ts "Functional Programming in TypeScript on GitHub"
 [jest]: https://jestjs.io/en/ "Jest"
 [mdn_arw]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions "Arrow functions - MDN"
-[repo_gs]: https://github.com/calebharris/fp_book_club_ts/tree/master/fpbookclub/getting_started "Getting started - Functional Programming in TypeScript on GitHub"
+[repo_gs]: https://github.com/calebharris/fp_book_club_ts/tree/master/code/libfpts/getting_started "Getting started - Functional Programming in TypeScript on GitHub"
 [wikip_fib]: https://en.wikipedia.org/wiki/Fibonacci_number "Fibonacci number - Wikipedia"
 [wikip_para]: https://en.wikipedia.org/wiki/Parametric_polymorphism "Parametric polymorphism - Wikipedia"
 [wikip_subt]: https://en.wikipedia.org/wiki/Subtyping "Subtyping - Wikipedia"
